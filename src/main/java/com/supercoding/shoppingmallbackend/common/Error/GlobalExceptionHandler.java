@@ -19,8 +19,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public CommonResponse<Object> handleCustomException(CustomException ex) {
         ErrorCode errorCode = ex.getErrorCode();
-        log.error("code: "+errorCode.getStatus());
-        log.error("message: "+ errorCode.getMessage());
+        log.error("\u001B[31mcode: "+errorCode.getStatus()+"\u001B[0m");
+        log.error("\u001B[31mmessage: "+ errorCode.getMessage()+"\u001B[0m");
         return ApiUtils.fail(errorCode.getStatus(), errorCode.getMessage());
     }
 }
