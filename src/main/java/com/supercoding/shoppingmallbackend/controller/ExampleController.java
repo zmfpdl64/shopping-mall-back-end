@@ -34,8 +34,6 @@ public class ExampleController {
     @GetMapping("/success")
     public CommonResponse<Object> howToSuccessResponse() {
 
-
-
         ExampleUser exampleUser = new ExampleUser(1L, "oneho", "원호");
         log.info(String.valueOf(exampleUser));
         return ApiUtils.success("유저 조회 성공", exampleUser);
