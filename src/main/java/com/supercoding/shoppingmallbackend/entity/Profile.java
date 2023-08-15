@@ -1,12 +1,14 @@
 package com.supercoding.shoppingmallbackend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Getter
 @Setter
 @Entity
@@ -16,10 +18,6 @@ public class Profile extends CommonField {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx", nullable = false)
     private Long id;
-
-    @NotNull
-    @Column(name = "role_id", nullable = false)
-    private Long roleId;
 
     @Size(max = 63)
     @NotNull
@@ -49,4 +47,7 @@ public class Profile extends CommonField {
     @Column(name = "paymoney", nullable = false)
     private Long paymoney;
 
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProfileRole role;
 }
