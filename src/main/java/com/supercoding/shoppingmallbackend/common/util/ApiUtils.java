@@ -8,12 +8,10 @@ public class ApiUtils {
     private ApiUtils(){}
 
     public static CommonResponse<Object> success(String message, Object data) {
-        Status status = new Status(200, message);
-        return new CommonResponse<>(true ,status, data);
+        return new CommonResponse<>(true ,200, message, data);
     }
 
     public static CommonResponse<Object> fail(int code, String message) {
-        Status status = new Status(code, message);
-        return new CommonResponse<>(false, status, null);
+        return new CommonResponse<>(false, code, message ,null);
     }
 }

@@ -7,14 +7,17 @@ import lombok.Getter;
 @Getter
 public class CommonResponse<T> {
     private final boolean result;
-    private final T status;
+    private final Integer status;
+    private final String message;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T data;
 
     @Builder
-    public CommonResponse(boolean result, T status, T data) {
+    public CommonResponse(boolean result, Integer status, String message,  T data) {
         this.result = result;
         this.status = status;
+        this.message = message;
         this.data = data;
     }
 }
