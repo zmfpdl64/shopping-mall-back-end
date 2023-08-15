@@ -20,8 +20,8 @@ public class CommonField {
     private Timestamp createdAt;
 
     @UpdateTimestamp
-    @Column(name = "modified_at", insertable = false)
-    private Timestamp modifiedAt;
+    @Column(name = "updated_at", insertable = false)
+    private Timestamp updatedAt;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
