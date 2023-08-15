@@ -27,5 +27,4 @@ public class ShoppingCart extends CommonField {
     @NotNull
     @Column(name = "amount", nullable = false)
     private Long amount;
-
 }
