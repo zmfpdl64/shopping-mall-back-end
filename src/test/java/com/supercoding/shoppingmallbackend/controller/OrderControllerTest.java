@@ -22,7 +22,7 @@ public class OrderControllerTest {
     @Test
     @DisplayName("setProduct 메서드 테스트")
     public void testSetProduct(){
-        CommonResponse<Object> res = orderController.setProduct(any());
+        CommonResponse<Object> res = orderController.setProduct(any(), any());
         System.out.println(res.getData().toString());
     }
 }
