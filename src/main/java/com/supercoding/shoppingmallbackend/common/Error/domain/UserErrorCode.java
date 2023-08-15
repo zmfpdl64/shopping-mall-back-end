@@ -1,6 +1,7 @@
 package com.supercoding.shoppingmallbackend.common.Error.domain;
 
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCode;
+import org.springframework.http.HttpStatus;
 
 public enum UserErrorCode {
     // 유저
@@ -13,7 +14,8 @@ public enum UserErrorCode {
     NOT_AUTHORIZED(403, "작성자만 수정 및 삭제를 할 수 있습니다."),
     USERNAME_DUPLICATION(400, "이미 등록된 아이디입니다."),
     LOGIN_INPUT_INVALID(400, "로그인 정보를 다시 확인해주세요."),
-    NOTFOUND_USER(404, "해당 이름의 유저가 존재하지 않습니다.");
+    NOTFOUND_USER(404, "해당 이름의 유저가 존재하지 않습니다."),
+    BAD_REQUEST(HttpStatus.BAD_GATEWAY.value(), "요청이 잘못되었습니다.");
 
     private final ErrorCode errorCode;
 
