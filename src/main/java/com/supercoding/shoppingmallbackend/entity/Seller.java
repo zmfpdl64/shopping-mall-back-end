@@ -1,11 +1,13 @@
 package com.supercoding.shoppingmallbackend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -17,7 +19,7 @@ public class Seller extends CommonField {
     private Long id;
 
     @NotNull
-    @Column(name = "product_idx", nullable = false)
-    private Long productIdx;
+    @Column(name = "profile_idx", nullable = false)
+    private Long profile_idx;
 
 }
