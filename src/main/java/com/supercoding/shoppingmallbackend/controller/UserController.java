@@ -27,7 +27,7 @@ public class UserController {
                 singupRequest.getPassword(),
                 singupRequest.getEmail(),
                 singupRequest.getPhoneNumber(),
-                null        // TODO: MultipartFile 추가 해줘야 됨
+                profileImage
         );
 
         return CommonResponse.builder().result(true).status(200).message("회원가입에 성공했습니다.").build();
