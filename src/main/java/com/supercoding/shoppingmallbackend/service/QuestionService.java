@@ -2,6 +2,7 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.dto.request.questions.CreateQuestionRequest;
 import com.supercoding.shoppingmallbackend.dto.response.questions.CreateQuestionResponse;
+import com.supercoding.shoppingmallbackend.dto.response.questions.GetQuestionResponse;
 import com.supercoding.shoppingmallbackend.entity.Question;
 import com.supercoding.shoppingmallbackend.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,24 @@ public class QuestionService {
     public QuestionService(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
     }
+
+
+    public GetQuestionResponse getQuestion(Long id) {
+        Question question = questionRepository.findById(id).orElse(null);
+        if (question == null) {
+            return null;
+        }
+
+        return GetQuestionResponse.builder()
+                .id(question.getId())
+                .productIdx(question.getProductIdx())
+                .consumerIdx(question.getConsumerIdx())
+                .title(question.getTitle())
+                .content(question.getContent())
+                .imageUrl(question.getImageUrl())
+                .build();
+    }
+
 
     public CreateQuestionResponse createQuestion(CreateQuestionRequest request) {
         Question question = new Question();
@@ -44,5 +63,7 @@ public class QuestionService {
 
         return createdQuestion;
     }
+
+
 
 }
