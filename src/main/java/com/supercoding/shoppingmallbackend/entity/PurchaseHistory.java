@@ -1,7 +1,6 @@
 package com.supercoding.shoppingmallbackend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -9,6 +8,10 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 @Entity
 @Table(name = "purchase_history")
 public class PurchaseHistory extends CommonField {
@@ -16,14 +19,6 @@ public class PurchaseHistory extends CommonField {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx", nullable = false)
     private Long id;
-
-    @NotNull
-    @Column(name = "consumer_id", nullable = false)
-    private Long consumerId;
-
-    @NotNull
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
 
     @Size(max = 22)
     @NotNull
@@ -63,10 +58,12 @@ public class PurchaseHistory extends CommonField {
     @Column(name = "sold_price_per_one", nullable = false)
     private Long soldPricePerOne;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "comsumer_id")
+    @JoinColumn(name = "consumer_id")
     private Consumer consumer;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
