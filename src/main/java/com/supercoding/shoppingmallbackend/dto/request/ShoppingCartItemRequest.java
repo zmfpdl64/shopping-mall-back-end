@@ -8,7 +8,6 @@ import lombok.*;
 @Builder
 @ToString
 public class ShoppingCartItemRequest {
-    private Long consumerId;
     private Long productId;
     private Long amount;
 }
