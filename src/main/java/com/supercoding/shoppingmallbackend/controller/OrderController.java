@@ -27,26 +27,26 @@ public class OrderController {
         return orderService.setProduct(orderRequest);
 
         // 더미 코드
-        {
-            OrderResponse data = OrderResponse.builder()
-                    .id(1L)
-                    .consumer(new Object(){
-                        private final Long id = orderRequest.getConsumerId();
-                        private final String name = "홍길동";
-                    })
-                    .product(new Object() {
-                        private final Long id = 1L;
-                        private final Long sellerId = 1L;
-                        private final String title = "쉐입 퍼즐: 콜로세움 600 PCS";
-                        private final String mainImageUrl = "https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1688696198_a.jpg";
-                        private final String genre = "퍼즐";
-                        private final Long price = 17600L;
-                    })
-                    .amount(1L)
-                    .build();
-
-            return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", data);
-        }
+//        {
+//            OrderResponse data = OrderResponse.builder()
+//                    .id(1L)
+//                    .consumer(new Object(){
+//                        private final Long id = orderRequest.getConsumerId();
+//                        private final String name = "홍길동";
+//                    })
+//                    .product(new Object() {
+//                        private final Long id = 1L;
+//                        private final Long sellerId = 1L;
+//                        private final String title = "쉐입 퍼즐: 콜로세움 600 PCS";
+//                        private final String mainImageUrl = "https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1688696198_a.jpg";
+//                        private final String genre = "퍼즐";
+//                        private final Long price = 17600L;
+//                    })
+//                    .amount(1L)
+//                    .build();
+//
+//            return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", data);
+//        }
     };
 
     @GetMapping("/{consumerId}")
