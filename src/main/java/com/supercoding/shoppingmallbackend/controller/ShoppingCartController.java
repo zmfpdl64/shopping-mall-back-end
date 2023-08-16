@@ -21,107 +21,42 @@ public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
 
+    /*
+     * ====================================================
+     * 아래 필드는 나중에 삭제될 필드
+     * ====================================================
+     */
+    private final boolean isUsingDummyCode = true;
+
     @PostMapping()
     public CommonResponse<ShoppingCartItemResponse> setProduct(@RequestBody ShoppingCartItemRequest shoppingCartItemRequest) {
 
-//        return shoppingCartService.setProduct(shoppingCartItemRequest);
-
-        // 더미 코드
-        {
-            ShoppingCartItemResponse data = ShoppingCartItemResponse.builder()
-                    .id(1L)
-                    .consumer(KoeyConsumerResponse.builder()
-                            .id(1L)
-                            .profileId(1L)
-                            .build()
-                    )
-                    .product(KoeyProductResponse.builder()
-                            .id(1L)
-                            .title("쉐입 퍼즐: 콜로세움 600 PCS")
-                            .mainImageUrl("https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1688696198_a.jpg")
-                            .amount(99L)
-                            .genre("퍼즐")
-                            .sellerId(1L)
-                            .price(17600L)
-                            .build()
-                    )
-                    .amount(2L)
-                    .build();
+        if (isUsingDummyCode) {
+            ShoppingCartItemResponse data = ShoppingCartItemResponse.getDummy1();
 
             return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", data);
         }
+
+        return shoppingCartService.setProduct(shoppingCartItemRequest);
     };
 
     @GetMapping()
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart(){
+
+        if (isUsingDummyCode) {
+            List<ShoppingCartItemResponse> data = List.of(
+                    ShoppingCartItemResponse.getDummy1(),
+                    ShoppingCartItemResponse.getDummy2(),
+                    ShoppingCartItemResponse.getDummy3()
+            );
+
+            return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", data);
+        }
+
         try {
             return shoppingCartService.getShoppingCart();
         } catch(NumberFormatException e) {
             throw new CustomException(CommonErrorCode.INVALID_PATH_VARIABLE);
         }
-        // 더미 코드
-//        {
-//            List<ShoppingCartItemResponse> data = List.of(
-//                    ShoppingCartItemResponse.builder()
-//                            .id(1L)
-//                            .consumer(KoeyConsumerResponse.builder()
-//                                    .id(Long.valueOf(consumerId))
-//                                    .profileId(1L)
-//                                    .build()
-//                            )
-//                            .product(KoeyProductResponse.builder()
-//                                    .id(1L)
-//                                    .title("쉐입 퍼즐: 콜로세움 600 PCS")
-//                                    .mainImageUrl("https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1688696198_a.jpg")
-//                                    .amount(99L)
-//                                    .genre("퍼즐")
-//                                    .sellerId(1L)
-//                                    .price(17600L)
-//                                    .build()
-//                            )
-//                            .amount(1L)
-//                            .build(),
-//                    ShoppingCartItemResponse.builder()
-//                            .id(2L)
-//                            .consumer(KoeyConsumerResponse.builder()
-//                                    .id(Long.valueOf(consumerId))
-//                                    .profileId(1L)
-//                                    .build()
-//                            )
-//                            .product(KoeyProductResponse.builder()
-//                                    .id(2L)
-//                                    .title("빨강머리앤 500 두손을 마주잡고")
-//                                    .mainImageUrl("https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1684916549_0.jpg")
-//                                    .amount(99L)
-//                                    .genre("퍼즐")
-//                                    .sellerId(2L)
-//                                    .price(12000L)
-//                                    .build()
-//                            )
-//                            .amount(2L)
-//                            .build(),
-//                    ShoppingCartItemResponse.builder()
-//                            .id(3L)
-//                            .consumer(KoeyConsumerResponse.builder()
-//                                    .id(Long.valueOf(consumerId))
-//                                    .profileId(1L)
-//                                    .build()
-//                            )
-//                            .product(KoeyProductResponse.builder()
-//                                    .id(3L)
-//                                    .title("클루")
-//                                    .mainImageUrl("https://thumbnail10.coupangcdn.com/thumbnails/remote/230x230ex/image/product/image/vendoritem/2018/08/23/3007143242/8be8c2f6-5880-4a23-9a0b-260e503a4a1b.jpg")
-//                                    .amount(99L)
-//                                    .genre("추리")
-//                                    .sellerId(3L)
-//                                    .price(23500L)
-//                                    .build()
-//                            )
-//                            .amount(3L)
-//                            .build()
-//            );
-//
-//            return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", data);
-//        }
     }
 }
