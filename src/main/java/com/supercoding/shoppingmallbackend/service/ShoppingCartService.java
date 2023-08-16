@@ -42,7 +42,7 @@ public class ShoppingCartService {
                 ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
         );
         Product product = productRepository.findById(shoppingCartItemRequest.getProductId()).orElseThrow(
-                ()->new CustomException(ProductErrorCode.NOT_FOUND_BY_ID)
+                ()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT)
         );
 
         ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(consumerId, shoppingCartItemRequest.getProductId()).orElse(null);
