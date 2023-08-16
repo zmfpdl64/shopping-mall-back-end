@@ -7,9 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class OrderResponse {
+public class ShoppingCartItemResponse {
     private Long id;
-    private Object consumer;
-    private Object product;
+    private KoeyConsumerResponse consumer;
+    private KoeyProductResponse product;
     private Long amount;
 }
