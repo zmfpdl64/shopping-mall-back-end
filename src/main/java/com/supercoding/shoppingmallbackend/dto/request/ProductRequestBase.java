@@ -35,4 +35,7 @@ public class ProductRequestBase {
     @Schema(description = "재고 수 입력 필드")
     private Long amount;
 
+    @NotBlank(message = "마감 기한을 입력해주세요.")
+    @Schema(description = "마감 기한 입력 필드")
+    private String closingAt;
 }
