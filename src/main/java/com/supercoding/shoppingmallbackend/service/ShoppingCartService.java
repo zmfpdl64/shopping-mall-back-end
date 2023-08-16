@@ -33,7 +33,7 @@ public class ShoppingCartService {
 //    private final ProductRepository productRepository;
     private final KoeyProductRepository productRepository;
 
-    @Transactional(transactionManager = "tmJpa")
+    @Transactional
     public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
 //        String consumerEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long consumerId = 1L;
