@@ -1,8 +1,10 @@
 package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.dto.request.questions.CreateQuestionRequest;
+import com.supercoding.shoppingmallbackend.dto.request.questions.UpdateQuestionRequest;
 import com.supercoding.shoppingmallbackend.dto.response.questions.CreateQuestionResponse;
 import com.supercoding.shoppingmallbackend.dto.response.questions.GetQuestionResponse;
+import com.supercoding.shoppingmallbackend.dto.response.questions.UpdateQuestionResponse;
 import com.supercoding.shoppingmallbackend.entity.Question;
 import com.supercoding.shoppingmallbackend.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +65,25 @@ public class QuestionService {
 
         return createdQuestion;
     }
+    public UpdateQuestionResponse updateQuestion(Long id, UpdateQuestionRequest request) {
+        Question question = questionRepository.findById(id).orElse(null);
+        if (question == null) {
+            return null;
+        }
+        
+        question.setTitle(request.getTitle());
+        question.setContent(request.getContent());
+        question.setImageUrl(request.getImageUrl());
 
+        Question updatedQuestion = questionRepository.save(question);
 
-
+        return UpdateQuestionResponse.builder()
+                .id(updatedQuestion.getId())
+                .productIdx(question.getProductIdx()) // 기존 값 유지
+                .consumerIdx(question.getConsumerIdx()) // 기존 값 유지
+                .title(updatedQuestion.getTitle())
+                .content(updatedQuestion.getContent())
+                .imageUrl(updatedQuestion.getImageUrl())
+                .build();
+    }
 }

@@ -4,8 +4,10 @@ import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.questions.CreateQuestionRequest;
 
+import com.supercoding.shoppingmallbackend.dto.request.questions.UpdateQuestionRequest;
 import com.supercoding.shoppingmallbackend.dto.response.questions.CreateQuestionResponse;
 import com.supercoding.shoppingmallbackend.dto.response.questions.GetQuestionResponse;
+import com.supercoding.shoppingmallbackend.dto.response.questions.UpdateQuestionResponse;
 import com.supercoding.shoppingmallbackend.service.QuestionService;
 
 
@@ -41,5 +43,15 @@ public class QuestionController {
         CreateQuestionResponse createdQuestion = questionService.createQuestion(request);
         return ApiUtils.success("작성 완료",createdQuestion);
     }
-    
+    // 문의 수정
+    @PutMapping("/{id}")
+    public CommonResponse<Object> updateQuestion(
+            @PathVariable Long id,
+            @RequestBody UpdateQuestionRequest request) {
+        UpdateQuestionResponse updatedQuestion = questionService.updateQuestion(id, request);
+        if( updatedQuestion == null){
+            return ApiUtils.fail(404,"존재하지 않습니다.");
+        }
+        return ApiUtils.success("수정 완료", updatedQuestion);
+    }
 }
