@@ -15,7 +15,8 @@ public enum UserErrorCode {
     USERNAME_DUPLICATION(400, "이미 등록된 아이디입니다."),
     LOGIN_INPUT_INVALID(400, "로그인 정보를 다시 확인해주세요."),
     NOTFOUND_USER(404, "해당 이름의 유저가 존재하지 않습니다."),
-    BAD_REQUEST(HttpStatus.BAD_GATEWAY.value(), "요청이 잘못되었습니다.");
+    BAD_REQUEST(HttpStatus.BAD_GATEWAY.value(), "요청이 잘못되었습니다."),
+    EMPTY(500, "이 에러코드는 비어 있습니다.");
 
     private final ErrorCode errorCode;
 

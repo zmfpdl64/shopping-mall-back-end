@@ -27,4 +27,12 @@ public class ShoppingCart extends CommonField {
     @NotNull
     @Column(name = "amount", nullable = false)
     private Long amount;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "comsumer_id")
+    private Consumer comsumer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
 }
