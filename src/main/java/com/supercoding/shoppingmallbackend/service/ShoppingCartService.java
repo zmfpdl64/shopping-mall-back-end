@@ -39,8 +39,8 @@ public class ShoppingCartService {
                 ()->new CustomException(ProductErrorCode.NOT_FOUND_BY_ID)
         );
 
-        ShoppingCart shoppingCart = shoppingCartRepository.findByConsumerIdAndProductId(orderRequest.getConsumerId(), orderRequest.getProductId()).orElse(null);
-        if (shoppingCart == null) {
+        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(orderRequest.getConsumerId(), orderRequest.getProductId()).orElse(null);
+        if (shoppingCartItem == null) {
             ShoppingCart newData = ShoppingCart.builder()
                     .consumer(consumer)
                     .product(product)
@@ -49,7 +49,7 @@ public class ShoppingCartService {
 
             JpaUtils.managedSave(shoppingCartRepository, newData);
 
-            ShoppingCartItemResponse shoppingCartItemResponse = ShoppingCartItemResponse.builder()
+            ShoppingCartItemResponse createdData = ShoppingCartItemResponse.builder()
                     .consumer(KoeyConsumerResponse.builder()
                             .id(consumer.getId())
                             .profileId(consumer.getProfileIdx())
@@ -67,9 +67,33 @@ public class ShoppingCartService {
                     )
                     .amount(orderRequest.getAmount())
                     .build();
-            return ApiUtils.success("장바구니에 상품을 성공적으로 세팅했습니다.", shoppingCartItemResponse);
+
+            return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", createdData);
         }
 
-        return null;
+        shoppingCartItem.setAmount(orderRequest.getAmount());
+
+
+        ShoppingCartItemResponse modifiedData = ShoppingCartItemResponse.builder()
+                .consumer(KoeyConsumerResponse.builder()
+                        .id(consumer.getId())
+                        .profileId(consumer.getProfileIdx())
+                        .build()
+                )
+                .product(KoeyProductResponse.builder()
+                        .id(product.getId())
+                        .title(product.getTitle())
+                        .mainImageUrl(product.getMainImageUrl())
+                        .amount(product.getAmount())
+                        .price(product.getPrice())
+                        .genre("product.getGenre()")
+                        .sellerId(product.getSellerIdx())
+                        .build()
+                )
+                .amount(shoppingCartItem.getAmount())
+                .build();
+
+
+        return ApiUtils.success("장바구니에 담긴 상품의 수량을 성공적으로 변경하였습니다.", modifiedData);
     }
 }
