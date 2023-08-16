@@ -30,6 +30,14 @@ logging:
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
-
+cloud:
+  aws:
+    s3:
+      bucket: ENC(FTGzO3i7iTDxLEDdQJlkfNrWwAxVv/By)
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ENC(N9j5dKB5zyxN8P1GNOZLF0O3knZ5csZRLOv2p2vWnzs=)
+      secretKey: ENC(w4Uf+DmpExPTKIvIajXPLEZ7lWovWvyVn9gh6yHc5hE/EERKzXfeO7Iz6ip7vXzm7JlA/MsYlME=)
 
 secret-key-source: ${SECRET_KEY_SOURCE}
