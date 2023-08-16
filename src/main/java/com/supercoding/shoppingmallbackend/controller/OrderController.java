@@ -6,9 +6,12 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.OrderRequest;
 import com.supercoding.shoppingmallbackend.dto.response.OrderResponse;
+import com.supercoding.shoppingmallbackend.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 @RestController
@@ -16,10 +19,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 
-    //private final OrderService orderService;
+    private final OrderService orderService;
 
     @PostMapping("/set")
     public CommonResponse<Object> setProduct(@RequestBody OrderRequest orderRequest) {
+
+        return orderService.setProduct(orderRequest);
+
         // 더미 코드
         {
             OrderResponse data = OrderResponse.builder()
@@ -41,11 +47,15 @@ public class OrderController {
 
             return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", data);
         }
-        //return orderService.setProduct(orderRequest);
     };
 
     @GetMapping("/{consumerId}")
     public CommonResponse<Object> getShoppingCart(@PathVariable String consumerId){
+        try {
+            return orderService.getShoppingCart(Long.valueOf(consumerId));
+        } catch(NumberFormatException e) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "consumer_id는 정수로 변환할 수 있는 문자열이어야 합니다.");
+        }
         // 더미 코드
         {
             List<OrderResponse> data = List.of(

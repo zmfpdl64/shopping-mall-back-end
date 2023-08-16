@@ -49,4 +49,25 @@ public class PurchaseHistory extends CommonField {
     @Column(name = "receiver_name", nullable = false, length = 63)
     private String receiverName;
 
+    @Size(max = 15)
+    @NotNull
+    @Column(name="phone", nullable = false, length = 15)
+    private String phone;
+
+    @Size(max = 50)
+    @NotNull
+    @Column(name = "product_title", nullable = false, length = 50)
+    private String productTitle;
+
+    @NotNull
+    @Column(name = "sold_price_per_one", nullable = false)
+    private Long soldPricePerOne;
+
+    @ManyToOne
+    @JoinColumn(name = "comsumer_id")
+    private Consumer consumer;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 }
