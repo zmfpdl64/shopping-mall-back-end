@@ -19,8 +19,8 @@ public class Product extends CommonField {
     private Long id;
 
     @NotNull
-    @Column(name = "saller_idx", nullable = false)
-    private Long sallerIdx;
+    @Column(name = "seller_idx", nullable = false)
+    private Long sellerIdx;
 
     @NotNull
     @Column(name = "genre_idx", nullable = false)

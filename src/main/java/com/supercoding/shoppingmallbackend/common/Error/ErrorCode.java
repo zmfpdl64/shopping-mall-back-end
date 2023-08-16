@@ -10,11 +10,7 @@ public abstract class ErrorCode {
         this.message = message;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
+    public Integer getStatus() { return status; }
 
-    public String getMessage() {
-        return message;
-    }
+    public String getMessage() { return message; }
 }
