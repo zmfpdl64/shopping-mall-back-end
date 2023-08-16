@@ -2,7 +2,7 @@ package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
-import com.supercoding.shoppingmallbackend.dto.request.OrderRequest;
+import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
 import com.supercoding.shoppingmallbackend.dto.response.KoeyConsumerResponse;
 import com.supercoding.shoppingmallbackend.dto.response.KoeyProductResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
@@ -20,7 +20,7 @@ public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
     @PostMapping("/set")
-    public CommonResponse<ShoppingCartItemResponse> setProduct(@RequestBody OrderRequest orderRequest) {
+    public CommonResponse<ShoppingCartItemResponse> setProduct(@RequestBody ShoppingCartItemRequest shoppingCartItemRequest) {
 
         //return orderService.setProduct(orderRequest);
 

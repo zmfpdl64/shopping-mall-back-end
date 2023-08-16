@@ -6,7 +6,7 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.ConsumerErrorCode
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProductErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
-import com.supercoding.shoppingmallbackend.dto.request.OrderRequest;
+import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
 import com.supercoding.shoppingmallbackend.dto.response.KoeyConsumerResponse;
 import com.supercoding.shoppingmallbackend.dto.response.KoeyProductResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
@@ -30,21 +30,21 @@ public class ShoppingCartService {
     private final KoeyProductRepository productRepository;
 
     @Transactional(transactionManager = "tmJpa")
-    public CommonResponse<ShoppingCartItemResponse> setProduct(OrderRequest orderRequest) {
+    public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
 
-        Consumer consumer = consumerRepository.findById(orderRequest.getConsumerId()).orElseThrow(
+        Consumer consumer = consumerRepository.findById(shoppingCartItemRequest.getConsumerId()).orElseThrow(
                 ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
         );
-        Product product = productRepository.findById(orderRequest.getProductId()).orElseThrow(
+        Product product = productRepository.findById(shoppingCartItemRequest.getProductId()).orElseThrow(
                 ()->new CustomException(ProductErrorCode.NOT_FOUND_BY_ID)
         );
 
-        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(orderRequest.getConsumerId(), orderRequest.getProductId()).orElse(null);
+        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(shoppingCartItemRequest.getConsumerId(), shoppingCartItemRequest.getProductId()).orElse(null);
         if (shoppingCartItem == null) {
             ShoppingCart newData = ShoppingCart.builder()
                     .consumer(consumer)
                     .product(product)
-                    .amount(orderRequest.getAmount())
+                    .amount(shoppingCartItemRequest.getAmount())
                     .build();
 
             JpaUtils.managedSave(shoppingCartRepository, newData);
@@ -65,13 +65,13 @@ public class ShoppingCartService {
                             .sellerId(product.getSellerIdx())
                             .build()
                     )
-                    .amount(orderRequest.getAmount())
+                    .amount(shoppingCartItemRequest.getAmount())
                     .build();
 
             return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", createdData);
         }
 
-        shoppingCartItem.setAmount(orderRequest.getAmount());
+        shoppingCartItem.setAmount(shoppingCartItemRequest.getAmount());
 
 
         ShoppingCartItemResponse modifiedData = ShoppingCartItemResponse.builder()
