@@ -2,6 +2,8 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
+import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
+import com.supercoding.shoppingmallbackend.common.util.FilePath;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import com.supercoding.shoppingmallbackend.entity.ProfileRole;
@@ -11,6 +13,7 @@ import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import com.supercoding.shoppingmallbackend.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,10 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.color.ProfileDataException;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.supercoding.shoppingmallbackend.common.util.FilePath.MEMBER_PROFILE_DIR;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
@@ -29,24 +36,37 @@ public class ProfileService {
     private final ConsumerRepository consumerRepository;
     private final SellerRepository sellerRepository;
     private final BCryptPasswordEncoder encoder;
+    private final AwsS3Service awsS3Service;
 
 
     @Transactional
-    public void signup(String type, String nickname, String password, String email, String phoneNumber, MultipartFile profileImage) {
+    public void signup(String type, String nickname, String password, String email, String phoneNumber, MultipartFile profileImage){
         Optional<Profile> findProfile = profileRepository.findByEmail(email);
         if(findProfile.isPresent()){
             throw new CustomException(ProfileErrorCode.DUPLICATE_USER.getErrorCode());
         }
+        // 회원 생성 후 Consumer, Seller 생성
         Profile profile = saveProfile(nickname, password, email, phoneNumber);
 
+        try { // 프로필 이미지 S3에 저장
+            setProfileImage(profileImage, profile);
+        }catch (IOException e){
+            throw new CustomException(UtilErrorCode.IOE_ERROR.getErrorCode());
+        }
         setProfileRole(type, profile);
+    }
+
+    private void setProfileImage(MultipartFile profileImage, Profile profile) throws IOException {
+        if(profileImage != null) {
+            String url = awsS3Service.upload(profileImage, MEMBER_PROFILE_DIR.getPath() + profile.getId());
+            profile.setImageUrl(url);
+        }
     }
 
     private Profile saveProfile(String nickname, String password, String email, String phoneNumber) {
         Profile profile = Profile.builder()
                 .email(email)
                 .password(encoder.encode(password))
-                .imageUrl("")           //TODO: 이미지 저장하고 URL 저장
                 .name(nickname)
                 .phone(phoneNumber)
                 .paymoney(0L)
