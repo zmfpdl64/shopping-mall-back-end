@@ -41,6 +41,16 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
+// QueryDSL
+sourceSets {
+    main {
+        java {
+            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+        }
+    }
+}
+
+
 tasks.named('test') {
     useJUnitPlatform()
 }
