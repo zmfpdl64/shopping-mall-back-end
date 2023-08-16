@@ -17,8 +17,12 @@ import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.KoeyProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ShoppingCartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,15 +35,17 @@ public class ShoppingCartService {
 
     @Transactional(transactionManager = "tmJpa")
     public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
+//        String consumerEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long consumerId = 1L;
 
-        Consumer consumer = consumerRepository.findById(shoppingCartItemRequest.getConsumerId()).orElseThrow(
+        Consumer consumer = consumerRepository.findById(consumerId).orElseThrow(
                 ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
         );
         Product product = productRepository.findById(shoppingCartItemRequest.getProductId()).orElseThrow(
                 ()->new CustomException(ProductErrorCode.NOT_FOUND_BY_ID)
         );
 
-        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(shoppingCartItemRequest.getConsumerId(), shoppingCartItemRequest.getProductId()).orElse(null);
+        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(consumerId, shoppingCartItemRequest.getProductId()).orElse(null);
         if (shoppingCartItem == null) {
             ShoppingCart newData = ShoppingCart.builder()
                     .consumer(consumer)
@@ -73,7 +79,6 @@ public class ShoppingCartService {
 
         shoppingCartItem.setAmount(shoppingCartItemRequest.getAmount());
 
-
         ShoppingCartItemResponse modifiedData = ShoppingCartItemResponse.builder()
                 .consumer(KoeyConsumerResponse.builder()
                         .id(consumer.getId())
@@ -93,7 +98,22 @@ public class ShoppingCartService {
                 .amount(shoppingCartItem.getAmount())
                 .build();
 
-
         return ApiUtils.success("장바구니에 담긴 상품의 수량을 성공적으로 변경하였습니다.", modifiedData);
+    }
+
+    public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart() {
+        // 토큰에서 구매자 id 혹은 email 파싱
+        Long consumerId = 1L;
+
+        // 구매자 id 혹은 email로 장바구니아이템들 리스트로 불러오기
+        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(1L);
+
+        // 엔티티를 dto로 번환
+        List<ShoppingCartItemResponse> data = shoppingCartList.stream()
+                .map(ShoppingCartItemResponse::from)
+                .collect(Collectors.toList());
+
+        // 불러온 리스트 반환하기
+        return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", data);
     }
 }

@@ -53,9 +53,9 @@ public class ShoppingCartController {
     };
 
     @GetMapping()
-    public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart(@PathVariable String consumerId){
+    public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart(){
         try {
-            return shoppingCartService.getShoppingCart(Long.valueOf(consumerId));
+            return shoppingCartService.getShoppingCart();
         } catch(NumberFormatException e) {
             throw new CustomException(CommonErrorCode.INVALID_PATH_VARIABLE);
         }
