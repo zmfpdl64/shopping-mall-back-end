@@ -6,7 +6,7 @@ import com.supercoding.shoppingmallbackend.dto.request.OrderRequest;
 import com.supercoding.shoppingmallbackend.dto.response.KoeyConsumerResponse;
 import com.supercoding.shoppingmallbackend.dto.response.KoeyProductResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
-import com.supercoding.shoppingmallbackend.service.OrderService;
+import com.supercoding.shoppingmallbackend.service.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShoppingCartController {
 
-    private final OrderService orderService;
+    private final ShoppingCartService shoppingCartService;
 
     @PostMapping("/set")
     public CommonResponse<ShoppingCartItemResponse> setProduct(@RequestBody OrderRequest orderRequest) {
