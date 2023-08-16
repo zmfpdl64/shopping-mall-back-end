@@ -1,12 +1,14 @@
 package com.supercoding.shoppingmallbackend.entity;
 
+import com.supercoding.shoppingmallbackend.common.util.DateUtils;
+import com.supercoding.shoppingmallbackend.dto.request.ProductCreateRequest;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.time.Instant;
+import java.text.ParseException;
 
 @Getter
 @Setter
@@ -22,12 +24,14 @@ public class Product extends CommonField {
     private Long id;
 
     @NotNull
-    @Column(name = "seller_idx", nullable = false)
-    private Long sellerIdx;
+    @ManyToOne
+    @JoinColumn(name = "seller_idx", nullable = false)
+    private Seller seller;
 
     @NotNull
-    @Column(name = "genre_idx", nullable = false)
-    private Long genreIdx;
+    @ManyToOne
+    @JoinColumn(name = "genre_idx", nullable = false)
+    private Genre genre;
 
     @Size(max = 50)
     @NotNull
@@ -49,5 +53,17 @@ public class Product extends CommonField {
     @NotNull
     @Column(name = "amount", nullable = false)
     private Long amount;
+
+
+    public static Product from(ProductCreateRequest productCreateRequest, Seller seller, Genre genre) throws ParseException {
+        return Product.builder()
+                .seller(seller)
+                .genre(genre)
+                .title(productCreateRequest.getTitle())
+                .price(productCreateRequest.getPrice())
+                .closingAt(DateUtils.convertToTimestamp(productCreateRequest.getClosingAt()))
+                .amount(productCreateRequest.getAmount())
+                .build();
+    }
 
 }
