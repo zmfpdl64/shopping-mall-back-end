@@ -54,4 +54,11 @@ public class QuestionController {
         }
         return ApiUtils.success("수정 완료", updatedQuestion);
     }
+
+    // 문의 삭제
+    @DeleteMapping("/{id}")
+    public CommonResponse<Object> deleteQuestion(@PathVariable Long id) {
+        questionService.deleteQuestion(id);
+        return ApiUtils.success("삭제 완료", null);
+    }
 }

@@ -70,7 +70,7 @@ public class QuestionService {
         if (question == null) {
             return null;
         }
-        
+
         question.setTitle(request.getTitle());
         question.setContent(request.getContent());
         question.setImageUrl(request.getImageUrl());
@@ -86,4 +86,12 @@ public class QuestionService {
                 .imageUrl(updatedQuestion.getImageUrl())
                 .build();
     }
+
+    public void deleteQuestion(Long id) {
+        Question question = questionRepository.findById(id).orElse(null);
+        if (question != null) {
+            questionRepository.delete(question);
+        }
+    }
+
 }
