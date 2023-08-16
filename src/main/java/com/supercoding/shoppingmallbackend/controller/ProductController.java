@@ -20,6 +20,8 @@ public class ProductController {
     @Operation(summary = "상품 등록", description = "상품 정보를 입력하여 product 레코드를 생성합니다.")
     @PostMapping(value = "/", consumes = "multipart/form-data")
     public CommonResponse<Object> createProduct(@RequestBody ProductCreateRequest productCreateRequest) {
+        productService.createProductItem(productCreateRequest);
+
         return ApiUtils.success("상품 등록 성공", null);
     }
 
