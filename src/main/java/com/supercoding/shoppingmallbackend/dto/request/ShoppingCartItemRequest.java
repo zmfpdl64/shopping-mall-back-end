@@ -7,8 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class OrderRequest {
-    private Long consumerId;
+public class ShoppingCartItemRequest {
     private Long productId;
     private Long amount;
 }

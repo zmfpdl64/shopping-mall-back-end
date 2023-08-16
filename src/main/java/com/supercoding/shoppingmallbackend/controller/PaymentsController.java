@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/v1/payments")
 public class PaymentsController {
 
-    @PostMapping("")
+    @PostMapping()
     public CommonResponse<Object> processPayment(@RequestBody PaymentRequest paymentRequest) {
 
         // 더미 코드
@@ -62,7 +62,7 @@ public class PaymentsController {
         }
     }
 
-    @GetMapping("/purchased/{consumerId}")
+    @GetMapping("/purchased")
     public CommonResponse<Object> getPurchasedInfo(@PathVariable String consumerId) {
 
         // 더미 코드
@@ -188,7 +188,7 @@ public class PaymentsController {
         }
     }
 
-    @GetMapping("/sold/{sellerId}")
+    @GetMapping("/sold")
     public CommonResponse<Object> getSoldInfo(@PathVariable String sellerId) {
 
         // 더미 코드
