@@ -1,7 +1,6 @@
 package com.supercoding.shoppingmallbackend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +10,9 @@ import java.time.Instant;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "product")
 public class Product extends CommonField {
