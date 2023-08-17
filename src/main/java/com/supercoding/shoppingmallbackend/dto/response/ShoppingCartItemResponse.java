@@ -10,14 +10,14 @@ import lombok.*;
 @ToString
 public class ShoppingCartItemResponse {
     private Long id;
-    private KoeyConsumerResponse consumer;
+    private ConsumerResponse consumer;
     private ProductSimpleResponse product;
     private Long amount;
 
     public static ShoppingCartItemResponse from(ShoppingCart entity, ProductSimpleResponse productResponse) {
         return ShoppingCartItemResponse.builder()
                 .id(entity.getId())
-                .consumer(KoeyConsumerResponse.from(entity.getConsumer()))
+                .consumer(ConsumerResponse.from(entity.getConsumer()))
                 .product(productResponse)
                 .amount(entity.getAmount())
                 .build();
@@ -32,7 +32,7 @@ public class ShoppingCartItemResponse {
     public static ShoppingCartItemResponse getDummy1() {
         return ShoppingCartItemResponse.builder()
                 .id(1L)
-                .consumer(KoeyConsumerResponse.builder()
+                .consumer(ConsumerResponse.builder()
                         .id(1L)
                         .profileId(1L)
                         .build()
@@ -54,7 +54,7 @@ public class ShoppingCartItemResponse {
     public static ShoppingCartItemResponse getDummy2() {
         return ShoppingCartItemResponse.builder()
                 .id(2L)
-                .consumer(KoeyConsumerResponse.builder()
+                .consumer(ConsumerResponse.builder()
                         .id(1L)
                         .profileId(1L)
                         .build()
@@ -75,7 +75,7 @@ public class ShoppingCartItemResponse {
     public static ShoppingCartItemResponse getDummy3() {
         return ShoppingCartItemResponse.builder()
                 .id(3L)
-                .consumer(KoeyConsumerResponse.builder()
+                .consumer(ConsumerResponse.builder()
                         .id(1L)
                         .profileId(1L)
                         .build()
