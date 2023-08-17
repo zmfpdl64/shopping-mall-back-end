@@ -10,6 +10,7 @@ public enum ProfileErrorCode implements ErrorCodeInterface {
     NOT_FOUND(404, "회원 정보를 찾지 못했습니다."),
     INVALID_PASSWORD(400, "숫자, 영어 8자 이상 작성해주세요"),
     INVALID_EMAIL(400, "이메일 형식이 아닙니다."),
+    INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),
     INVALID_PHONE(400, "12~13자리의 -와 숫자를 입력가능합니다");
     private final ErrorCode errorCode;
 

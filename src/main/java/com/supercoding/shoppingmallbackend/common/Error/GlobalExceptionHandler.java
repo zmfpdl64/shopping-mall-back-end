@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public CommonResponse<Object> handleException(Exception e) {
+    public CommonResponse<?> handleException(Exception e) {
         log.error(e.getMessage(), 500);
-        return ApiUtils.fail(500, e.getMessage());
+        return CommonResponse.fail(e);
     }
 }

@@ -4,8 +4,8 @@ import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
-import com.supercoding.shoppingmallbackend.common.util.FilePath;
-import com.supercoding.shoppingmallbackend.common.util.JwtUtiles;
+import com.supercoding.shoppingmallbackend.security.JwtUtiles;
+import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
 import com.supercoding.shoppingmallbackend.dto.response.LoginResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Profile;
@@ -15,15 +15,12 @@ import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import com.supercoding.shoppingmallbackend.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.jasypt.util.password.PasswordEncryptor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.color.ProfileDataException;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -103,7 +100,7 @@ public class ProfileService {
         sellerRepository.save(seller);
     }
     private void createConsumer(Profile profile) {
-        Consumer consumer = Consumer.builder().profileIdx(profile.getId()).build();
+        Consumer consumer = Consumer.builder().id(profile.getId()).build();
         consumer.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         consumer.setIsDeleted(false);
         profile.setRole(ProfileRole.CONSUMER);
@@ -120,5 +117,10 @@ public class ProfileService {
         //jwt 토큰 생성
         String token = jwtUtiles.createToken(profile.getId(), profile.getRole().name());
         return LoginResponse.from(profile, token);
+    }
+
+
+    public ProfileDetail loadProfileByProfileIdx(Long idx) {
+        return ProfileDetail.from(profileRepository.loadProfileByProfileIdx(idx));
     }
 }
