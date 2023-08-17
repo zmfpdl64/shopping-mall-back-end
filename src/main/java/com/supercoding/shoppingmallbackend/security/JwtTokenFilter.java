@@ -22,8 +22,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("header: {}", header);
-        if (header == null || !header.startsWith("Bearer ")){
+
+        if (header == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (!header.startsWith("Bearer ")){
             log.error("유효하지 않은 토큰이거나 유효하지 않는 경로입니다. {}", request.getRequestURL());
             filterChain.doFilter(request, response);
             return ;
