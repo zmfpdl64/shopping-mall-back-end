@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.color.ProfileDataException;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -93,7 +94,7 @@ public class ProfileService {
     }
 
     private void createSeller(Profile profile) {
-        Seller seller = Seller.builder().profile_idx(profile.getId()).build(); //TODO: 커밋 전에 수정
+        Seller seller = Seller.builder().profile(profile).build(); //TODO: 커밋 전에 수정
         seller.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         seller.setIsDeleted(false);
         profile.setRole(ProfileRole.SELLER);

@@ -1,7 +1,6 @@
 package com.supercoding.shoppingmallbackend.repository;
 
 import com.supercoding.shoppingmallbackend.entity.Profile;
-import com.supercoding.shoppingmallbackend.entity.Seller;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,11 +13,9 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     @Query("SELECT p FROM Profile p where p.email =:email")
     Optional<Profile> findByEmail(@Param("email") String email);
 
-    @Query("SELECT s from Seller s JOIN FETCH Profile p on p.id = s.profile_idx")
-    Seller findByProfileId(Integer profileId);
 
 
-    @Query("SELECT s from Seller s JOIN FETCH Profile p on p.id = s.profile_idx")
+    @Query("SELECT s from Seller s JOIN FETCH Profile p on p.id = s.profile.id")
     Profile findByProfileId(Long profileId);
 
     @Query("SELECT p FROM  Profile p WHERE p.id = :idx")
