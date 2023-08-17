@@ -4,6 +4,7 @@ import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.ProductRequestBase;
 import com.supercoding.shoppingmallbackend.dto.response.ProductDetailResponse;
+import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
@@ -34,8 +35,8 @@ public class ProductController {
                                                 @ApiParam(value = "썸네일 이미지 파일 (선택)", required = false) @RequestPart(value = "mainImageFile", required = false) MultipartFile thumbNailFile,
                                                 @ApiParam(value = "본문 이미지 파일들 (선택)", required = false) @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles
     ) {
-
-        productService.createProductItem(productRequestBase, thumbNailFile, imageFiles);
+        Long userIdx = AuthHolder.getUserIdx();
+        productService.createProductItem(productRequestBase, thumbNailFile, imageFiles, userIdx);
 
         return ApiUtils.success("상품 등록 성공", null);
     }

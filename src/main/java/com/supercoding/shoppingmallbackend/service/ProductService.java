@@ -51,13 +51,25 @@ public class ProductService {
     }
 
     @Transactional
-    public void createProductItem(ProductRequestBase productRequestBase, MultipartFile thumbFile, List<MultipartFile> imgFiles) {
+    public void createProductItem(ProductRequestBase productRequestBase, MultipartFile thumbFile, List<MultipartFile> imgFiles, Long profileIdx) {
+        Long validProfileIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
 
-        Seller seller = sellerRepository.findById(1L).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-        Genre genre = genreRepository.findById(productRequestBase.getGenre()).orElseThrow(() -> new CustomException(GenreErrorCode.NOT_FOUND));
-        Category playerCount = categoryRepository.findByName(productRequestBase.getPlayerCount()).orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
-        Category playTime = categoryRepository.findByName(productRequestBase.getPlayTime()).orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
-        Category difficultyLevel = categoryRepository.findByName(productRequestBase.getDifficultyLevel()).orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
+        Seller seller = sellerRepository.findByProfile_Id(validProfileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+        Genre genre = genreRepository.findById(productRequestBase.getGenre())
+                .orElseThrow(() -> new CustomException(GenreErrorCode.NOT_FOUND));
+
+        Category playerCount = categoryRepository.findByName(productRequestBase.getPlayerCount())
+                .orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
+
+        Category playTime = categoryRepository.findByName(productRequestBase.getPlayTime())
+                .orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
+
+        Category difficultyLevel = categoryRepository.findByName(productRequestBase.getDifficultyLevel())
+                .orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
+
         if (imgFiles.size() > 5) throw new CustomException(ProductErrorCode.TOO_MANY_FILES);
 
         try {
