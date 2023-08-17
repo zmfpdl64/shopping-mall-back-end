@@ -11,25 +11,12 @@ import lombok.*;
 @Builder
 @ToString
 public class ProductSimpleResponse {
-    private Long id;
+    private Long productId;
     private String title;
     private String mainImageUrl;
     private String genre;
     private Long price;
-    private Long amount;
+    private Long quantityLeft;
     private Long sellerId;
     private String closingAt;
-
-    public static ProductSimpleResponse from(Product entity, Genre genre) {
-        return ProductSimpleResponse.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .mainImageUrl(entity.getMainImageUrl())
-                .genre(genre.getName())
-                .price(entity.getPrice())
-                .amount(entity.getAmount())
-                .sellerId(entity.getSellerIdx())
-                .closingAt(DateUtils.convertToString(entity.getClosingAt()))
-                .build();
-    }
 }
