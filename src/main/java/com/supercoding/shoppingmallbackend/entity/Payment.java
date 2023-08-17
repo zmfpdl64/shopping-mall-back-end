@@ -74,11 +74,6 @@ public class Payment extends CommonField {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "seller_id")
-    private Seller seller;
-
-    @NotNull
-    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -97,7 +92,6 @@ public class Payment extends CommonField {
                 .consumer(shoppingCart.getConsumer())
                 .product(product)
                 .paidAt(paidAt)
-                .seller(product.getSeller())
                 .build();
     }
 }
