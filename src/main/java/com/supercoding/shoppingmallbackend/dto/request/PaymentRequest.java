@@ -10,7 +10,6 @@ import java.util.List;
 @Builder
 @ToString
 public class PaymentRequest {
-    private Long consumerId;
     private String address;
     private String addressDetail;
     private String receiverName;
