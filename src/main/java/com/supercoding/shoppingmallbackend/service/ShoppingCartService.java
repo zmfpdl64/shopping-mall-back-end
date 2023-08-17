@@ -42,7 +42,7 @@ public class ShoppingCartService {
         Product product = productRepository.findById(shoppingCartItemRequest.getProductId()).orElseThrow(
                 ()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT)
         );
-        ProductSimpleResponse productResponse = ProductSimpleResponse.from(product, getGenre(product.getGenre().getId()));
+        ProductSimpleResponse productResponse = ProductSimpleResponse.from(product);
 
         // consuemrId, productId로 장바구니 조회
         ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(consumerId, shoppingCartItemRequest.getProductId()).orElse(null);
@@ -78,7 +78,7 @@ public class ShoppingCartService {
                 .map(shoppingCart -> {
                     Product product = shoppingCart.getProduct();
                     Genre genre = getGenre(product.getGenre().getId());
-                    ProductSimpleResponse productResponse = ProductSimpleResponse.from(product, genre);
+                    ProductSimpleResponse productResponse = ProductSimpleResponse.from(product);
                     return ShoppingCartItemResponse.from(shoppingCart, productResponse);
                 })
                 .collect(Collectors.toList());
