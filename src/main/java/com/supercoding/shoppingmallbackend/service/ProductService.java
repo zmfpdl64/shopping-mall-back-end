@@ -57,7 +57,7 @@ public class ProductService {
     public void createProductItem(ProductCreateRequest productCreateRequest) {
 
         Seller seller = sellerRepository.findById(1L).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-        Genre genre = genreRepository.findById(productCreateRequest.getGenre()).orElseThrow(() -> new CustomException(GenreErrorCode.NOTFOUND_GENRE));
+        Genre genre = genreRepository.findById(productCreateRequest.getGenre()).orElseThrow(() -> new CustomException(GenreErrorCode.NOT_FOUND));
 
 
 
