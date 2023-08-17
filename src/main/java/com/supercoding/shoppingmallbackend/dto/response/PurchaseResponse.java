@@ -4,23 +4,22 @@ import com.supercoding.shoppingmallbackend.entity.Genre;
 import com.supercoding.shoppingmallbackend.entity.Payment;
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class SimplePurchaseInfoResponse {
+public class PurchaseResponse {
     private Long paymentId;
+    private String orderNumber;
     private ProductSimpleResponse product;
-    private Long soldAmount;
-    private Long soldPricePerOne;
-
-    public static SimplePurchaseInfoResponse from(Payment payment, Genre productGenre) {
-        return SimplePurchaseInfoResponse.builder()
-                .paymentId(payment.getId())
-                .product(ProductSimpleResponse.from(payment.getProduct(), productGenre))
-                .soldAmount(payment.getAmount())
-                .soldPricePerOne(payment.getSoldPricePerOne())
-                .build();
-    }
+    private Long purchaseQuantity;
+    private Long purchasePrice;
+    private Timestamp purchasedAt;
+    private String receivedAddress;
+    private String receivedAddressDetail;
+    private String recipientName;
+    private String recipientPhoneNumber;
 }

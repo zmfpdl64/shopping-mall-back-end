@@ -2,6 +2,7 @@ package com.supercoding.shoppingmallbackend.dto.response;
 
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Getter
@@ -9,13 +10,15 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
-public class SoldInfoResponse {
-    // 주문번호
-    // 배송 주소
-    // 판매 일시
-    // 거래정보들
+public class SaleResponse {
+    private Long paymentId;
     private String orderNumber;
-    private String address;
-    private String soldDateTime;
-    private List<SimplePurchaseInfoResponse> tradeInfos;
+    private ProductSimpleResponse product;
+    private Long soldQuantity;
+    private Long soldPrice;
+    private Timestamp soldAt;
+    private String receivedAddress;
+    private String receivedAddressDetail;
+    private String recipientName;
+    private String recipientPhoneNumber;
 }

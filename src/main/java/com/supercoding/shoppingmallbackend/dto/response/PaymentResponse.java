@@ -13,23 +13,14 @@ import java.util.List;
 @Builder
 @ToString
 public class PaymentResponse {
+    private Long paymentId;
     private String orderNumber;
-    private String paymentAt;
-    private String address;
-    private String addressDetail;
-    private String receiverName;
-    private String receiverPhone;
-    private List<SimplePurchaseInfoResponse> purchaseInfos;
-
-    public static PaymentResponse from(String orderNumber, PaymentRequest paymentRequest, List<SimplePurchaseInfoResponse> purchaseInfos, Timestamp paymentAt) {
-        return PaymentResponse.builder()
-                .orderNumber(orderNumber)
-                .paymentAt(DateUtils.convertToString(paymentAt))
-                .address(paymentRequest.getAddress())
-                .addressDetail(paymentRequest.getAddressDetail())
-                .receiverName(paymentRequest.getReceiverName())
-                .receiverPhone(paymentRequest.getReceiverPhone())
-                .purchaseInfos(purchaseInfos)
-                .build();
-    }
+    private ProductSimpleResponse product;
+    private Long purchaseQuantity;
+    private Long purchasePrice;
+    private Timestamp paidAt;
+    private String receivedAddress;
+    private String receivedAddressDetail;
+    private String recipientName;
+    private String recipientPhoneNumber;
 }
