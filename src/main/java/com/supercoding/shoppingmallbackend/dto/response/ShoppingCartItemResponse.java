@@ -11,14 +11,14 @@ import lombok.*;
 public class ShoppingCartItemResponse {
     private Long id;
     private KoeyConsumerResponse consumer;
-    private KoeyProductResponse product;
+    private ProductInCartResponse product;
     private Long amount;
 
-    public static ShoppingCartItemResponse from(ShoppingCart entity) {
+    public static ShoppingCartItemResponse from(ShoppingCart entity, ProductInCartResponse productResponse) {
         return ShoppingCartItemResponse.builder()
                 .id(entity.getId())
                 .consumer(KoeyConsumerResponse.from(entity.getConsumer()))
-                .product(KoeyProductResponse.from(entity.getProduct()))
+                .product(productResponse)
                 .amount(entity.getAmount())
                 .build();
     }
@@ -37,7 +37,7 @@ public class ShoppingCartItemResponse {
                         .profileId(1L)
                         .build()
                 )
-                .product(KoeyProductResponse.builder()
+                .product(ProductInCartResponse.builder()
                         .id(1L)
                         .title("쉐입 퍼즐: 콜로세움 600 PCS")
                         .mainImageUrl("https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1688696198_a.jpg")
@@ -59,7 +59,7 @@ public class ShoppingCartItemResponse {
                         .profileId(1L)
                         .build()
                 )
-                .product(KoeyProductResponse.builder()
+                .product(ProductInCartResponse.builder()
                         .id(2L)
                         .title("빨강머리앤 500 두손을 마주잡고")
                         .mainImageUrl("https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1684916549_0.jpg")
@@ -80,7 +80,7 @@ public class ShoppingCartItemResponse {
                         .profileId(1L)
                         .build()
                 )
-                .product(KoeyProductResponse.builder()
+                .product(ProductInCartResponse.builder()
                         .id(3L)
                         .title("클루")
                         .mainImageUrl("https://thumbnail10.coupangcdn.com/thumbnails/remote/230x230ex/image/product/image/vendoritem/2018/08/23/3007143242/8be8c2f6-5880-4a23-9a0b-260e503a4a1b.jpg")
