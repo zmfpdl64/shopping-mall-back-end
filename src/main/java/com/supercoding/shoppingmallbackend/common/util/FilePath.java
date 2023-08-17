@@ -2,7 +2,8 @@ package com.supercoding.shoppingmallbackend.common.util;
 
 public enum FilePath {
     MEMBER_PROFILE_DIR("user/image/"),
-    PRODUCT_THUMB_NAIL("product/thumbnails/");
+    PRODUCT_THUMB_NAIL_DIR("product/thumbnails/"),
+    PRODUCT_CONTENT_DIR("product/content/");
 
     FilePath(String path) {
         this.path = path;

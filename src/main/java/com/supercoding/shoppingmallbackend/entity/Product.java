@@ -1,8 +1,10 @@
 package com.supercoding.shoppingmallbackend.entity;
 
 import com.supercoding.shoppingmallbackend.common.util.DateUtils;
-import com.supercoding.shoppingmallbackend.dto.request.ProductCreateRequest;
+import com.supercoding.shoppingmallbackend.dto.request.ProductRequestBase;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,6 +18,8 @@ import java.text.ParseException;
 @AllArgsConstructor
 @Builder
 @Entity
+@DynamicInsert
+@DynamicUpdate
 @Table(name = "product")
 public class Product extends CommonField {
     @Id
@@ -55,14 +59,14 @@ public class Product extends CommonField {
     private Long amount;
 
 
-    public static Product from(ProductCreateRequest productCreateRequest, Seller seller, Genre genre) throws ParseException {
+    public static Product from(ProductRequestBase ProductRequestBase, Seller seller, Genre genre) throws ParseException {
         return Product.builder()
                 .seller(seller)
                 .genre(genre)
-                .title(productCreateRequest.getTitle())
-                .price(productCreateRequest.getPrice())
-                .closingAt(DateUtils.convertToTimestamp(productCreateRequest.getClosingAt()))
-                .amount(productCreateRequest.getAmount())
+                .title(ProductRequestBase.getTitle())
+                .price(ProductRequestBase.getPrice())
+                .closingAt(DateUtils.convertToTimestamp(ProductRequestBase.getClosingAt()))
+                .amount(ProductRequestBase.getAmount())
                 .build();
     }
 

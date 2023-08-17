@@ -2,25 +2,40 @@ package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
-import com.supercoding.shoppingmallbackend.dto.request.ProductCreateRequest;
+import com.supercoding.shoppingmallbackend.dto.request.ProductRequestBase;
 import com.supercoding.shoppingmallbackend.dto.response.ProductDetailResponse;
 import com.supercoding.shoppingmallbackend.service.ProductService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/product")
+@Api(tags = "상품 CRUD API")
 public class ProductController {
 
     private final ProductService productService;
 
     @Operation(summary = "상품 등록", description = "상품 정보를 입력하여 product 레코드를 생성합니다.")
     @PostMapping(value = "/", consumes = "multipart/form-data")
-    public CommonResponse<Object> createProduct(@RequestBody ProductCreateRequest productCreateRequest) {
-        productService.createProductItem(productCreateRequest);
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data",
+            schema = @Schema(implementation = MultipartFile.class)))
+    public CommonResponse<Object> createProduct(@ModelAttribute ProductRequestBase productRequestBase,
+                                                @ApiParam(value = "썸네일 이미지 파일 (선택)", required = false) @RequestPart(value = "mainImageFile", required = false) MultipartFile thumbNailFile,
+                                                @ApiParam(value = "본문 이미지 파일들 (선택)", required = false) @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles
+    ) {
+
+        productService.createProductItem(productRequestBase, thumbNailFile, imageFiles);
 
         return ApiUtils.success("상품 등록 성공", null);
     }
