@@ -5,6 +5,8 @@ import com.supercoding.shoppingmallbackend.dto.request.ProductRequestBase;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,6 +23,8 @@ import java.text.ParseException;
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "product")
+@SQLDelete(sql = "UPDATE product as p SET p.is_deleted = true WHERE idx = ?")
+@Where(clause = "is_deleted = false")
 public class Product extends CommonField {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,14 +63,14 @@ public class Product extends CommonField {
     private Long amount;
 
 
-    public static Product from(ProductRequestBase ProductRequestBase, Seller seller, Genre genre) throws ParseException {
+    public static Product from(ProductRequestBase productRequestBase, Seller seller, Genre genre) throws ParseException {
         return Product.builder()
                 .seller(seller)
                 .genre(genre)
-                .title(ProductRequestBase.getTitle())
-                .price(ProductRequestBase.getPrice())
-                .closingAt(DateUtils.convertToTimestamp(ProductRequestBase.getClosingAt()))
-                .amount(ProductRequestBase.getAmount())
+                .title(productRequestBase.getTitle())
+                .price(productRequestBase.getPrice())
+                .closingAt(DateUtils.convertToTimestamp(productRequestBase.getClosingAt()))
+                .amount(productRequestBase.getAmount())
                 .build();
     }
 
