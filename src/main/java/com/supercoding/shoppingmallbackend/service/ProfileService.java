@@ -2,8 +2,11 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
+import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.FilePath;
+import com.supercoding.shoppingmallbackend.common.util.JwtUtiles;
+import com.supercoding.shoppingmallbackend.dto.response.LoginResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import com.supercoding.shoppingmallbackend.entity.ProfileRole;
@@ -37,11 +40,13 @@ public class ProfileService {
     private final SellerRepository sellerRepository;
     private final BCryptPasswordEncoder encoder;
     private final AwsS3Service awsS3Service;
+    private final JwtUtiles jwtUtiles;
 
 
     @Transactional
     public void signup(String type, String nickname, String password, String email, String phoneNumber, MultipartFile profileImage){
         Optional<Profile> findProfile = profileRepository.findByEmail(email);
+
         if(findProfile.isPresent()){
             throw new CustomException(ProfileErrorCode.DUPLICATE_USER.getErrorCode());
         }
@@ -107,4 +112,13 @@ public class ProfileService {
     }
 
 
+    public LoginResponse login(String email, String password) {
+        //유저 존재여부 확인
+        Profile profile = profileRepository.findByEmail(email).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+        //패스워드 확인
+        if(!encoder.matches(password, profile.getPassword())) throw new CustomException(UserErrorCode.LOGIN_INPUT_INVALID.getErrorCode());
+        //jwt 토큰 생성
+        String token = jwtUtiles.createToken(profile.getId(), profile.getRole().name());
+        return LoginResponse.from(profile, token);
+    }
 }

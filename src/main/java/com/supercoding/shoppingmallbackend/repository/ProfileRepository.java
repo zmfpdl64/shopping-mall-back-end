@@ -16,4 +16,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     @Query("SELECT s from Seller s JOIN FETCH Profile p on p.id = s.profile_idx")
     Seller findByProfileId(Integer profileId);
+
+    @Query("SELECT p FROM Profile p WHERE p.id = :idx")
+    Profile loadUserByProfileIdx(@Param("idx") Long idx);
 }
