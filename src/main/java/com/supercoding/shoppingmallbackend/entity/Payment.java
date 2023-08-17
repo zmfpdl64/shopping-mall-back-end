@@ -86,17 +86,18 @@ public class Payment extends CommonField {
         Product product = shoppingCart.getProduct();
         return Payment.builder()
                 .orderNumber(orderNumber)
-                .amount(shoppingCart.getAmount())
-                .address(request.getAddress())
-                .addressDetail(request.getAddressDetail())
-                .receiverName(request.getReceiverName())
-                .receiverPhone(request.getReceiverPhone())
+                .availableQuantity(shoppingCart.getAmount())
+                .receivedAddress(request.getAddress())
+                .receivedAddressDetail(request.getAddressDetail())
+                .recipientName(request.getReceiverName())
+                .recipientPhoneNumber(request.getReceiverPhone())
                 .productTitle(product.getTitle())
                 .productMainImageUrl(product.getMainImageUrl())
-                .soldPricePerOne(product.getPrice())
+                .paidPrice(product.getPrice())
                 .consumer(shoppingCart.getConsumer())
                 .product(product)
-                .paymentAt(paymentAt)
+                .paidAt(paymentAt)
+                .seller(null)  // 나중에 수정
                 .build();
     }
 }
