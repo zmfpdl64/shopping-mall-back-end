@@ -1,7 +1,7 @@
 package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
-import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
+import com.supercoding.shoppingmallbackend.security.JwtUtiles;
 import com.supercoding.shoppingmallbackend.dto.request.LoginRequest;
 import com.supercoding.shoppingmallbackend.dto.request.SignupRequest;
 import com.supercoding.shoppingmallbackend.dto.response.LoginResponse;
@@ -9,20 +9,19 @@ import com.supercoding.shoppingmallbackend.service.ProfileService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
 public class UserController {
 
     private final ProfileService profileService;
-
     @PostMapping("/singup")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data",
             schema = @Schema(implementation = MultipartFile.class)))
