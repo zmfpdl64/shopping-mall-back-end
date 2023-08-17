@@ -1,7 +1,11 @@
 package com.supercoding.shoppingmallbackend.dto.response;
 
+import com.supercoding.shoppingmallbackend.common.util.DateUtils;
+import com.supercoding.shoppingmallbackend.entity.Genre;
 import com.supercoding.shoppingmallbackend.entity.Product;
 import lombok.*;
+
+import java.sql.Timestamp;
 
 @Getter
 @NoArgsConstructor
@@ -16,17 +20,18 @@ public class KoeyProductResponse {
     private Long price;
     private Long amount;
     private Long sellerId;
+    private String closingAt;
 
-    public static KoeyProductResponse from(Product entity) {
+    public static KoeyProductResponse from(Product entity, Genre genre) {
         return KoeyProductResponse.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .mainImageUrl(entity.getMainImageUrl())
-//                장르 객체 얻어오기
-                .genre("퍼즐")
+                .genre(genre.getName())
                 .price(entity.getPrice())
                 .amount(entity.getAmount())
                 .sellerId(entity.getSellerIdx())
+                .closingAt(DateUtils.convertToString(entity.getClosingAt()))
                 .build();
     }
 }

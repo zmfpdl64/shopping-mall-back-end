@@ -17,7 +17,7 @@ public class DateUtils {
         return new Timestamp(date.getTime());
     }
 
-    public static String convertToString(Timestamp inputDate) throws ParseException {
+    public static String convertToString(Timestamp inputDate) {
         String pattern = "yyyy.MM.dd";
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(inputDate);
