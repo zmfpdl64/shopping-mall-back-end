@@ -1,6 +1,7 @@
 package com.supercoding.shoppingmallbackend.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.supercoding.shoppingmallbackend.common.Error.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,5 +20,11 @@ public class CommonResponse<T> {
         this.status = status;
         this.message = message;
         this.data = data;
+    }
+    public static <T>CommonResponse<T> success(String message, T data) {
+        return new CommonResponse<T>(true, 200, message, data);
+    }
+    public static <T>CommonResponse<T> fail(ErrorCode code) {
+        return new CommonResponse<T>(false, code.getStatus(), code.getMessage(), null);
     }
 }
