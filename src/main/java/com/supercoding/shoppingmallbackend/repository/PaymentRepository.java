@@ -11,10 +11,9 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     boolean existsByOrderNumber(String orderNumber);
 
-    List<Payment> findByOrderNumberAndIsDeletedIsFalse(String orderNumber);
-
-    List<Payment> findAllByConsumerIdAndIsDeletedIsFalse(Long consumerId);
-
     @Query("select p from Payment p join fetch p.consumer c join fetch p.product pd where p.orderNumber=:orderNumber and p.isDeleted=false order by p.paidAt desc")
     List<Payment> findAllByOrderNumber(String orderNumber);
+
+    @Query("select p from Payment p join fetch p.consumer c join fetch p.product pd where c.id=:consumerId and p.isDeleted=false order by p.paidAt desc")
+    List<Payment> findAllByConsumerId(Long consumerId);
 }
