@@ -1,11 +1,10 @@
 package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
-import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
 import com.supercoding.shoppingmallbackend.dto.response.PaymentResponse;
-import com.supercoding.shoppingmallbackend.dto.response.SimplePurchaseInfoResponse;
-import com.supercoding.shoppingmallbackend.dto.response.SoldInfoResponse;
+import com.supercoding.shoppingmallbackend.dto.response.PurchaseResponse;
+import com.supercoding.shoppingmallbackend.dto.response.SaleResponse;
 import com.supercoding.shoppingmallbackend.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,7 @@ public class PaymentsController {
     private final boolean isUsingDummyCode = true;    // 나중에 더미코드들 다 걷어냄
 
     @PostMapping()
-    public CommonResponse<PaymentResponse> processPayment(@RequestBody PaymentRequest paymentRequest) {
+    public CommonResponse<List<PaymentResponse>> processPayment(@RequestBody PaymentRequest paymentRequest) {
 
 //        if (isUsingDummyCode) {
 //            PaymentResponse data = PaymentResponse.builder()
@@ -69,7 +68,7 @@ public class PaymentsController {
     }
 
     @GetMapping("/purchased")
-    public CommonResponse<List<PaymentResponse>> getPurchasedInfo() {
+    public CommonResponse<List<PurchaseResponse>> getPurchaseHistory() {
 
 //        if (isUsingDummyCode) {
 //            PaymentResponse data = PaymentResponse.builder()
@@ -192,11 +191,11 @@ public class PaymentsController {
 //            return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", List.of(data, data1, data2));
 //        }
 
-        return paymentService.getPurchasedInfo();
+        return paymentService.getPurchaseHistory();
     }
 
     @GetMapping("/sold")
-    public CommonResponse<List<SoldInfoResponse>> getSoldInfo() {
+    public CommonResponse<List<SaleResponse>> getSaleHistory() {
 
 //        if (isUsingDummyCode) {
 //            List<SoldInfoResponse> data = List.of(
@@ -297,6 +296,6 @@ public class PaymentsController {
 //
 //            return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", data);
 //        }
-        return null;
+        return paymentService.getSaleHistory();
     }
 }
