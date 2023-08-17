@@ -103,16 +103,24 @@ public class PaymentService {
         Long consumerId = 1L;
 
         // 구매내역 조회하기
-        List<Payment> payments = paymentRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumerId);
+        List<Payment> payments = paymentRepository.findAllByConsumerId(consumerId);
         List<PurchaseResponse> purchaseResponses = payments.stream()
                 .map(PurchaseResponse::from)
                 .collect(Collectors.toList());
 
-        // 반환하기
         return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", purchaseResponses);
     }
 
     public CommonResponse<List<SaleResponse>> getSaleHistory() {
-        return null;
+        // 토큰에서 consumerId 혹은 email 파싱하기
+        Long sellerId = 1L;
+
+        // 판매내역 조회하기
+        List<Payment> payments = paymentRepository.findAllBySellerId(sellerId);
+        List<SaleResponse> saleResponses = payments.stream()
+                .map(SaleResponse::from)
+                .collect(Collectors.toList());
+
+        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", saleResponses);
     }
 }
