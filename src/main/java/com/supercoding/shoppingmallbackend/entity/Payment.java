@@ -20,7 +20,7 @@ public class Payment extends CommonField {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx", nullable = false)
-    private Long id;
+    private Long paymentId;
 
     @NotNull
     @Column(name = "order_number", columnDefinition = "char(11) not null unique")
@@ -28,27 +28,27 @@ public class Payment extends CommonField {
 
     @NotNull
     @Column(name = "amount", nullable = false)
-    private Long amount;
+    private Long availableQuantity;
 
     @Size(max = 127)
     @NotNull
     @Column(name = "address", nullable = false, length = 127)
-    private String address;
+    private String receivedAddress;
 
     @Size(max = 127)
     @NotNull
     @Column(name = "address_detail", nullable = false, length = 127)
-    private String addressDetail;
+    private String receivedAddressDetail;
 
     @Size(max = 63)
     @NotNull
     @Column(name = "receiver_name", nullable = false, length = 63)
-    private String receiverName;
+    private String recipientName;
 
     @Size(max = 15)
     @NotNull
     @Column(name="phone", nullable = false, length = 15)
-    private String receiverPhone;
+    private String recipientPhoneNumber;
 
     @Size(max = 50)
     @NotNull
@@ -61,16 +61,21 @@ public class Payment extends CommonField {
 
     @NotNull
     @Column(name = "sold_price_per_one", nullable = false)
-    private Long soldPricePerOne;
+    private Long paidPrice;
 
     @NotNull
     @Column(name = "payment_at", nullable = false)
-    private Timestamp paymentAt;
+    private Timestamp paidAt;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "consumer_id")
     private Consumer consumer;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     @NotNull
     @ManyToOne
