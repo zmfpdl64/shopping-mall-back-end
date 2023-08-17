@@ -5,14 +5,12 @@ import com.supercoding.shoppingmallbackend.entity.Genre;
 import com.supercoding.shoppingmallbackend.entity.Product;
 import lombok.*;
 
-import java.sql.Timestamp;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class KoeyProductResponse {
+public class ProductInCartResponse {
     private Long id;
     private String title;
     private String mainImageUrl;
@@ -22,8 +20,8 @@ public class KoeyProductResponse {
     private Long sellerId;
     private String closingAt;
 
-    public static KoeyProductResponse from(Product entity, Genre genre) {
-        return KoeyProductResponse.builder()
+    public static ProductInCartResponse from(Product entity, Genre genre) {
+        return ProductInCartResponse.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .mainImageUrl(entity.getMainImageUrl())
