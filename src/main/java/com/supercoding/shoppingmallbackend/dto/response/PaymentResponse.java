@@ -5,8 +5,6 @@ import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -15,7 +13,6 @@ import java.util.List;
 @Builder
 @ToString
 public class PaymentResponse {
-
     private String orderNumber;
     private String paymentAt;
     private String address;
@@ -24,10 +21,10 @@ public class PaymentResponse {
     private String receiverPhone;
     private List<SimplePurchaseInfoResponse> purchaseInfos;
 
-    public static PaymentResponse from(String orderNumber, PaymentRequest paymentRequest, List<SimplePurchaseInfoResponse> purchaseInfos) {
+    public static PaymentResponse from(String orderNumber, PaymentRequest paymentRequest, List<SimplePurchaseInfoResponse> purchaseInfos, Timestamp paymentAt) {
         return PaymentResponse.builder()
                 .orderNumber(orderNumber)
-                .paymentAt(DateUtils.convertToString(new Timestamp(new Date().getTime())))
+                .paymentAt(DateUtils.convertToString(paymentAt))
                 .address(paymentRequest.getAddress())
                 .addressDetail(paymentRequest.getAddressDetail())
                 .receiverName(paymentRequest.getReceiverName())
