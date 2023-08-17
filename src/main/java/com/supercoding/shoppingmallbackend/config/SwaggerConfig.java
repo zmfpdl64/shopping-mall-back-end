@@ -2,6 +2,8 @@ package com.supercoding.shoppingmallbackend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -14,6 +16,7 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -28,7 +31,10 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.supercoding.shoppingmallbackend.controller"))
                 .paths(PathSelectors.any())
                 .build()
-                .apiInfo(apiInfo()); // Ignore Authentication class
+                .apiInfo(apiInfo())
+                .consumes(Collections.singleton("multipart/form-data"))
+                .produces(Collections.singleton(MediaType.APPLICATION_JSON_VALUE))
+                .ignoredParameterTypes(Authentication.class); // Ignore Authentication class
     }
 
     private ApiInfo apiInfo() {

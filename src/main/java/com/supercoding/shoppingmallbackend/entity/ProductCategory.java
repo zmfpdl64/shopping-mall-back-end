@@ -1,13 +1,15 @@
 package com.supercoding.shoppingmallbackend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "product_category")
 public class ProductCategory {
@@ -17,11 +19,20 @@ public class ProductCategory {
     private Long id;
 
     @NotNull
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @NotNull
-    @Column(name = "category_id", nullable = false)
-    private Long categoryId;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    public static ProductCategory from(Product product, Category category) {
+        return ProductCategory.builder()
+                .product(product)
+                .category(category)
+                .build();
+    }
 
 }

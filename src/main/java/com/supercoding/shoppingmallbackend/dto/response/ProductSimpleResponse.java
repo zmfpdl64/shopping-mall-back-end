@@ -28,7 +28,7 @@ public class ProductSimpleResponse {
                 .genre(genre.getName())
                 .price(entity.getPrice())
                 .amount(entity.getAmount())
-                .sellerId(entity.getSellerIdx())
+                .sellerId(entity.getSeller().getId())
                 .closingAt(DateUtils.convertToString(entity.getClosingAt()))
                 .build();
     }
