@@ -17,5 +17,5 @@ public class SoldInfoResponse {
     private String orderNumber;
     private String address;
     private String soldDateTime;
-    private List<SimpleTradeInfoResponse> tradeInfos;
+    private List<SimplePurchaseInfoResponse> tradeInfos;
 }
