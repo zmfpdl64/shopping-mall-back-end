@@ -7,7 +7,8 @@ import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
 import com.supercoding.shoppingmallbackend.dto.response.PaymentResponse;
-import com.supercoding.shoppingmallbackend.dto.response.SimplePurchaseInfoResponse;
+import com.supercoding.shoppingmallbackend.dto.response.PurchaseResponse;
+import com.supercoding.shoppingmallbackend.dto.response.SaleResponse;
 import com.supercoding.shoppingmallbackend.entity.*;
 import com.supercoding.shoppingmallbackend.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class PaymentService {
 
 
     @Transactional
-    public CommonResponse<PaymentResponse> processPayment(PaymentRequest paymentRequest) {
+    public CommonResponse<List<PaymentResponse>> processPayment(PaymentRequest paymentRequest) {
         // 토큰에서 consumerId 혹은 email 파싱
         Long consumerId = 1L;
 
@@ -56,8 +57,8 @@ public class PaymentService {
         String orderNumber = createOrderNumber();
         if (orderNumber == null) throw new CustomException(PaymentErrorCode.FAIL_TO_CREATE);
 
-        //결제 일시 생성
-        Timestamp paymentAt = new Timestamp(new Date().getTime());
+        //결제일자 생성
+        Timestamp paidAt = new Timestamp(new Date().getTime());
 
         // 상품 재고 차감, 장바구니 소프트 딜리트, 결제내역 추가
         shoppingCart.forEach(cart-> {
@@ -66,24 +67,24 @@ public class PaymentService {
 
             cart.setIsDeleted(true);
 
-            Payment newData = Payment.from(orderNumber, cart, paymentRequest, paymentAt);
+            Payment newData = Payment.from(orderNumber, cart, paymentRequest, paidAt);
             JpaUtils.managedSave(paymentRepository, newData);
         });
 
         // 페이머니 차감
         profile.setPaymoney(profile.getPaymoney() - totalPrice);
 
-        // 추가된 결제내역 응답
-        List<Payment> purchaseHistories = paymentRepository.findByOrderNumberAndIsDeletedIsFalse(orderNumber);
-        if (purchaseHistories.isEmpty()) throw new CustomException(PaymentErrorCode.NO_CREATED_PAYMENT);
-        List<SimplePurchaseInfoResponse> purchaseInfos = purchaseHistories.stream()
-                .map(purchaseHistory -> {
-                    Long genreId = purchaseHistory.getProduct().getGenreIdx();
+        // 결제내역 응답
+        List<Payment> payments = paymentRepository.findByOrderNumberAndIsDeletedIsFalse(orderNumber);
+        if (payments.isEmpty()) throw new CustomException(PaymentErrorCode.NO_CREATED_PAYMENT);
+        List<PaymentResponse> paymentResponses = payments.stream()
+                .map(payment -> {
+                    Long genreId = payment.getProduct().getGenreIdx();
                     Genre genre = genreRepository.findById(genreId).orElseThrow(()->new CustomException(GenreErrorCode.NOT_FOUND_BY_ID));
-                    return SimplePurchaseInfoResponse.from(purchaseHistory, genre);
+                    return PaymentResponse.from(payment);
                 }).collect(Collectors.toList());
 
-        return ApiUtils.success("결제를 성공적으로 완료했습니다.", PaymentResponse.from(orderNumber, paymentRequest, purchaseInfos, paymentAt)) ;
+        return ApiUtils.success("결제를 성공적으로 완료했습니다.", paymentResponses) ;
     }
 
     private String createOrderNumber(){
@@ -102,15 +103,18 @@ public class PaymentService {
         return null;
     }
 
-    public CommonResponse<List<PaymentResponse>> getPurchasedInfo() {
+    public CommonResponse<List<PurchaseResponse>> getPurchaseHistory() {
         // 토큰에서 consumerId 혹은 email 파싱하기
         Long consumerId = 1L;
 
         // 구매내역 조회하기
-        List<Payment> purchaseHistories = paymentRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumerId);
-
+        List<Payment> payments = paymentRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumerId);
 
         // 반환하기
+        return null;
+    }
+
+    public CommonResponse<List<SaleResponse>> getSaleHistory() {
         return null;
     }
 }
