@@ -12,14 +12,14 @@ public class ShoppingCartItemResponse {
     private Long id;
     private ConsumerResponse consumer;
     private ProductSimpleResponse product;
-    private Long amount;
+    private Long quantity;
 
     public static ShoppingCartItemResponse from(ShoppingCart entity, ProductSimpleResponse productResponse) {
         return ShoppingCartItemResponse.builder()
                 .id(entity.getId())
                 .consumer(ConsumerResponse.from(entity.getConsumer()))
                 .product(productResponse)
-                .amount(entity.getAmount())
+                .quantity(entity.getAmount())
                 .build();
     }
 
@@ -47,7 +47,7 @@ public class ShoppingCartItemResponse {
                         .price(17600L)
                         .build()
                 )
-                .amount(2L)
+                .quantity(2L)
                 .build();
     }
 
@@ -69,7 +69,7 @@ public class ShoppingCartItemResponse {
                         .price(12000L)
                         .build()
                 )
-                .amount(2L)
+                .quantity(2L)
                 .build();
     }
     public static ShoppingCartItemResponse getDummy3() {
@@ -90,7 +90,7 @@ public class ShoppingCartItemResponse {
                         .price(23500L)
                         .build()
                 )
-                .amount(3L)
+                .quantity(3L)
                 .build();
     }
 }
