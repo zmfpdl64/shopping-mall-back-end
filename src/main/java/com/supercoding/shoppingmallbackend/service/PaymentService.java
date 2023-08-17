@@ -109,9 +109,12 @@ public class PaymentService {
 
         // 구매내역 조회하기
         List<Payment> payments = paymentRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumerId);
+        List<PurchaseResponse> purchaseResponses = payments.stream()
+                .map(PurchaseResponse::from)
+                .collect(Collectors.toList());
 
         // 반환하기
-        return null;
+        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", purchaseResponses);
     }
 
     public CommonResponse<List<SaleResponse>> getSaleHistory() {
