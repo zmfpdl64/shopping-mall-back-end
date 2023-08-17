@@ -2,6 +2,7 @@ package com.supercoding.shoppingmallbackend.dto.response;
 
 import com.supercoding.shoppingmallbackend.common.util.DateUtils;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
+import com.supercoding.shoppingmallbackend.entity.Payment;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -13,23 +14,29 @@ import java.util.List;
 @Builder
 @ToString
 public class PaymentResponse {
+    private Long paymentId;
     private String orderNumber;
-    private String paymentAt;
-    private String address;
-    private String addressDetail;
-    private String receiverName;
-    private String receiverPhone;
-    private List<SimplePurchaseInfoResponse> purchaseInfos;
+    private ProductSimpleResponse product;
+    private Long paidQuantity;
+    private Long paidPrice;
+    private Timestamp paidAt;
+    private String receivedAddress;
+    private String receivedAddressDetail;
+    private String recipientName;
+    private String recipientPhoneNumber;
 
-    public static PaymentResponse from(String orderNumber, PaymentRequest paymentRequest, List<SimplePurchaseInfoResponse> purchaseInfos, Timestamp paymentAt) {
+    public static PaymentResponse from(Payment payment) {
         return PaymentResponse.builder()
-                .orderNumber(orderNumber)
-                .paymentAt(DateUtils.convertToString(paymentAt))
-                .address(paymentRequest.getAddress())
-                .addressDetail(paymentRequest.getAddressDetail())
-                .receiverName(paymentRequest.getReceiverName())
-                .receiverPhone(paymentRequest.getReceiverPhone())
-                .purchaseInfos(purchaseInfos)
+                .paymentId(payment.getPaymentId())
+                .orderNumber(payment.getOrderNumber())
+                .product(ProductSimpleResponse.from(payment.getProduct()))
+                .paidQuantity(payment.getPaidQuantity())
+                .paidPrice(payment.getPaidPrice())
+                .paidAt(payment.getPaidAt())
+                .receivedAddress(payment.getReceivedAddress())
+                .receivedAddressDetail(payment.getReceivedAddressDetail())
+                .recipientName(payment.getRecipientName())
+                .recipientPhoneNumber(payment.getRecipientPhoneNumber())
                 .build();
     }
 }
