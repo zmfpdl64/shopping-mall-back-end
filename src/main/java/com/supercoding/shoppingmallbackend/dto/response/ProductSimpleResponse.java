@@ -25,11 +25,10 @@ public class ProductSimpleResponse {
                 .productId(product.getId())
                 .title(product.getTitle())
                 .mainImageUrl(product.getMainImageUrl())
-//                .genre(product.getGenre())
-                .genre("장르") // 나중에 수정
+                .genre(product.getGenre().getName())
                 .price(product.getPrice())
                 .leftQuantity(product.getAmount())
-                .sellerId(product.getSellerIdx())
+                .sellerId(product.getSeller().getId())
                 .closingAt(DateUtils.convertToString(product.getClosingAt()))
                 .build();
     }
