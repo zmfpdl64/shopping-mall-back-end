@@ -18,7 +18,8 @@ public class Consumer extends CommonField{
     private Long id;
 
     @NotNull
-    @Column(name = "profile_idx", nullable = false)
-    private Long profileIdx;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_idx")
+    private Profile profile;
 
 }

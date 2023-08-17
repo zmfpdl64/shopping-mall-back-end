@@ -41,15 +41,13 @@ public class PaymentService {
         Long consumerId = 1L;
 
         // 재고가 충분한지 확인
-        List<ShoppingCart> shoppingCart =  shoppingCartRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumerId);
+        List<ShoppingCart> shoppingCart =  shoppingCartRepository.findAllByConsumerId(consumerId);
         if (shoppingCart.isEmpty()) throw new CustomException(ShoppingCartErrorCode.EMPTY);
         if (shoppingCart.stream().anyMatch(cart->cart.getAmount() > cart.getProduct().getAmount())) throw new CustomException(PaymentErrorCode.OVER_AMOUNT);
 
         // 페이머니가 충분한지 확인
-        Consumer consumer = consumerRepository.findByIdAndIsDeletedIsFalse(consumerId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
-        Long profileId = consumer.getProfileIdx();
-        Profile profile = profileRepository.findByProfileId(profileId);
-        if (profile == null) throw new CustomException(ProfileErrorCode.NOT_FOUND);
+        Consumer consumer = consumerRepository.findConsumerById(consumerId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+        Profile profile = consumer.getProfile();
         Long totalPrice = shoppingCart.stream().mapToLong(el->el.getAmount() * el.getProduct().getPrice()).sum();
         if (profile.getPaymoney() < totalPrice) throw new CustomException(PaymentErrorCode.NOT_ENOUGH_PAYMONEY);
 
@@ -75,14 +73,11 @@ public class PaymentService {
         profile.setPaymoney(profile.getPaymoney() - totalPrice);
 
         // 결제내역 응답
-        List<Payment> payments = paymentRepository.findByOrderNumberAndIsDeletedIsFalse(orderNumber);
+        List<Payment> payments = paymentRepository.findAllByOrderNumber(orderNumber);
         if (payments.isEmpty()) throw new CustomException(PaymentErrorCode.NO_CREATED_PAYMENT);
         List<PaymentResponse> paymentResponses = payments.stream()
-                .map(payment -> {
-                    Long genreId = payment.getProduct().getGenreIdx();
-                    Genre genre = genreRepository.findById(genreId).orElseThrow(()->new CustomException(GenreErrorCode.NOT_FOUND_BY_ID));
-                    return PaymentResponse.from(payment);
-                }).collect(Collectors.toList());
+                .map(PaymentResponse::from)
+                .collect(Collectors.toList());
 
         return ApiUtils.success("결제를 성공적으로 완료했습니다.", paymentResponses) ;
     }
@@ -109,9 +104,12 @@ public class PaymentService {
 
         // 구매내역 조회하기
         List<Payment> payments = paymentRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumerId);
+        List<PurchaseResponse> purchaseResponses = payments.stream()
+                .map(PurchaseResponse::from)
+                .collect(Collectors.toList());
 
         // 반환하기
-        return null;
+        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", purchaseResponses);
     }
 
     public CommonResponse<List<SaleResponse>> getSaleHistory() {

@@ -22,4 +22,19 @@ public class PurchaseResponse {
     private String receivedAddressDetail;
     private String recipientName;
     private String recipientPhoneNumber;
+
+    public static PurchaseResponse from(Payment payment) {
+        return PurchaseResponse.builder()
+                .paymentId(payment.getPaymentId())
+                .orderNumber(payment.getOrderNumber())
+                .product(ProductSimpleResponse.from(payment.getProduct()))
+                .purchaseQuantity(payment.getPaidQuantity())
+                .purchasePrice(payment.getPaidPrice())
+                .purchasedAt(payment.getPaidAt())
+                .receivedAddress(payment.getReceivedAddress())
+                .receivedAddressDetail(payment.getReceivedAddressDetail())
+                .recipientName(payment.getRecipientName())
+                .recipientPhoneNumber(payment.getRecipientPhoneNumber())
+                .build();
+    }
 }
