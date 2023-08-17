@@ -53,6 +53,10 @@ public class ProductController {
     @Operation(summary = "상품 삭제", description = "상품 식별값을 입력하여 단일의 product 레코드를 삭제합니다.")
     @DeleteMapping("/{product_idx}")
     public CommonResponse<Object> deleteProduct(@PathVariable("product_idx") Long productId) {
+
+        Long profileIdx = AuthHolder.getUserIdx();
+        productService.deleteProductByProductId(productId, profileIdx);
+
         return ApiUtils.success(productId + "번 상품 삭제 성공", null);
     }
 

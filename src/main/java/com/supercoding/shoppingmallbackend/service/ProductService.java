@@ -114,4 +114,14 @@ public class ProductService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
+    public void deleteProductByProductId(Long productId, Long profileIdx) {
+        Long validProfileIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+        if (!Objects.equals(product.getSeller().getProfile().getId(), validProfileIdx)) {
+            throw new CustomException(UserErrorCode.NOT_AUTHORIZED.getErrorCode());
+        }
+        productRepository.deleteById(product.getId());
+    }
 }
