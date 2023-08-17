@@ -33,30 +33,43 @@ public class ProductService {
 
     public ProductDetailResponse getProductByProductId(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new CustomException(ProductErrorCode.NOTFOUND_PRODUCT.getErrorCode()));
-
-        List<ProductImageResponse> productImageResponseList = new ArrayList<>();
-        ProductImageResponse productImageResponse = new ProductImageResponse();
-        productImageResponse.setImgIdx(1L);
-        productImageResponse.setImgUrl("https://chat.openai.com/");
-        productImageResponseList.add(productImageResponse);
+        List<ProductContentImage> productContentImageList = productContentImageRepository.findAllByProduct_Id(product.getId());
+        List<ProductImageResponse> productImageResponseList = productContentImageList.stream().map(ProductImageResponse::from).collect(Collectors.toList());
+        List<Category> categories = categoryRepository.findCategoriesByProductId(product.getId());
+        /*
+        TODO 리뷰 로직
+        List<Long> 타입으로 findRatingByProductID 을 리뷰 엔티티에서 가져옴
+        stream으로 rating 다 더함
+        size만큼 나눠서 소수점 1~2자리
+         */
 
         try {
-            return ProductDetailResponse.builder()
-                    .build()
-                    .toResponse(product, productImageResponseList);
+            return ProductDetailResponse.from(product, productImageResponseList, categories);
         } catch (ParseException e) {
             throw new CustomException(CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode());
         }
     }
 
     @Transactional
-    public void createProductItem(ProductRequestBase productRequestBase, MultipartFile thumbFile, List<MultipartFile> imgFiles) {
+    public void createProductItem(ProductRequestBase productRequestBase, MultipartFile thumbFile, List<MultipartFile> imgFiles, Long profileIdx) {
+        Long validProfileIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
 
-        Seller seller = sellerRepository.findById(1L).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-        Genre genre = genreRepository.findById(productRequestBase.getGenre()).orElseThrow(() -> new CustomException(GenreErrorCode.NOT_FOUND));
-        Category playerCount = categoryRepository.findByName(productRequestBase.getPlayerCount()).orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
-        Category playTime = categoryRepository.findByName(productRequestBase.getPlayTime()).orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
-        Category difficultyLevel = categoryRepository.findByName(productRequestBase.getDifficultyLevel()).orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
+        Seller seller = sellerRepository.findByProfile_Id(validProfileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+        Genre genre = genreRepository.findById(productRequestBase.getGenre())
+                .orElseThrow(() -> new CustomException(GenreErrorCode.NOT_FOUND));
+
+        Category playerCount = categoryRepository.findByName(productRequestBase.getPlayerCount())
+                .orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
+
+        Category playTime = categoryRepository.findByName(productRequestBase.getPlayTime())
+                .orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
+
+        Category difficultyLevel = categoryRepository.findByName(productRequestBase.getDifficultyLevel())
+                .orElseThrow(() -> new CustomException(CategoryErrorCode.NOT_FOUND_BY_ID));
+
         if (imgFiles.size() > 5) throw new CustomException(ProductErrorCode.TOO_MANY_FILES);
 
         try {

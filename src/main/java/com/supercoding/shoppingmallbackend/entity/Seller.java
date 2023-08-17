@@ -19,7 +19,8 @@ public class Seller extends CommonField {
     private Long id;
 
     @NotNull
-    @Column(name = "profile_idx", nullable = false)
-    private Long profile_idx;
+    @OneToOne
+    @JoinColumn(name = "profile_idx", nullable = false)
+    private Profile profile;
 
 }
