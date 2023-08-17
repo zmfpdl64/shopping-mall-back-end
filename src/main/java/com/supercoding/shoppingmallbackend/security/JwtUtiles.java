@@ -1,4 +1,4 @@
-package com.supercoding.shoppingmallbackend.common.util;
+package com.supercoding.shoppingmallbackend.security;
 
 import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
@@ -7,8 +7,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -25,13 +25,13 @@ public class JwtUtiles {
     private final ProfileRepository profileRepository;
     @PostConstruct
     public void setUp() {
-        secretKey = Base64.getEncoder().encodeToString("super-coding".getBytes());
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
 
 
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("AUTHORIZATION");
+        return request.getHeader(HttpHeaders.AUTHORIZATION);
     }
 
     public String createToken(Long user_idx, String role) {
@@ -61,12 +61,12 @@ public class JwtUtiles {
         }
     }
 
-    public Authentication getAuthentication(String jwtToken) {
-        ProfileDetail profile = ProfileDetail.from(profileRepository.loadUserByProfileIdx(getIdx(jwtToken)));
-        return new UsernamePasswordAuthenticationToken(profile, "", profile.getAuthorities());
+    public UsernamePasswordAuthenticationToken getAuthentication(Long profileIdx) {
+        ProfileDetail profile = ProfileDetail.from(profileRepository.loadProfileByProfileIdx(profileIdx));
+        return new UsernamePasswordAuthenticationToken(profile, null, profile.getAuthorities());
     }
 
-    private Long getIdx(String jwtToken) {
+    public Long getProfileIdx(String jwtToken) {
         return Long.valueOf(Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(jwtToken)

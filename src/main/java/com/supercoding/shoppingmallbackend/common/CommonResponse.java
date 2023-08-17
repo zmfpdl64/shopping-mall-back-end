@@ -27,4 +27,24 @@ public class CommonResponse<T> {
     public static <T>CommonResponse<T> fail(ErrorCode code) {
         return new CommonResponse<T>(false, code.getStatus(), code.getMessage(), null);
     }
+    public static <T extends Exception>CommonResponse<T> fail(T e) {
+        return new CommonResponse<T>(false, 500, e.getMessage(), null);
+    }
+
+    public String toStream() {
+        if (data == null) {
+            return "{" +
+                    "\"result\":"+ "\"" + result + "\"," +
+                    "\"status\":"+ "\"" + status + "\"," +
+                    "\"message\":"+ "\"" + message + "\"," +
+                    "}";
+        }
+
+        return "{" +
+                "\"result\":"+ "\"" + result + "\"," +
+                "\"status\":"+ "\"" + status + "\"," +
+                "\"message\":"+ "\"" + message + "\"," +
+                "\"data\":" + data +
+                "}";
+    }
 }
