@@ -1,7 +1,6 @@
 package com.supercoding.shoppingmallbackend.dto.response;
 
 import com.supercoding.shoppingmallbackend.common.util.DateUtils;
-import com.supercoding.shoppingmallbackend.entity.Genre;
 import com.supercoding.shoppingmallbackend.entity.Product;
 import lombok.*;
 
@@ -11,7 +10,7 @@ import lombok.*;
 @Builder
 @ToString
 public class ProductSimpleResponse {
-    private Long productId;
+    private Long id;
     private String title;
     private String mainImageUrl;
     private String genre;
@@ -22,7 +21,7 @@ public class ProductSimpleResponse {
 
     public static ProductSimpleResponse from(Product product) {
         return ProductSimpleResponse.builder()
-                .productId(product.getId())
+                .id(product.getId())
                 .title(product.getTitle())
                 .mainImageUrl(product.getMainImageUrl())
                 .genre(product.getGenre().getName())
