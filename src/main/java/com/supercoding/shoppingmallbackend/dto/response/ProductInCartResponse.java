@@ -1,5 +1,7 @@
 package com.supercoding.shoppingmallbackend.dto.response;
 
+import com.supercoding.shoppingmallbackend.common.util.DateUtils;
+import com.supercoding.shoppingmallbackend.entity.Genre;
 import com.supercoding.shoppingmallbackend.entity.Product;
 import lombok.*;
 
@@ -8,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class KoeyProductResponse {
+public class ProductInCartResponse {
     private Long id;
     private String title;
     private String mainImageUrl;
@@ -16,17 +18,18 @@ public class KoeyProductResponse {
     private Long price;
     private Long amount;
     private Long sellerId;
+    private String closingAt;
 
-    public static KoeyProductResponse from(Product entity) {
-        return KoeyProductResponse.builder()
+    public static ProductInCartResponse from(Product entity, Genre genre) {
+        return ProductInCartResponse.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .mainImageUrl(entity.getMainImageUrl())
-//                장르 객체 얻어오기
-                .genre("퍼즐")
+                .genre(genre.getName())
                 .price(entity.getPrice())
                 .amount(entity.getAmount())
                 .sellerId(entity.getSellerIdx())
+                .closingAt(DateUtils.convertToString(entity.getClosingAt()))
                 .build();
     }
 }

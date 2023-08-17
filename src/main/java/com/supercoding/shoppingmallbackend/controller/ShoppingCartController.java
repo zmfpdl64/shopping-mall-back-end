@@ -5,8 +5,6 @@ import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
-import com.supercoding.shoppingmallbackend.dto.response.KoeyConsumerResponse;
-import com.supercoding.shoppingmallbackend.dto.response.KoeyProductResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
 import com.supercoding.shoppingmallbackend.service.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
