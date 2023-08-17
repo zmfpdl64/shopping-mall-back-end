@@ -28,7 +28,7 @@ public class Payment extends CommonField {
 
     @NotNull
     @Column(name = "amount", nullable = false)
-    private Long availableQuantity;
+    private Long paidQuantity;
 
     @Size(max = 127)
     @NotNull
@@ -86,7 +86,7 @@ public class Payment extends CommonField {
         Product product = shoppingCart.getProduct();
         return Payment.builder()
                 .orderNumber(orderNumber)
-                .availableQuantity(shoppingCart.getAmount())
+                .paidQuantity(shoppingCart.getAmount())
                 .receivedAddress(request.getAddress())
                 .receivedAddressDetail(request.getAddressDetail())
                 .recipientName(request.getReceiverName())
