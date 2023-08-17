@@ -26,6 +26,11 @@ spring:
       enabled: true
 logging:
   config: classpath:logback.xml
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
 #jasypt
 jasypt:
   encryptor:
