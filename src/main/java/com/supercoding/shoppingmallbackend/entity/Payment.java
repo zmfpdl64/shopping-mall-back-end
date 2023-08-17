@@ -6,8 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -16,8 +15,8 @@ import java.util.Date;
 @Builder
 @ToString
 @Entity
-@Table(name = "purchase_history")
-public class PurchaseHistory extends CommonField {
+@Table(name = "payments")
+public class Payment extends CommonField {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx", nullable = false)
@@ -56,9 +55,17 @@ public class PurchaseHistory extends CommonField {
     @Column(name = "product_title", nullable = false, length = 50)
     private String productTitle;
 
+    @Lob
+    @Column(name = "product_main_image")
+    private String productMainImageUrl;
+
     @NotNull
     @Column(name = "sold_price_per_one", nullable = false)
     private Long soldPricePerOne;
+
+    @NotNull
+    @Column(name = "payment_at", nullable = false)
+    private Timestamp paymentAt;
 
     @NotNull
     @ManyToOne
@@ -70,9 +77,9 @@ public class PurchaseHistory extends CommonField {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public static PurchaseHistory from(String orderNumber, ShoppingCart shoppingCart, PaymentRequest request) {
+    public static Payment from(String orderNumber, ShoppingCart shoppingCart, PaymentRequest request, Timestamp paymentAt) {
         Product product = shoppingCart.getProduct();
-        return PurchaseHistory.builder()
+        return Payment.builder()
                 .orderNumber(orderNumber)
                 .amount(shoppingCart.getAmount())
                 .address(request.getAddress())
@@ -80,9 +87,11 @@ public class PurchaseHistory extends CommonField {
                 .receiverName(request.getReceiverName())
                 .receiverPhone(request.getReceiverPhone())
                 .productTitle(product.getTitle())
+                .productMainImageUrl(product.getMainImageUrl())
                 .soldPricePerOne(product.getPrice())
                 .consumer(shoppingCart.getConsumer())
                 .product(product)
+                .paymentAt(paymentAt)
                 .build();
     }
 }

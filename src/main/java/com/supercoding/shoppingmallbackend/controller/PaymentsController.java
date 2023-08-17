@@ -192,7 +192,7 @@ public class PaymentsController {
 //            return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", List.of(data, data1, data2));
 //        }
 
-        return null;
+        return paymentService.getPurchasedInfo();
     }
 
     @GetMapping("/sold")
