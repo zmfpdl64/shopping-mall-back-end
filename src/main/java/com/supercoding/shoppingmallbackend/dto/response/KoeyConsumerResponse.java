@@ -15,7 +15,7 @@ public class KoeyConsumerResponse {
     public static KoeyConsumerResponse from(Consumer entity) {
         return KoeyConsumerResponse.builder()
                 .id(entity.getId())
-                .profileId(entity.getProfileIdx())
+                .profileId(entity.getProfile().getId())
                 .build();
     }
 }
