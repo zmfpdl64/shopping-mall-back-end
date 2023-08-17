@@ -8,7 +8,7 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.ProductErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
-import com.supercoding.shoppingmallbackend.dto.response.ProductInCartResponse;
+import com.supercoding.shoppingmallbackend.dto.response.ProductSimpleResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Genre;
@@ -42,7 +42,7 @@ public class ShoppingCartService {
         Product product = productRepository.findById(shoppingCartItemRequest.getProductId()).orElseThrow(
                 ()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT)
         );
-        ProductInCartResponse productResponse = ProductInCartResponse.from(product, getGenre(product.getGenreIdx()));
+        ProductSimpleResponse productResponse = ProductSimpleResponse.from(product, getGenre(product.getGenreIdx()));
         ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(consumerId, shoppingCartItemRequest.getProductId()).orElse(null);
 
         if (shoppingCartItem == null) {
@@ -70,13 +70,13 @@ public class ShoppingCartService {
         // 토큰에서 구매자 id 혹은 email 파싱
         Long consumerId = 1L;
 
-        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumerId);
+        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumerId);
 
         List<ShoppingCartItemResponse> data = shoppingCartList.stream()
                 .map(shoppingCart -> {
                     Product product = shoppingCart.getProduct();
                     Genre genre = getGenre(product.getGenreIdx());
-                    ProductInCartResponse productResponse = ProductInCartResponse.from(product, genre);
+                    ProductSimpleResponse productResponse = ProductSimpleResponse.from(product, genre);
                     return ShoppingCartItemResponse.from(shoppingCart, productResponse);
                 })
                 .collect(Collectors.toList());

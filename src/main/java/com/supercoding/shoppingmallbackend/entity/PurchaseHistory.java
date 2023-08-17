@@ -1,10 +1,13 @@
 package com.supercoding.shoppingmallbackend.entity;
 
+import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -20,9 +23,8 @@ public class PurchaseHistory extends CommonField {
     @Column(name = "idx", nullable = false)
     private Long id;
 
-    @Size(max = 22)
     @NotNull
-    @Column(name = "order_number", nullable = false, length = 22)
+    @Column(name = "order_number", columnDefinition = "char(11) not null unique")
     private String orderNumber;
 
     @NotNull
@@ -47,7 +49,7 @@ public class PurchaseHistory extends CommonField {
     @Size(max = 15)
     @NotNull
     @Column(name="phone", nullable = false, length = 15)
-    private String phone;
+    private String receiverPhone;
 
     @Size(max = 50)
     @NotNull
@@ -67,4 +69,20 @@ public class PurchaseHistory extends CommonField {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public static PurchaseHistory from(String orderNumber, ShoppingCart shoppingCart, PaymentRequest request) {
+        Product product = shoppingCart.getProduct();
+        return PurchaseHistory.builder()
+                .orderNumber(orderNumber)
+                .amount(shoppingCart.getAmount())
+                .address(request.getAddress())
+                .addressDetail(request.getAddressDetail())
+                .receiverName(request.getReceiverName())
+                .receiverPhone(request.getReceiverPhone())
+                .productTitle(product.getTitle())
+                .soldPricePerOne(product.getPrice())
+                .consumer(shoppingCart.getConsumer())
+                .product(product)
+                .build();
+    }
 }

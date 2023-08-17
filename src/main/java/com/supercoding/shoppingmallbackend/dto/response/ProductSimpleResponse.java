@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class ProductInCartResponse {
+public class ProductSimpleResponse {
     private Long id;
     private String title;
     private String mainImageUrl;
@@ -20,8 +20,8 @@ public class ProductInCartResponse {
     private Long sellerId;
     private String closingAt;
 
-    public static ProductInCartResponse from(Product entity, Genre genre) {
-        return ProductInCartResponse.builder()
+    public static ProductSimpleResponse from(Product entity, Genre genre) {
+        return ProductSimpleResponse.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .mainImageUrl(entity.getMainImageUrl())
