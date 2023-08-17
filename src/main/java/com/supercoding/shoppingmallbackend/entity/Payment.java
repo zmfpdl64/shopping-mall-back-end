@@ -97,8 +97,7 @@ public class Payment extends CommonField {
                 .consumer(shoppingCart.getConsumer())
                 .product(product)
                 .paidAt(paidAt)
-//                .seller(product.getSeller())
-                .seller(Seller.builder().build())  // 나중에 수정
+                .seller(product.getSeller())
                 .build();
     }
 }
