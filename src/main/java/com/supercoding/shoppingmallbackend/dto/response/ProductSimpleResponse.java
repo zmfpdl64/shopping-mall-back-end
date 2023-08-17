@@ -16,7 +16,21 @@ public class ProductSimpleResponse {
     private String mainImageUrl;
     private String genre;
     private Long price;
-    private Long quantityLeft;
+    private Long leftQuantity;
     private Long sellerId;
     private String closingAt;
+
+    public static ProductSimpleResponse from(Product product) {
+        return ProductSimpleResponse.builder()
+                .productId(product.getId())
+                .title(product.getTitle())
+                .mainImageUrl(product.getMainImageUrl())
+//                .genre(product.getGenre())
+                .genre("장르") // 나중에 수정
+                .price(product.getPrice())
+                .leftQuantity(product.getAmount())
+                .sellerId(product.getSellerIdx())
+                .closingAt(DateUtils.convertToString(product.getClosingAt()))
+                .build();
+    }
 }
