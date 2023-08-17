@@ -16,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaymentsController {
     private final PaymentService paymentService;
-    private final boolean isUsingDummyCode = true;    // 나중에 더미코드들 다 걷어냄
 
     @PostMapping()
     public CommonResponse<List<PaymentResponse>> processPayment(@RequestBody PaymentRequest paymentRequest) {
