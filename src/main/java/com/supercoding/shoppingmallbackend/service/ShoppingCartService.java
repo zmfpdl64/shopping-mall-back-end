@@ -72,7 +72,7 @@ public class ShoppingCartService {
         // 토큰에서 구매자 id 혹은 email 파싱
         Long consumerId = 1L;
 
-        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumerId);
+        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumerId);
 
         List<ShoppingCartItemResponse> data = shoppingCartList.stream()
                 .map(shoppingCart -> {
