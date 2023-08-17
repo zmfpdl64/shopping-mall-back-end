@@ -82,7 +82,7 @@ public class Payment extends CommonField {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public static Payment from(String orderNumber, ShoppingCart shoppingCart, PaymentRequest request, Timestamp paymentAt) {
+    public static Payment from(String orderNumber, ShoppingCart shoppingCart, PaymentRequest request, Timestamp paidAt) {
         Product product = shoppingCart.getProduct();
         return Payment.builder()
                 .orderNumber(orderNumber)
@@ -96,8 +96,9 @@ public class Payment extends CommonField {
                 .paidPrice(product.getPrice())
                 .consumer(shoppingCart.getConsumer())
                 .product(product)
-                .paidAt(paymentAt)
-                .seller(null)  // 나중에 수정
+                .paidAt(paidAt)
+//                .seller(product.getSeller())
+                .seller(Seller.builder().build())  // 나중에 수정
                 .build();
     }
 }
