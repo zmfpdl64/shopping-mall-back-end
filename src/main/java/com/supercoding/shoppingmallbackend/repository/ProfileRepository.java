@@ -1,5 +1,6 @@
 package com.supercoding.shoppingmallbackend.repository;
 
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import com.supercoding.shoppingmallbackend.entity.Seller;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     @Query("SELECT s from Seller s JOIN FETCH Profile p on p.id = s.profile_idx")
     Seller findByProfileId(Integer profileId);
+
+    @Query("SELECT s from Seller s JOIN FETCH Profile p on p.id = s.profile_idx")
+    Profile findByProfileId(Long profileId);
 }
