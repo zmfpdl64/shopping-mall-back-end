@@ -43,12 +43,10 @@ public class ShoppingCartService {
                 ()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT)
         );
         ProductInCartResponse productResponse = ProductInCartResponse.from(product, getGenre(product.getGenreIdx()));
-
-        // consuemrId, productId로 장바구니 조회
         ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(consumerId, shoppingCartItemRequest.getProductId()).orElse(null);
 
         if (shoppingCartItem == null) {
-            // 장바구니에 존재하지 않다면 새로 추가
+            // 장바구니에 존재하지 않다면
             ShoppingCart newData = ShoppingCart.builder()
                     .consumer(consumer)
                     .product(product)
@@ -61,7 +59,7 @@ public class ShoppingCartService {
             return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", createdData);
         }
 
-        // 장바구니에 이미 존재한다면 수량 변경
+        // 장바구니에 이미 존재한다면
         shoppingCartItem.setAmount(shoppingCartItemRequest.getAmount());
 
         ShoppingCartItemResponse modifiedData = ShoppingCartItemResponse.from(shoppingCartItem, productResponse);
@@ -72,8 +70,7 @@ public class ShoppingCartService {
         // 토큰에서 구매자 id 혹은 email 파싱
         Long consumerId = 1L;
 
-        // 구매자 id 혹은 email로 장바구니아이템들 리스트로 불러오기
-        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(1L);
+        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumerId);
 
         List<ShoppingCartItemResponse> data = shoppingCartList.stream()
                 .map(shoppingCart -> {
@@ -84,7 +81,6 @@ public class ShoppingCartService {
                 })
                 .collect(Collectors.toList());
 
-        // 불러온 리스트 반환하기
         return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", data);
     }
 
