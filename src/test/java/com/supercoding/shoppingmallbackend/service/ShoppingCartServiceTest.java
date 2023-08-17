@@ -1,20 +1,13 @@
 package com.supercoding.shoppingmallbackend.service;
 
 
-import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
-import com.supercoding.shoppingmallbackend.entity.Consumer;
-import com.supercoding.shoppingmallbackend.entity.Product;
 import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
-import com.supercoding.shoppingmallbackend.repository.KoeyProductRepository;
+import com.supercoding.shoppingmallbackend.repository.ProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ShoppingCartRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import java.util.Optional;
-
-import static org.mockito.Mockito.when;
 
 public class ShoppingCartServiceTest {
     @Mock
@@ -24,7 +17,7 @@ public class ShoppingCartServiceTest {
     private ConsumerRepository consumerRepository;
 
     @Mock
-    private KoeyProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ShoppingCartService shoppingCartService;
