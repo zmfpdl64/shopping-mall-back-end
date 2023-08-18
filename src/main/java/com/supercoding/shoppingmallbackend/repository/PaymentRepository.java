@@ -20,7 +20,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             "join fetch pd.genre g " +
             "where p.orderNumber=:orderNumber and p.isDeleted=false " +
             "order by p.paidAt desc")
-    Optional<List<Payment>> findAllByOrderNumber(String orderNumber);
+    List<Payment> findAllByOrderNumber(String orderNumber);
 
     @Query("select p from Payment p " +
             "join fetch p.consumer c " +
@@ -30,7 +30,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             "join fetch pd.genre g " +
             "where c.id=:consumerId and p.isDeleted=false " +
             "order by p.paidAt desc")
-    Optional<List<Payment>> findAllByConsumerId(Long consumerId);
+    List<Payment> findAllByConsumerId(Long consumerId);
 
     @Query("select p from Payment p " +
             "join fetch p.consumer c " +
@@ -40,5 +40,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             "join fetch pd.genre g " +
             "where s.id=:sellerId and p.isDeleted=false " +
             "order by p.paidAt desc")
-    Optional<List<Payment>> findAllBySellerId(Long sellerId);
+    List<Payment> findAllBySellerId(Long sellerId);
 }

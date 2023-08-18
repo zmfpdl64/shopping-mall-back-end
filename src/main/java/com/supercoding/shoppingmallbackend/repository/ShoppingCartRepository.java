@@ -19,7 +19,7 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long
             "join fetch p.seller s " +
             "where c.id=:consumerId and sc.isDeleted=false " +
             "order by sc.createdAt desc")
-    Optional<List<ShoppingCart>> findAllByConsumerId(long consumerId);
+    List<ShoppingCart> findAllByConsumerId(long consumerId);
 
     @Query("select sc from ShoppingCart sc " +
             "join fetch sc.consumer c " +
