@@ -2,15 +2,22 @@ package com.supercoding.shoppingmallbackend.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCode;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@ApiModel("공통응답 폼")
 public class CommonResponse<T> {
+    @ApiModelProperty(value = "응답 성공 시 true, 실패 시 false", required = true, example = "true")
     private final boolean result;
+    @ApiModelProperty(value = "Http 상태 코드", required = true, example = "200")
     private final Integer status;
+    @ApiModelProperty(value = "응답 메세지", required = true, example = "요청이 성공적으로 처리되었습니다.")
     private final String message;
 
+    @ApiModelProperty(value = "응답 데이터", required = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T data;
 
