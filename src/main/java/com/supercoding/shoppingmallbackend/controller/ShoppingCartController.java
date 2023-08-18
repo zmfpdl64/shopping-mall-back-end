@@ -24,41 +24,18 @@ public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
 
-    @ApiOperation(
-            value = "장바구니에 상품 세팅(추가 및 수량 변경)",
-            notes = "장바구니에 상품을 추가하거나, 상품의 수량을 변경합니다."
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = HttpHeaders.AUTHORIZATION,
-                    value = "Bearer [JWT Token]",
-                    required = true,
-                    paramType = "header"
-            )
-    })
+    @ApiOperation(value = "장바구니에 상품 세팅(추가 및 수량 변경)", notes = "장바구니에 상품을 추가하거나, 상품의 수량을 변경합니다.")
+    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @PostMapping()
     public CommonResponse<ShoppingCartItemResponse> setProduct(
             @RequestBody
-            @ApiParam(
-                    required = true,
-                    value = "어떤 상품을 얼마나 담았는지 알려줄 객체"
-            )
+            @ApiParam(required = true, value = "어떤 상품을 얼마나 담았는지 알려줄 객체")
             ShoppingCartItemRequest shoppingCartItemRequest) {
         return shoppingCartService.setProduct(shoppingCartItemRequest);
     };
 
-    @ApiOperation(
-            value = "장바구니 전체 조회",
-            notes = "장바구니를 전체 조회합니다."
-    )
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = HttpHeaders.AUTHORIZATION,
-                    value = "Bearer [JWT Token]",
-                    required = true,
-                    paramType = "header"
-            )
-    })
+    @ApiOperation(value = "장바구니 전체 조회", notes = "장바구니를 전체 조회합니다.")
+    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping()
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart(){
         return shoppingCartService.getShoppingCart();
