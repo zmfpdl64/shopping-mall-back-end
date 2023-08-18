@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("api/v1/shoppingcart")
 @RequiredArgsConstructor
 @Api(
-        tags = {"장바구니", "상품 추가", "상품 수량 변경", "장바구니 조회"},
+        tags = "장바구니 API",
         authorizations = @Authorization(value = "Bearer [JWT Token]")
 )
 public class ShoppingCartController {
@@ -29,8 +29,7 @@ public class ShoppingCartController {
 
     @ApiOperation(
             value = "장바구니에 상품 세팅(추가 및 수량 변경)",
-            notes = "장바구니에 상품을 추가하거나, 상품의 수량을 변경합니다.",
-            tags = {"상품 추가", "상품 수량 변경"}
+            notes = "장바구니에 상품을 추가하거나, 상품의 수량을 변경합니다."
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
@@ -45,7 +44,7 @@ public class ShoppingCartController {
             @RequestBody
             @ApiParam(
                     required = true,
-                    value = "어떤 상품을 얼마나 담았는지 정보를 담은 객체입니다."
+                    value = "어떤 상품을 얼마나 담았는지 알려줄 객체"
             )
             ShoppingCartItemRequest shoppingCartItemRequest) {
         return shoppingCartService.setProduct(shoppingCartItemRequest);
@@ -53,8 +52,7 @@ public class ShoppingCartController {
 
     @ApiOperation(
             value = "장바구니 전체 조회",
-            notes = "장바구니를 전체 조회합니다.",
-            tags = {"장바구니 조회"}
+            notes = "장바구니를 전체 조회합니다."
     )
     @ApiImplicitParams({
             @ApiImplicitParam(
