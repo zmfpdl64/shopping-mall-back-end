@@ -27,7 +27,6 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long
             "join fetch c.profile pf " +
             "join fetch p.genre g " +
             "join fetch p.seller s " +
-            "where c.id=:consumerId and p.id=:productId and sc.isDeleted=false " +
-            "limit 1")
+            "where c.id=:consumerId and p.id=:productId and sc.isDeleted=false ")
     Optional<ShoppingCart> findByConsumerIdProductId(Long consumerId, Long productId);
 }

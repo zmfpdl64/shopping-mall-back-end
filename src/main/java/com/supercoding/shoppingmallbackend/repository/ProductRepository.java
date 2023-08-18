@@ -13,7 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p " +
             "join fetch p.genre " +
             "join fetch p.seller " +
-            "where p.id=:productId and p.isDeleted=false " +
-            "limit 1")
+            "where p.id=:productId and p.isDeleted=false ")
     Optional<Product> findProductById(Long productId);
 }
