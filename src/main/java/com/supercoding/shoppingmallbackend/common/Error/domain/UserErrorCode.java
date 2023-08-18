@@ -1,8 +1,9 @@
 package com.supercoding.shoppingmallbackend.common.Error.domain;
 
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCode;
+import org.springframework.http.HttpStatus;
 
-public enum UserErrorCode {
+public enum UserErrorCode{
     // 유저
     HANDLE_ACCESS_DENIED(403, "로그인이 필요합니다."),
     INVALID_SIGNUP_FILED(400, "가입 정보를 다시 확인 해주세요."),

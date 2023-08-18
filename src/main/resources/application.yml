@@ -1,4 +1,23 @@
 spring:
+  jpa:
+    generate-ddl: 'false'
+    database: mysql
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        use_sql_comments: true
+        format_sql: true
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+  thymeleaf:
+    cache: false
+  datasource:
+    url: ENC(Rtxn1UbIfkJRUNIaJluNDrE+iNLvVPkCNhXNkXaPW0BHdlKFv62IQgtJMetDFuxkakqZpcMRqtjGnyH+UL4gvUVMAx3OTBWv7GdwaMUl6nh++P2/lHqGJVP0G322JN8x)
+    password: ENC(CZjVz03fSWR42RG0x7i/tZLRfEMBMGka)
+    username: ENC(5GLG4AMKGzqc+yc1smgXAA==)
+    driver-class-name: com.mysql.cj.jdbc.Driver
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -7,7 +26,23 @@ spring:
       enabled: true
 logging:
   config: classpath:logback.xml
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
 #jasypt
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
+cloud:
+  aws:
+    s3:
+      bucket: ENC(FTGzO3i7iTDxLEDdQJlkfNrWwAxVv/By)
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ENC(N9j5dKB5zyxN8P1GNOZLF0O3knZ5csZRLOv2p2vWnzs=)
+      secretKey: ENC(w4Uf+DmpExPTKIvIajXPLEZ7lWovWvyVn9gh6yHc5hE/EERKzXfeO7Iz6ip7vXzm7JlA/MsYlME=)
+
+secret-key-source: ${SECRET_KEY_SOURCE}

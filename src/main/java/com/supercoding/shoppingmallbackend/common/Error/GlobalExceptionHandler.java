@@ -10,17 +10,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public CommonResponse<Object> handleException(Exception e) {
-        log.error(e.getMessage(), 500);
-        return ApiUtils.fail(500, e.getMessage());
-    }
+
 
     @ExceptionHandler(CustomException.class)
-    public CommonResponse<Object> handleCustomException(CustomException ex) {
+    public CommonResponse<?> handleCustomException(CustomException ex) {
         ErrorCode errorCode = ex.getErrorCode();
         log.error("\u001B[31mcode: "+errorCode.getStatus()+"\u001B[0m");
         log.error("\u001B[31mmessage: "+ errorCode.getMessage()+"\u001B[0m");
-        return ApiUtils.fail(errorCode.getStatus(), errorCode.getMessage());
+        return CommonResponse.fail(ex.getErrorCode());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public CommonResponse<?> handleException(Exception e) {
+        log.error(e.getMessage(), 500);
+        return CommonResponse.fail(e);
     }
 }
