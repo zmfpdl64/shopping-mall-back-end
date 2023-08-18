@@ -1,15 +1,12 @@
 package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
-import com.supercoding.shoppingmallbackend.common.Error.CustomException;
-import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
+import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartIdSetRepuest;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
 import com.supercoding.shoppingmallbackend.service.ShoppingCartService;
 import io.swagger.annotations.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -46,5 +43,15 @@ public class ShoppingCartController {
     @DeleteMapping()
     public CommonResponse<ShoppingCartItemResponse> deleteShoppingCart() {
         return shoppingCartService.softDeleteShoppingCart();
+    }
+
+    @ApiOperation(value = "장바구니 일부 삭제", notes = "장바구니에 담긴 지정된 상품을 제거합니다.")
+    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
+    @DeleteMapping("/selected")
+    public CommonResponse<ShoppingCartItemResponse> deleteShoppingCart(@RequestBody ShoppingCartIdSetRepuest shoppingCartIdSetRepuest) {
+        return shoppingCartService.softDeleteShoppingCartByIds(shoppingCartIdSetRepuest.getShoppingCartIdSet());
+
+//        shoppingCartIdSetRepuest.getShoppingCartIdList().forEach(System.out::println);
+//        return ApiUtils.success("성공", null);
     }
 }

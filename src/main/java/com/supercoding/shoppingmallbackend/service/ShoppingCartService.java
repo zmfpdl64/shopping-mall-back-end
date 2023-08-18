@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -100,5 +101,19 @@ public class ShoppingCartService {
         });
 
         return ApiUtils.success("장바구니의 모든 상품을 성공적으로 삭제했습니다.", null);
+    }
+
+    @Transactional
+    public CommonResponse<ShoppingCartItemResponse> softDeleteShoppingCartByIds(Set<Long> shoppingCartIdSet) {
+        Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
+        Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+
+        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumer.getId());
+        shoppingCartList.forEach(shoppingCart -> {
+            if (shoppingCartIdSet.contains(shoppingCart.getId())) shoppingCart.setIsDeleted(true);
+        });
+
+        return ApiUtils.success("장바구니에서 선택한 상품들을 성공적으로 삭제했습니다.", null);
     }
 }
