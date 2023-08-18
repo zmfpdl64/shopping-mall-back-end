@@ -13,6 +13,7 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long
 
     @Query("select sc from ShoppingCart sc " +
             "join fetch sc.consumer c " +
+            "join fetch sc.product p " +
             "where c.id=:consumerId and sc.isDeleted=false " +
             "order by sc.createdAt desc")
     List<ShoppingCart> findAllByConsumerId(long consumerId);
