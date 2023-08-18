@@ -8,6 +8,7 @@ on:
 
 env:
   S3_BUCKET_NAME: 'super-board'
+  SECRET_KEY_SOURCE: ${{ secrets.SECRET_KEY_SOURCE }}
 
 jobs:
   build:
