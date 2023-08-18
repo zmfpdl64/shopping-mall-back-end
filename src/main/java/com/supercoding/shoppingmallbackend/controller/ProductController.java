@@ -42,7 +42,7 @@ public class ProductController {
     }
 
     @Operation(summary = "상품 조회", description = "상품 식별값을 입력하여 단일의 product 레코드를 조회합니다.")
-    @PostMapping(value = "/{product_idx}")
+    @GetMapping(value = "/{product_idx}")
     public CommonResponse<Object> getProduct(@PathVariable("product_idx") Long productId) {
 
         ProductDetailResponse productDetailResponse = productService.getProductByProductId(productId);
