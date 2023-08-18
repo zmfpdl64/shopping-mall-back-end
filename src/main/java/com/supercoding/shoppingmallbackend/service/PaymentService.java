@@ -132,8 +132,8 @@ public class PaymentService {
     }
 
     public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(int page, int size) {
-//        Long profileId = AuthHolder.getUserIdx();
-        Long profileId = 40L;
+        Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         Slice<Payment> slice = paymentRepository.findAllByConsumerIdWithPagination(consumer.getId(), PageRequest.of(page, size));
@@ -147,8 +147,8 @@ public class PaymentService {
     }
 
     public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistoryWithPagination(int page, int size) {
-//        Long profileId = AuthHolder.getUserIdx();
-        Long profileId = 40L;
+        Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
         Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         Slice<Payment> slice = paymentRepository.findAllBySellerIdWithPagination(seller.getId(), PageRequest.of(page, size));
