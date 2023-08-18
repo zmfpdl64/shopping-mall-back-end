@@ -51,13 +51,13 @@ public class ShoppingCartController {
 
     @ApiOperation(value = "장바구니 전체 삭제", notes = "장바구니에 담긴 모든 상품을 제거합니다.")
     @DeleteMapping()
-    public CommonResponse<ShoppingCartItemResponse> deleteShoppingCart() {
+    public CommonResponse<List<ShoppingCartItemResponse>> deleteShoppingCart() {
         return shoppingCartService.softDeleteShoppingCart();
     }
 
     @ApiOperation(value = "장바구니 일부 삭제", notes = "장바구니에 담긴 지정된 상품을 제거합니다.")
     @DeleteMapping("/selected")
-    public CommonResponse<Object> deleteShoppingCart(
+    public CommonResponse<List<ShoppingCartItemResponse>> deleteShoppingCart(
             @RequestBody @ApiParam(required = true, value = "삭제할 장바구니 id들을 알려줄 객체") ShoppingCartIdSetRepuest shoppingCartIdSetRepuest) {
         return shoppingCartService.softDeleteShoppingCartByIds(shoppingCartIdSetRepuest.getShoppingCartIdSet());
     }

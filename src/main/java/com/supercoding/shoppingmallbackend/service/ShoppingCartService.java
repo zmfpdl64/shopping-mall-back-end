@@ -90,7 +90,7 @@ public class ShoppingCartService {
     }
 
     @Transactional
-    public CommonResponse<ShoppingCartItemResponse> softDeleteShoppingCart() {
+    public CommonResponse<List<ShoppingCartItemResponse>> softDeleteShoppingCart() {
         Long profileId = AuthHolder.getUserIdx();
 //        Long profileId = 40L;
         Consumer consumer = getConsumerByProfileId(profileId);
@@ -100,11 +100,11 @@ public class ShoppingCartService {
             shoppingCart.setIsDeleted(true);
         });
 
-        return ApiUtils.success("장바구니의 모든 상품을 성공적으로 삭제했습니다.", null);
+        return ApiUtils.success("장바구니의 모든 상품을 성공적으로 삭제했습니다.", new ArrayList<>());
     }
 
     @Transactional
-    public CommonResponse<Object> softDeleteShoppingCartByIds(Set<Long> shoppingCartIdSet) {
+    public CommonResponse<List<ShoppingCartItemResponse>> softDeleteShoppingCartByIds(Set<Long> shoppingCartIdSet) {
         Long profileId = AuthHolder.getUserIdx();
 //        Long profileId = 40L;
         Consumer consumer = getConsumerByProfileId(profileId);
@@ -114,7 +114,7 @@ public class ShoppingCartService {
             if (shoppingCartIdSet.contains(shoppingCart.getId())) shoppingCart.setIsDeleted(true);
         });
 
-        return ApiUtils.success("장바구니에서 선택한 상품들을 성공적으로 삭제했습니다.", null);
+        return ApiUtils.success("장바구니에서 선택한 상품들을 성공적으로 삭제했습니다.", new ArrayList<>());
     }
 
     public CommonResponse<PaginationResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(int page, int size) {
