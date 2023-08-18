@@ -50,8 +50,5 @@ public class ShoppingCartController {
     @DeleteMapping("/selected")
     public CommonResponse<ShoppingCartItemResponse> deleteShoppingCart(@RequestBody ShoppingCartIdSetRepuest shoppingCartIdSetRepuest) {
         return shoppingCartService.softDeleteShoppingCartByIds(shoppingCartIdSetRepuest.getShoppingCartIdSet());
-
-//        shoppingCartIdSetRepuest.getShoppingCartIdList().forEach(System.out::println);
-//        return ApiUtils.success("성공", null);
     }
 }
