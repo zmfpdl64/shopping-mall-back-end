@@ -34,8 +34,8 @@ public class ShoppingCartService {
 
     @Transactional
     public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
-//        Long profileId = AuthHolder.getUserIdx();
-        Long profileId = 40L;
+        Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
         Long productId = shoppingCartItemRequest.getProductId();
         Long addedQuantity = shoppingCartItemRequest.getAmount();
 
@@ -72,8 +72,8 @@ public class ShoppingCartService {
     }
 
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart() {
-//        Long profileId = AuthHolder.getUserIdx();
-        Long profileId = 40L;
+        Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
 
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(
                 ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
