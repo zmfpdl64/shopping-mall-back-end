@@ -26,6 +26,12 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+    - name: Set Yaml
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: ./src/main/resources/application-prod.yml 
+      env:
+        secret-key-source: ${{ secrets.SECRET_KEY_SOURCE }} 
     - name: Build with Gradle
       run: |
         chmod +x gradlew
