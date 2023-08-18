@@ -27,21 +27,18 @@ public class PaymentsController {
     private final PaymentService paymentService;
 
     @ApiOperation(value = "결제하기", notes = "현재 장바구니에 담긴 모든 상품에 대해 결제를 진행합니다.")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @PostMapping()
     public CommonResponse<List<PaymentResponse>> processPayment(@RequestBody @ApiParam(name = "결제 요청 객체", value = "배송 받는 사람의 주소, 이름 ,연락처를 알려줄 객체", required = true) PaymentRequest paymentRequest) {
         return paymentService.processPayment(paymentRequest);
     }
 
     @ApiOperation(value = "구매내역 가져오기", notes = "구매자의 구매내역을 가져옵니다.")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping("/purchased")
     public CommonResponse<List<PurchaseResponse>> getPurchaseHistory() {
         return paymentService.getPurchaseHistory();
     }
 
     @ApiOperation(value = "구매내역 가져오기 (pagination)", notes = "구매자의 구매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping("/purchased/query")
     public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistory(@RequestParam String page, @RequestParam String size) {
         try {
@@ -52,14 +49,12 @@ public class PaymentsController {
     }
 
     @ApiOperation(value = "판매내역 가져오기", notes = "판매자의 판매내역을 가져옵니다.")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping("/sold")
     public CommonResponse<List<SaleResponse>> getSaleHistory() {
         return paymentService.getSaleHistory();
     }
 
     @ApiOperation(value = "판매내역 가져오기 (pagination)", notes = "판매자의 판매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping("/sold/query")
     public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistory(@RequestParam String page, @RequestParam String size) {
         try {
