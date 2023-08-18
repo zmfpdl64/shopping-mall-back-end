@@ -2,9 +2,7 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
-import com.supercoding.shoppingmallbackend.common.Error.domain.ConsumerErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.GenreErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.ProductErrorCode;
+import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
 import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
@@ -22,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +35,7 @@ public class ShoppingCartService {
     @Transactional
     public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
         Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
         Long productId = shoppingCartItemRequest.getProductId();
         Long addedQuantity = shoppingCartItemRequest.getAmount();
 
@@ -56,6 +56,7 @@ public class ShoppingCartService {
                     .product(product)
                     .amount(addedQuantity)
                     .build();
+            newData.setIsDeleted(false);
 
             JpaUtils.managedSave(shoppingCartRepository, newData);
 
@@ -72,6 +73,7 @@ public class ShoppingCartService {
 
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart() {
         Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
 
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(
                 ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
