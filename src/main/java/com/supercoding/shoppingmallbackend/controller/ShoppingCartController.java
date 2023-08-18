@@ -40,4 +40,11 @@ public class ShoppingCartController {
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart(){
         return shoppingCartService.getShoppingCart();
     }
+
+    @ApiOperation(value = "장바구니 전체 삭제", notes = "장바구니에 담긴 모든 상품을 제거합니다.")
+    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
+    @DeleteMapping()
+    public CommonResponse<ShoppingCartItemResponse> deleteShoppingCart() {
+        return shoppingCartService.softDeleteShoppingCart();
+    }
 }
