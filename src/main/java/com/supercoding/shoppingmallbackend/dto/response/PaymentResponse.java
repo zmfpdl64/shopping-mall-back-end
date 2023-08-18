@@ -19,7 +19,7 @@ public class PaymentResponse {
     private ProductSimpleResponse product;
     private Long paidQuantity;
     private Long paidPrice;
-    private Timestamp paidAt;
+    private String paidAt;
     private String receivedAddress;
     private String receivedAddressDetail;
     private String recipientName;
@@ -32,7 +32,7 @@ public class PaymentResponse {
                 .product(ProductSimpleResponse.from(payment.getProduct()))
                 .paidQuantity(payment.getPaidQuantity())
                 .paidPrice(payment.getPaidPrice())
-                .paidAt(payment.getPaidAt())
+                .paidAt(DateUtils.convertToString(payment.getPaidAt()))
                 .receivedAddress(payment.getReceivedAddress())
                 .receivedAddressDetail(payment.getReceivedAddressDetail())
                 .recipientName(payment.getRecipientName())
