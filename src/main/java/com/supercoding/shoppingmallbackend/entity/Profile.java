@@ -1,6 +1,10 @@
 package com.supercoding.shoppingmallbackend.entity;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -8,6 +12,10 @@ import javax.validation.constraints.Size;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicInsert
+@DynamicUpdate
+@SQLDelete(sql = "UPDATE Profiles as p SET p.is_deleted = true WHERE idx = ?")
+@Where(clause = "is_deleted = false")
 @Builder
 @Getter
 @Setter
