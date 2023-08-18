@@ -10,15 +10,15 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-@ApiModel(description = "쇼핑카트에 담기는 일련의 정보입니다. 누가 무엇을 얼마나 담았는지에 대한 정보를 의미합니다.")
+@ApiModel("쇼핑카트 아이템")
 public class ShoppingCartItemResponse {
-    @ApiModelProperty(dataType = "Long", value = "구매자의 id", example = "1")
+    @ApiModelProperty(required = true, value = "구매자의 id", example = "1")
     private Long id;
-    @ApiModelProperty(value = "상품을 담은 구매자")
+    @ApiModelProperty(required = true, value = "상품을 담은 구매자")
     private ConsumerResponse consumer;
-    @ApiModelProperty(value = "장바구니에 담긴 상품")
+    @ApiModelProperty( required = true, value = "장바구니에 담긴 상품")
     private ProductSimpleResponse product;
-    @ApiModelProperty(dataType = "Long", value = "장바구니에 담긴 수량", example = "1")
+    @ApiModelProperty(required = true, value = "장바구니에 담긴 수량", example = "1")
     private Long quantity;
 
     public static ShoppingCartItemResponse from(ShoppingCart shoppingCart) {
@@ -27,77 +27,6 @@ public class ShoppingCartItemResponse {
                 .consumer(ConsumerResponse.from(shoppingCart.getConsumer()))
                 .product(ProductSimpleResponse.from(shoppingCart.getProduct()))
                 .quantity(shoppingCart.getAmount())
-                .build();
-    }
-
-    /*
-     * ================================================================================
-     * 나중에 삭제될 메서드들
-     * ================================================================================
-     */
-
-    public static ShoppingCartItemResponse getDummy1() {
-        return ShoppingCartItemResponse.builder()
-                .id(1L)
-                .consumer(ConsumerResponse.builder()
-                        .id(1L)
-                        .profileId(1L)
-                        .build()
-                )
-                .product(ProductSimpleResponse.builder()
-                        .id(1L)
-                        .title("쉐입 퍼즐: 콜로세움 600 PCS")
-                        .mainImageUrl("https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1688696198_a.jpg")
-                        .leftQuantity(99L)
-                        .genre("퍼즐")
-                        .sellerId(1L)
-                        .price(17600L)
-                        .build()
-                )
-                .quantity(2L)
-                .build();
-    }
-
-    public static ShoppingCartItemResponse getDummy2() {
-        return ShoppingCartItemResponse.builder()
-                .id(2L)
-                .consumer(ConsumerResponse.builder()
-                        .id(1L)
-                        .profileId(1L)
-                        .build()
-                )
-                .product(ProductSimpleResponse.builder()
-                        .id(2L)
-                        .title("빨강머리앤 500 두손을 마주잡고")
-                        .mainImageUrl("https://boardm.co.kr/upload/product/img2/img_largeupfilenm_1684916549_0.jpg")
-                        .leftQuantity(99L)
-                        .genre("퍼즐")
-                        .sellerId(2L)
-                        .price(12000L)
-                        .build()
-                )
-                .quantity(2L)
-                .build();
-    }
-    public static ShoppingCartItemResponse getDummy3() {
-        return ShoppingCartItemResponse.builder()
-                .id(3L)
-                .consumer(ConsumerResponse.builder()
-                        .id(1L)
-                        .profileId(1L)
-                        .build()
-                )
-                .product(ProductSimpleResponse.builder()
-                        .id(3L)
-                        .title("클루")
-                        .mainImageUrl("https://thumbnail10.coupangcdn.com/thumbnails/remote/230x230ex/image/product/image/vendoritem/2018/08/23/3007143242/8be8c2f6-5880-4a23-9a0b-260e503a4a1b.jpg")
-                        .leftQuantity(99L)
-                        .genre("추리")
-                        .sellerId(3L)
-                        .price(23500L)
-                        .build()
-                )
-                .quantity(3L)
                 .build();
     }
 }

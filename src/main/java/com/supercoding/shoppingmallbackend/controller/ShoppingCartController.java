@@ -19,10 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/shoppingcart")
 @RequiredArgsConstructor
-@Api(
-        tags = "장바구니 API",
-        authorizations = @Authorization(value = "Bearer [JWT Token]")
-)
+@Api(tags = "장바구니 API")
 public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
