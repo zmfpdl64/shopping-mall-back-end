@@ -1,6 +1,7 @@
 package com.supercoding.shoppingmallbackend.dto.response;
 
 import com.supercoding.shoppingmallbackend.entity.ShoppingCart;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
+@ApiModel(description = "쇼핑카트에 담기는 일련의 정보입니다. 누가 무엇을 얼마나 담았는지에 대한 정보를 의미합니다.")
 public class ShoppingCartItemResponse {
     @ApiModelProperty(dataType = "Long", value = "구매자의 id", example = "1")
     private Long id;
