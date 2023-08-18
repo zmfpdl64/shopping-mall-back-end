@@ -118,8 +118,8 @@ public class ShoppingCartService {
     }
 
     public CommonResponse<PaginationResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(int page, int size) {
-//        Long profileId = AuthHolder.getUserIdx();
-        Long profileId = 40L;
+        Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
         Consumer consumer = getConsumerByProfileId(profileId);
 
         Slice<ShoppingCart> shoppingCarts = shoppingCartRepository.findAllByConsumerIdWithPagination(consumer.getId(), PageRequest.of(page, size));

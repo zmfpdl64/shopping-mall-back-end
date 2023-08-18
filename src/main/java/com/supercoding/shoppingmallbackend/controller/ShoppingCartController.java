@@ -41,7 +41,7 @@ public class ShoppingCartController {
         return shoppingCartService.getShoppingCart();
     }
 
-    @ApiOperation(value = "장바구니 전체 조회 (pagination)", notes = "장바구니를 전체 조회합니다. 근데 pagination을 곁들인...")
+    @ApiOperation(value = "장바구니 전체 조회 (pagination)", notes = "장바구니를 전체 조회합니다. 그런데 이제 이 pagination을 곁들인...")
     @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping("/query")
     public CommonResponse<PaginationResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(@RequestParam String page, @RequestParam String size){

@@ -7,6 +7,7 @@ import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
 import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
 import com.supercoding.shoppingmallbackend.dto.response.PaymentResponse;
 import com.supercoding.shoppingmallbackend.dto.response.PurchaseResponse;
 import com.supercoding.shoppingmallbackend.dto.response.SaleResponse;
@@ -15,6 +16,8 @@ import com.supercoding.shoppingmallbackend.repository.*;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,5 +129,35 @@ public class PaymentService {
                 .collect(Collectors.toList());
 
         return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", saleResponses);
+    }
+
+    public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(int page, int size) {
+//        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = 40L;
+        Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
+
+        Slice<Payment> slice = paymentRepository.findAllByConsumerIdWithPagination(consumer.getId(), PageRequest.of(page, size));
+        List<PurchaseResponse> purchaseResponses = slice.getContent().stream()
+                .map(PurchaseResponse::from)
+                .collect(Collectors.toList());
+
+        PaginationResponse<PurchaseResponse> paginationResponse = new PaginationResponse<>(slice.hasNext(), slice.hasPrevious(), purchaseResponses);
+
+        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", paginationResponse);
+    }
+
+    public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistoryWithPagination(int page, int size) {
+//        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = 40L;
+        Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
+
+        Slice<Payment> slice = paymentRepository.findAllBySellerIdWithPagination(seller.getId(), PageRequest.of(page, size));
+        List<SaleResponse> saleResponses = slice.getContent().stream()
+                .map(SaleResponse::from)
+                .collect(Collectors.toList());
+
+        PaginationResponse<SaleResponse> paginationResponse = new PaginationResponse<>(slice.hasNext(), slice.hasPrevious(), saleResponses);
+
+        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", paginationResponse);
     }
 }

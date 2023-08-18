@@ -1,7 +1,10 @@
 package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
+import com.supercoding.shoppingmallbackend.common.Error.CustomException;
+import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
 import com.supercoding.shoppingmallbackend.dto.response.PaymentResponse;
 import com.supercoding.shoppingmallbackend.dto.response.PurchaseResponse;
 import com.supercoding.shoppingmallbackend.dto.response.SaleResponse;
@@ -30,17 +33,39 @@ public class PaymentsController {
         return paymentService.processPayment(paymentRequest);
     }
 
-    @ApiOperation(value = "구매내역 가져오기", notes = "구매자의 구매내역을 가져옵니다.", response = PurchaseResponse.class, responseContainer = "List")
+    @ApiOperation(value = "구매내역 가져오기", notes = "구매자의 구매내역을 가져옵니다.")
     @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping("/purchased")
     public CommonResponse<List<PurchaseResponse>> getPurchaseHistory() {
         return paymentService.getPurchaseHistory();
     }
 
-    @ApiOperation(value = "판매내역 가져오기", notes = "판매자의 판매내역을 가져옵니다.", response = SaleResponse.class, responseContainer = "List")
+    @ApiOperation(value = "구매내역 가져오기 (pagination)", notes = "구매자의 구매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
+    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
+    @GetMapping("/purchased/query")
+    public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistory(@RequestParam String page, @RequestParam String size) {
+        try {
+            return paymentService.getPurchaseHistoryWithPagination(Integer.parseInt(page), Integer.parseInt(size));
+        } catch(NumberFormatException e) {
+            throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAMETER);
+        }
+    }
+
+    @ApiOperation(value = "판매내역 가져오기", notes = "판매자의 판매내역을 가져옵니다.")
     @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping("/sold")
     public CommonResponse<List<SaleResponse>> getSaleHistory() {
         return paymentService.getSaleHistory();
+    }
+
+    @ApiOperation(value = "판매내역 가져오기 (pagination)", notes = "판매자의 판매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
+    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
+    @GetMapping("/sold/query")
+    public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistory(@RequestParam String page, @RequestParam String size) {
+        try {
+            return paymentService.getSaleHistoryWithPagination(Integer.parseInt(page), Integer.parseInt((size)));
+        } catch (NumberFormatException e) {
+            throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAMETER);
+        }
     }
 }
