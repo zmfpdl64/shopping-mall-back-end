@@ -14,12 +14,12 @@ public class ShoppingCartItemResponse {
     private ProductSimpleResponse product;
     private Long quantity;
 
-    public static ShoppingCartItemResponse from(ShoppingCart entity, ProductSimpleResponse productResponse) {
+    public static ShoppingCartItemResponse from(ShoppingCart shoppingCart) {
         return ShoppingCartItemResponse.builder()
-                .id(entity.getId())
-                .consumer(ConsumerResponse.from(entity.getConsumer()))
-                .product(productResponse)
-                .quantity(entity.getAmount())
+                .id(shoppingCart.getId())
+                .consumer(ConsumerResponse.from(shoppingCart.getConsumer()))
+                .product(ProductSimpleResponse.from(shoppingCart.getProduct()))
+                .quantity(shoppingCart.getAmount())
                 .build();
     }
 
