@@ -1,6 +1,7 @@
 package com.supercoding.shoppingmallbackend.dto.response;
 
 import com.supercoding.shoppingmallbackend.entity.ShoppingCart;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 @Getter
@@ -9,9 +10,13 @@ import lombok.*;
 @Builder
 @ToString
 public class ShoppingCartItemResponse {
+    @ApiModelProperty(dataType = "Long", value = "구매자의 id", example = "1")
     private Long id;
+    @ApiModelProperty(value = "상품을 담은 구매자")
     private ConsumerResponse consumer;
+    @ApiModelProperty(value = "장바구니에 담긴 상품")
     private ProductSimpleResponse product;
+    @ApiModelProperty(dataType = "Long", value = "장바구니에 담긴 수량", example = "1")
     private Long quantity;
 
     public static ShoppingCartItemResponse from(ShoppingCart shoppingCart) {
