@@ -79,7 +79,7 @@ public class ShoppingCartService {
                 ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
         );
 
-        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumer.getId()).orElseGet(ArrayList::new);
+        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumer.getId());
 
         List<ShoppingCartItemResponse> shoppingCartItemResponses = shoppingCartList.stream()
                 .map(ShoppingCartItemResponse::from)
