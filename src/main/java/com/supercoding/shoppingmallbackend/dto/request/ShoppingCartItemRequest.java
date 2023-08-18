@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-@ApiModel(description = "쇼핑카트에 상품을 저장하기 위해 필요한 정보들을 담은 객체입니다.")
+@ApiModel(value = "쇼핑카트 아이템 객체", description = "어떤 상품을 얼마나 담을지 알려줄 객체")
 public class ShoppingCartItemRequest {
     @ApiModelProperty(required = true, value = "장바구니에 담을 상품의 id", dataType = "Long", example = "1")
     private Long productId;
