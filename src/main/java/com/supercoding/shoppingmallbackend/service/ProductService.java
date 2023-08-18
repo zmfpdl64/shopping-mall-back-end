@@ -4,17 +4,22 @@ package com.supercoding.shoppingmallbackend.service;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.FilePath;
+import com.supercoding.shoppingmallbackend.dto.request.ProductListRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ProductRequestBase;
 import com.supercoding.shoppingmallbackend.dto.response.ProductDetailResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ProductImageResponse;
+import com.supercoding.shoppingmallbackend.dto.response.ProductListResponse;
 import com.supercoding.shoppingmallbackend.entity.*;
 import com.supercoding.shoppingmallbackend.repository.*;
 import lombok.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,7 +54,10 @@ public class ProductService {
     }
 
     @Transactional
-    public void createProductItem(ProductRequestBase productRequestBase, MultipartFile thumbFile, List<MultipartFile> imgFiles, Long profileIdx) {
+    public void createProductItem(ProductRequestBase productRequestBase,
+                                  MultipartFile thumbFile,
+                                  List<MultipartFile> imgFiles,
+                                  Long profileIdx) {
         Long validProfileIdx = Optional.ofNullable(profileIdx)
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
 
@@ -93,7 +101,8 @@ public class ProductService {
     private void uploadThumbNailImage(MultipartFile thumbNailFile, Product product) {
         try {
             if (thumbNailFile != null) {
-                String url = awsS3Service.upload(thumbNailFile, FilePath.PRODUCT_THUMB_NAIL_DIR.getPath() + product.getId());
+                String url = awsS3Service.upload(thumbNailFile,
+                        FilePath.PRODUCT_THUMB_NAIL_DIR.getPath() + product.getId());
                 product.setMainImageUrl(url);
             }
         } catch (IOException e) {
@@ -105,7 +114,8 @@ public class ProductService {
         return imgList.stream().map(multipartFile -> {
             String uniqueIdentifier = UUID.randomUUID().toString();
             try {
-                String url = awsS3Service.upload(multipartFile, FilePath.PRODUCT_CONTENT_DIR.getPath() + product.getId() + uniqueIdentifier);
+                String url = awsS3Service.upload(multipartFile,
+                        FilePath.PRODUCT_CONTENT_DIR.getPath() + product.getId() + uniqueIdentifier);
                 return ProductContentImage.from(product, url);
             } catch (IOException e) {
                 throw new CustomException(CommonErrorCode.FAIL_TO_SAVE.getErrorCode());
@@ -117,10 +127,23 @@ public class ProductService {
     public void deleteProductByProductId(Long productId, Long profileIdx) {
         Long validProfileIdx = Optional.ofNullable(profileIdx)
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-        Product product = productRepository.findById(productId).orElseThrow(() -> new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+
         if (!Objects.equals(product.getSeller().getProfile().getId(), validProfileIdx)) {
             throw new CustomException(UserErrorCode.NOT_AUTHORIZED.getErrorCode());
         }
         productRepository.deleteById(product.getId());
     }
+
+    @Transactional
+    public List<ProductListResponse> getProductList(ProductListRequest productListRequest, Pageable pageable) {
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        Page<ProductListResponse> productList =
+                productRepository.findAvailableProductsBySearchCriteria(currentTimestamp, productListRequest, pageable);
+
+        return productList.getContent();
+    }
+
 }
