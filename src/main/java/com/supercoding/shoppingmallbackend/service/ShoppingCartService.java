@@ -87,4 +87,18 @@ public class ShoppingCartService {
 
         return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", shoppingCartItemResponses);
     }
+
+    @Transactional
+    public CommonResponse<ShoppingCartItemResponse> softDeleteShoppingCart() {
+        Long profileId = AuthHolder.getUserIdx();
+//        Long profileId = 40L;
+        Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+
+        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumer.getId());
+        shoppingCartList.forEach(shoppingCart -> {
+            shoppingCart.setIsDeleted(true);
+        });
+
+        return ApiUtils.success("장바구니의 모든 상품을 성공적으로 삭제했습니다.", null);
+    }
 }
