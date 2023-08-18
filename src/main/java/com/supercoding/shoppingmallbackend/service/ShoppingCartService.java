@@ -35,36 +35,37 @@ public class ShoppingCartService {
     public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
         // 토큰에서 consumer id 혹은 email 파싱
         Long consumerId = 1L;
+        Long productId = shoppingCartItemRequest.getProductId();
+        Long addedQuantity = shoppingCartItemRequest.getAmount();
 
-        Consumer consumer = consumerRepository.findById(consumerId).orElseThrow(
+        Consumer consumer = consumerRepository.findConsumerById(consumerId).orElseThrow(
                 ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
         );
-        Product product = productRepository.findById(shoppingCartItemRequest.getProductId()).orElseThrow(
+        Product product = productRepository.findProductById(productId).orElseThrow(
                 ()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT)
         );
-        ProductSimpleResponse productResponse = ProductSimpleResponse.from(product);
 
         // consuemrId, productId로 장바구니 조회
-        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdAndProductId(consumerId, shoppingCartItemRequest.getProductId()).orElse(null);
+        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdProductId(consumerId, productId).orElse(null);
 
         if (shoppingCartItem == null) {
             // 장바구니에 존재하지 않다면
             ShoppingCart newData = ShoppingCart.builder()
                     .consumer(consumer)
                     .product(product)
-                    .amount(shoppingCartItemRequest.getAmount())
+                    .amount(addedQuantity)
                     .build();
 
             JpaUtils.managedSave(shoppingCartRepository, newData);
 
-            ShoppingCartItemResponse createdData = ShoppingCartItemResponse.from(newData, productResponse);
+            ShoppingCartItemResponse createdData = ShoppingCartItemResponse.from(newData);
             return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", createdData);
         }
 
         // 장바구니에 이미 존재한다면
-        shoppingCartItem.setAmount(shoppingCartItemRequest.getAmount());
+        shoppingCartItem.setAmount(addedQuantity);
 
-        ShoppingCartItemResponse modifiedData = ShoppingCartItemResponse.from(shoppingCartItem, productResponse);
+        ShoppingCartItemResponse modifiedData = ShoppingCartItemResponse.from(shoppingCartItem);
         return ApiUtils.success("장바구니에 담긴 상품의 수량을 성공적으로 변경하였습니다.", modifiedData);
     }
 
@@ -74,19 +75,10 @@ public class ShoppingCartService {
 
         List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumerId);
 
-        List<ShoppingCartItemResponse> data = shoppingCartList.stream()
-                .map(shoppingCart -> {
-                    Product product = shoppingCart.getProduct();
-                    Genre genre = getGenre(product.getGenre().getId());
-                    ProductSimpleResponse productResponse = ProductSimpleResponse.from(product);
-                    return ShoppingCartItemResponse.from(shoppingCart, productResponse);
-                })
+        List<ShoppingCartItemResponse> shoppingCartItemResponses = shoppingCartList.stream()
+                .map(ShoppingCartItemResponse::from)
                 .collect(Collectors.toList());
 
-        return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", data);
-    }
-
-    private Genre getGenre(Long genreId) {
-        return genreRepository.findById(genreId).orElseThrow(()->new CustomException(GenreErrorCode.NOT_FOUND_BY_ID));
+        return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", shoppingCartItemResponses);
     }
 }

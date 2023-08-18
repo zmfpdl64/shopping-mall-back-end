@@ -10,11 +10,24 @@ import java.util.Optional;
 
 @Repository
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
-    
-    Optional<ShoppingCart> findByConsumerIdAndProductId(Long consumerId, Long productId);
 
-    @Query("select sc from ShoppingCart sc join fetch sc.consumer c where c.id=:consumerId and sc.isDeleted=false")
+    @Query("select sc from ShoppingCart sc " +
+            "join fetch sc.consumer c " +
+            "join fetch sc.product p " +
+            "join fetch c.profile pf " +
+            "join fetch p.genre g " +
+            "join fetch p.seller s " +
+            "where c.id=:consumerId and sc.isDeleted=false " +
+            "order by sc.createdAt desc")
     List<ShoppingCart> findAllByConsumerId(long consumerId);
 
-    boolean existsByConsumerIdAndIsDeletedIsFalse(Long consumerId);
+    @Query("select sc from ShoppingCart sc " +
+            "join fetch sc.consumer c " +
+            "join fetch sc.product p " +
+            "join fetch c.profile pf " +
+            "join fetch p.genre g " +
+            "join fetch p.seller s " +
+            "where c.id=:consumerId and p.id=:productId and sc.isDeleted=false " +
+            "limit 1")
+    Optional<ShoppingCart> findByConsumerIdProductId(Long consumerId, Long productId);
 }
