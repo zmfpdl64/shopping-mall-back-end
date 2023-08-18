@@ -25,7 +25,6 @@ public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
     @ApiOperation(value = "장바구니에 상품 세팅(추가 및 수량 변경)", notes = "장바구니에 상품을 추가하거나, 상품의 수량을 변경합니다.")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @PostMapping()
     public CommonResponse<ShoppingCartItemResponse> setProduct(
             @RequestBody
@@ -35,14 +34,12 @@ public class ShoppingCartController {
     };
 
     @ApiOperation(value = "장바구니 전체 조회", notes = "장바구니를 전체 조회합니다.")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping()
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart(){
         return shoppingCartService.getShoppingCart();
     }
 
     @ApiOperation(value = "장바구니 전체 조회 (pagination)", notes = "장바구니를 전체 조회합니다. 그런데 이제 이 pagination을 곁들인...")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @GetMapping("/query")
     public CommonResponse<PaginationResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(@RequestParam String page, @RequestParam String size){
         try {
@@ -53,14 +50,12 @@ public class ShoppingCartController {
     }
 
     @ApiOperation(value = "장바구니 전체 삭제", notes = "장바구니에 담긴 모든 상품을 제거합니다.")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @DeleteMapping()
     public CommonResponse<ShoppingCartItemResponse> deleteShoppingCart() {
         return shoppingCartService.softDeleteShoppingCart();
     }
 
     @ApiOperation(value = "장바구니 일부 삭제", notes = "장바구니에 담긴 지정된 상품을 제거합니다.")
-    @ApiImplicitParam(name = HttpHeaders.AUTHORIZATION, value = "Bearer [JWT Token]", required = true, paramType = "header")
     @DeleteMapping("/selected")
     public CommonResponse<Object> deleteShoppingCart(
             @RequestBody @ApiParam(required = true, value = "삭제할 장바구니 id들을 알려줄 객체") ShoppingCartIdSetRepuest shoppingCartIdSetRepuest) {
