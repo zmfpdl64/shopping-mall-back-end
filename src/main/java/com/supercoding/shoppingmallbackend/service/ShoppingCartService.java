@@ -104,7 +104,7 @@ public class ShoppingCartService {
     }
 
     @Transactional
-    public CommonResponse<ShoppingCartItemResponse> softDeleteShoppingCartByIds(Set<Long> shoppingCartIdSet) {
+    public CommonResponse<Object> softDeleteShoppingCartByIds(Set<Long> shoppingCartIdSet) {
         Long profileId = AuthHolder.getUserIdx();
 //        Long profileId = 40L;
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
