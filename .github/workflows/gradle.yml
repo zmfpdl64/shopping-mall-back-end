@@ -10,6 +10,8 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "main" ]
+env:
+  SECRET_KEY_SOURCE: ${{ secrets.SECRET_KEY_SOURCE }}  
 
 permissions:
   contents: read
