@@ -7,6 +7,7 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.GenreErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProductErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
+import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
 import com.supercoding.shoppingmallbackend.dto.response.ProductSimpleResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
@@ -15,7 +16,9 @@ import com.supercoding.shoppingmallbackend.entity.Genre;
 import com.supercoding.shoppingmallbackend.entity.Product;
 import com.supercoding.shoppingmallbackend.entity.ShoppingCart;
 import com.supercoding.shoppingmallbackend.repository.*;
+import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,16 +32,14 @@ public class ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ConsumerRepository consumerRepository;
     private final ProductRepository productRepository;
-    private final GenreRepository genreRepository;
 
     @Transactional
     public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
-        // 토큰에서 consumer id 혹은 email 파싱
-        Long consumerId = 1L;
+        Long profileId = AuthHolder.getUserIdx();
         Long productId = shoppingCartItemRequest.getProductId();
         Long addedQuantity = shoppingCartItemRequest.getAmount();
 
-        Consumer consumer = consumerRepository.findConsumerById(consumerId).orElseThrow(
+        Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(
                 ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
         );
         Product product = productRepository.findProductById(productId).orElseThrow(
@@ -46,7 +47,7 @@ public class ShoppingCartService {
         );
 
         // consuemrId, productId로 장바구니 조회
-        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdProductId(consumerId, productId).orElse(null);
+        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdProductId(consumer.getId(), productId).orElse(null);
 
         if (shoppingCartItem == null) {
             // 장바구니에 존재하지 않다면
@@ -70,10 +71,13 @@ public class ShoppingCartService {
     }
 
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart() {
-        // 토큰에서 구매자 id 혹은 email 파싱
-        Long consumerId = 1L;
+        Long profileId = AuthHolder.getUserIdx();
 
-        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumerId);
+        Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(
+                ()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID)
+        );
+
+        List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAllByConsumerId(consumer.getId());
 
         List<ShoppingCartItemResponse> shoppingCartItemResponses = shoppingCartList.stream()
                 .map(ShoppingCartItemResponse::from)
