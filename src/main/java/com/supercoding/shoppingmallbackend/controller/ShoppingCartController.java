@@ -15,6 +15,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/shoppingcart")
@@ -60,5 +62,16 @@ public class ShoppingCartController {
     public CommonResponse<List<ShoppingCartItemResponse>> deleteShoppingCart(
             @RequestBody @ApiParam(required = true, value = "삭제할 장바구니 id들을 알려줄 객체") ShoppingCartIdSetRepuest shoppingCartIdSetRepuest) {
         return shoppingCartService.softDeleteShoppingCartByIds(shoppingCartIdSetRepuest.getShoppingCartIdSet());
+    }
+
+    @ApiOperation(value = "장바구니 일부 삭제", notes = "장바구니에 담긴 지정된 상품을 제거합니다.")
+    @DeleteMapping("/query")
+    public CommonResponse<List<ShoppingCartItemResponse>> deleteShoppingCartWithQuery(@RequestParam("id")Set<String> stringShoppingCartIdSet) {
+        try {
+            Set<Long> shoppingCartIdSet = stringShoppingCartIdSet.stream().map(Long::parseLong).collect(Collectors.toSet());
+            return shoppingCartService.softDeleteShoppingCartByIds(shoppingCartIdSet);
+        } catch (NumberFormatException e) {
+            throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAMETER);
+        }
     }
 }
