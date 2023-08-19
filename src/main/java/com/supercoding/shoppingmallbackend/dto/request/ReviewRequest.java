@@ -15,6 +15,6 @@ public class ReviewRequest {
     private Long productId;
     @ApiModelProperty(value = "리뷰 내용", required = true)
     private String content;
-    @ApiModelProperty(value = "별점", required = true)
+    @ApiModelProperty(value = "별점", required = true, allowableValues = "range[0.0, 5.0]")
     private Double rating;
 }
