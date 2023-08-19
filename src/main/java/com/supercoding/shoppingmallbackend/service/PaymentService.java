@@ -5,7 +5,6 @@ import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
-import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
 import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
 import com.supercoding.shoppingmallbackend.dto.response.PaymentResponse;
@@ -18,16 +17,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,19 +37,32 @@ public class PaymentService {
     private final SellerRepository sellerRepository;
 
     @Transactional
-    public CommonResponse<List<PaymentResponse>> processPayment(PaymentRequest paymentRequest) {
+    public CommonResponse<List<PaymentResponse>> buyWhole(PaymentRequest paymentRequest) {
         Long profileId = AuthHolder.getUserIdx();
-//        Long profileId = 40L;
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerId(consumer.getId());
 
-        // 재고가 충분한지 확인
-        List<ShoppingCart> shoppingCart =  shoppingCartRepository.findAllByConsumerId(consumer.getId());
-        if (shoppingCart.isEmpty()) throw new CustomException(PaymentErrorCode.NO_PRODUCT);
-        if (shoppingCart.stream().anyMatch(cart->cart.getAmount() > cart.getProduct().getAmount())) throw new CustomException(PaymentErrorCode.OVER_AMOUNT);
+        return processPayment(consumer, purchaseList, paymentRequest);
+    }
+
+    @Transactional
+    public CommonResponse<List<PaymentResponse>> buySelected(PaymentRequest paymentRequest, Set<Long> shoppingCartIdSet) {
+        Long profileId = AuthHolder.getUserIdx();
+        Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerId(consumer.getId()).stream()
+                .filter(shoppingCart -> shoppingCartIdSet.contains(shoppingCart.getId()))
+                .collect(Collectors.toList());
+
+        return processPayment(consumer, purchaseList, paymentRequest);
+    }
+
+    private CommonResponse<List<PaymentResponse>> processPayment(Consumer consumer, List<ShoppingCart> purchaseList, PaymentRequest paymentRequest) {
+
+        if (!validateProductQuatity(purchaseList)) throw new CustomException(PaymentErrorCode.OVER_AMOUNT);
 
         // 페이머니가 충분한지 확인
         Profile profile = consumer.getProfile();
-        Long totalPrice = shoppingCart.stream().mapToLong(el->el.getAmount() * el.getProduct().getPrice()).sum();
+        Long totalPrice = calculateTotalPrice(purchaseList);
         if (profile.getPaymoney() < totalPrice) throw new CustomException(PaymentErrorCode.NOT_ENOUGH_PAYMONEY);
 
         //주문번호 생성
@@ -61,10 +70,10 @@ public class PaymentService {
         if (orderNumber == null) throw new CustomException(PaymentErrorCode.FAIL_TO_CREATE);
 
         //결제일자 생성
-        Timestamp paidAt = new Timestamp(new Date().getTime());
+        Timestamp paidAt = createPaidAt();
 
         // 상품 재고 차감, 장바구니 소프트 딜리트, 결제내역 추가
-        shoppingCart.forEach(cart-> {
+        purchaseList.forEach(cart-> {
             Product product = cart.getProduct();
             product.setAmount(product.getAmount()-cart.getAmount());
 
@@ -87,6 +96,20 @@ public class PaymentService {
         return ApiUtils.success("결제를 성공적으로 완료했습니다.", paymentResponses) ;
     }
 
+    private boolean validateProductQuatity(@NotNull List<ShoppingCart> purchaseList) {
+        if (purchaseList.isEmpty()) throw new CustomException(PaymentErrorCode.NO_PRODUCT);
+
+        return purchaseList.stream().allMatch(cart -> cart.getAmount() <= cart.getProduct().getAmount());
+    }
+
+    private Long calculateTotalPrice(@NotNull List<ShoppingCart> purchaseList) {
+        return purchaseList.stream().mapToLong(el->el.getAmount() * el.getProduct().getPrice()).sum();
+    }
+    
+    private Timestamp createPaidAt() {
+        return new Timestamp(new Date().getTime());
+    }
+
     private String createOrderNumber(){
         String dateString = new SimpleDateFormat("yyMMddHH").format(new Date());
 
@@ -105,7 +128,6 @@ public class PaymentService {
 
     public CommonResponse<List<PurchaseResponse>> getPurchaseHistory() {
         Long profileId = AuthHolder.getUserIdx();
-//        Long profileId = 40L;
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         // 구매내역 조회하기
@@ -119,7 +141,6 @@ public class PaymentService {
 
     public CommonResponse<List<SaleResponse>> getSaleHistory() {
         Long profileId = AuthHolder.getUserIdx();
-//        Long profileId = 40L;
         Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         // 판매내역 조회하기
@@ -133,7 +154,6 @@ public class PaymentService {
 
     public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(int page, int size) {
         Long profileId = AuthHolder.getUserIdx();
-//        Long profileId = 40L;
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         Slice<Payment> slice = paymentRepository.findAllByConsumerIdWithPagination(consumer.getId(), PageRequest.of(page, size));
@@ -148,7 +168,6 @@ public class PaymentService {
 
     public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistoryWithPagination(int page, int size) {
         Long profileId = AuthHolder.getUserIdx();
-//        Long profileId = 40L;
         Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         Slice<Payment> slice = paymentRepository.findAllBySellerIdWithPagination(seller.getId(), PageRequest.of(page, size));
