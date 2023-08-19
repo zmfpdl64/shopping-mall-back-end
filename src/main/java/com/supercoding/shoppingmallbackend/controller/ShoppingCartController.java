@@ -4,6 +4,7 @@ import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
+import com.supercoding.shoppingmallbackend.dto.request.ListRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartIdSetRepuest;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
 import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
@@ -33,6 +34,15 @@ public class ShoppingCartController {
             @ApiParam(required = true, value = "어떤 상품을 얼마나 담았는지 알려줄 객체")
             ShoppingCartItemRequest shoppingCartItemRequest) {
         return shoppingCartService.setProduct(shoppingCartItemRequest);
+    };
+
+    @ApiOperation(value = "장바구니에 여러 상품 세팅(추가 및 수량 변경)", notes = "장바구니에 제공된 상품들을 세팅합니다")
+    @PostMapping("/list")
+    public CommonResponse<List<ShoppingCartItemResponse>> setProductList(
+            @RequestBody
+            @ApiParam(required = true, value = "어떤 상품을 얼마나 담았는지 알려줄 객체")
+            ListRequest<ShoppingCartItemRequest> listRequest) {
+        return shoppingCartService.setProductList(listRequest.getContents());
     };
 
     @ApiOperation(value = "장바구니 전체 조회", notes = "장바구니를 전체 조회합니다.")
