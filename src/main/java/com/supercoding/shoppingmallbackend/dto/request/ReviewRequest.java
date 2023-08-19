@@ -1,5 +1,7 @@
 package com.supercoding.shoppingmallbackend.dto.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 @Getter
@@ -7,8 +9,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
+@ApiModel("리뷰 요청 객체")
 public class ReviewRequest {
+    @ApiModelProperty(value = "상품 id", required = true)
     private Long productId;
-    private String Content;
+    @ApiModelProperty(value = "리뷰 내용", required = true)
+    private String content;
+    @ApiModelProperty(value = "별점", required = true, allowableValues = "range[0.0, 5.0]")
     private Double rating;
 }

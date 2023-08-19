@@ -40,16 +40,21 @@ public class ReviewService {
         Product product = productRepository.findProductById(request.getProductId()).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
 
         Review newData = Review.from(consumer, product, request);
+        newData.setIsDeleted(false);
         Review savedData = JpaUtils.managedSave(reviewRepository, newData);
 
-        String imageUrl = uploadImageFile(imageFile, String.valueOf(savedData.getId()));
-        savedData.setReviewImageUrl(imageUrl);
+        if (imageFile != null) {
+            String imageUrl = uploadImageFile(imageFile, String.valueOf(savedData.getId()));
+            savedData.setReviewImageUrl(imageUrl);
+        }
 
         ReviewResponse response = ReviewResponse.from(savedData);
         return ApiUtils.success("리뷰를 성공적으로 작성했습니다.", response);
     }
 
     private String uploadImageFile(MultipartFile imageFile, String imageId) {
+        if (imageFile == null) return null;
+
         try {
             return awsS3Service.upload(imageFile, FilePath.REVIEW_IMAGE_DIR.getPath()+imageId);
         } catch (IOException e) {
