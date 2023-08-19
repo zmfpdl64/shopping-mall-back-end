@@ -1,13 +1,16 @@
 package com.supercoding.shoppingmallbackend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.supercoding.shoppingmallbackend.dto.request.ReviewRequest;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "reviews")
 public class Review extends CommonField {
@@ -38,4 +41,13 @@ public class Review extends CommonField {
     @Column(name = "rating", nullable = false)
     private Double rating;
 
+    public static Review from(Consumer consumer, Product product, ReviewRequest request) {
+        return Review.builder()
+                .consumer(consumer)
+                .product(product)
+                .reviewImageUrl(null)
+                .content(request.getContent())
+                .rating(request.getRating())
+                .build();
+    }
 }
