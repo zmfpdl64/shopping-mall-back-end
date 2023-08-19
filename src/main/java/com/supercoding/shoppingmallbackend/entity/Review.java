@@ -17,16 +17,18 @@ public class Review extends CommonField {
     private Long id;
 
     @NotNull
-    @Column(name = "consumer_idx", nullable = false)
-    private Long consumerIdx;
+    @ManyToOne
+    @JoinColumn(name = "consumer_idx")
+    private Consumer consumer;
 
     @NotNull
-    @Column(name = "product_idx", nullable = false)
-    private Long productIdx;
+    @ManyToOne
+    @JoinColumn(name = "product_idx")
+    private Product product;
 
     @Lob
     @Column(name = "image_url")
-    private String imageUrl;
+    private String reviewImageUrl;
 
     @Lob
     @Column(name = "content")
