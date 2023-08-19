@@ -34,12 +34,16 @@ public class ReviewService {
     private final AwsS3Service awsS3Service;
 
     @Transactional
-    public CommonResponse<ReviewResponse> createReview(ReviewRequest request, MultipartFile imageFile) {
-
+    public CommonResponse<ReviewResponse> createReview(MultipartFile imageFile, Long productId, String content, Double rating) {
         Consumer consumer = getConsumer();
-        Product product = productRepository.findProductById(request.getProductId()).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+        Product product = productRepository.findProductById(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
 
-        Review newData = Review.from(consumer, product, request);
+        Review newData = Review.builder()
+                .consumer(consumer)
+                .product(product)
+                .content(content)
+                .rating(rating)
+                .build();
         newData.setIsDeleted(false);
         Review savedData = JpaUtils.managedSave(reviewRepository, newData);
 
