@@ -35,42 +35,6 @@ public class ShoppingCartService {
     private final ConsumerRepository consumerRepository;
     private final ProductRepository productRepository;
 
-    @Transactional
-    @CacheEvict(value = "shoppingcart", allEntries = true)
-    public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
-        Consumer consumer = getConsumer();
-        Long productId = shoppingCartItemRequest.getProductId();
-        Long addedQuantity = shoppingCartItemRequest.getAmount();
-
-        Product product = productRepository.findProductById(productId).orElseThrow(
-                ()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT)
-        );
-
-        // consuemrId, productId로 장바구니 조회
-        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdProductId(consumer.getId(), productId).orElse(null);
-
-        if (shoppingCartItem == null) {
-            // 장바구니에 존재하지 않다면
-            ShoppingCart newData = ShoppingCart.builder()
-                    .consumer(consumer)
-                    .product(product)
-                    .amount(addedQuantity)
-                    .build();
-            newData.setIsDeleted(false);
-
-            JpaUtils.managedSave(shoppingCartRepository, newData);
-
-            ShoppingCartItemResponse createdData = ShoppingCartItemResponse.from(newData);
-            return ApiUtils.success("장바구니에 상품을 성공적으로 추가했습니다.", createdData);
-        }
-
-        // 장바구니에 이미 존재한다면
-        shoppingCartItem.setAmount(addedQuantity);
-
-        ShoppingCartItemResponse modifiedData = ShoppingCartItemResponse.from(shoppingCartItem);
-        return ApiUtils.success("장바구니에 담긴 상품의 수량을 성공적으로 변경하였습니다.", modifiedData);
-    }
-
     @Cacheable(value = "shoppingcart", key = "'getAll'")
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart() {
         Consumer consumer = getConsumer();
@@ -94,6 +58,30 @@ public class ShoppingCartService {
         PaginationResponse<ShoppingCartItemResponse> paginationResponse = new PaginationResponse<>(shoppingCarts.hasNext(), shoppingCarts.hasPrevious(), shoppingCartItemResponses);
 
         return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", paginationResponse);
+    }
+
+    @Transactional
+    @CacheEvict(value = "shoppingcart", allEntries = true)
+    public CommonResponse<ShoppingCartItemResponse> setProduct(ShoppingCartItemRequest shoppingCartItemRequest) {
+        Consumer consumer = getConsumer();
+
+        ShoppingCart proccessedData = processSetProduct(consumer, shoppingCartItemRequest);
+        ShoppingCartItemResponse response = ShoppingCartItemResponse.from(proccessedData);
+
+        return ApiUtils.success("장바구니에 상품이 성공적으로 담겼습니다.", response);
+    }
+
+    @Transactional
+    @CacheEvict(value = "shoppingcart", allEntries = true)
+    public CommonResponse<List<ShoppingCartItemResponse>> setProductList(List<ShoppingCartItemRequest> shoppingCartItemRequestList) {
+        Consumer consumer = getConsumer();
+
+        List<ShoppingCartItemResponse> responses = shoppingCartItemRequestList.stream()
+                .map(shoppingCartItemRequest -> processSetProduct(consumer,shoppingCartItemRequest))
+                .map(ShoppingCartItemResponse::from)
+                .collect(Collectors.toList());
+
+        return ApiUtils.success("장바구니에 상품이 성공적으로 담겼습니다.", responses);
     }
 
     @Transactional
@@ -129,5 +117,31 @@ public class ShoppingCartService {
     private Consumer getConsumer(){
         Long profileId = AuthHolder.getUserIdx();
         return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+    }
+
+    private ShoppingCart processSetProduct(Consumer consumer, ShoppingCartItemRequest request) {
+        Long productId = request.getProductId();
+        Long addedQuantity = request.getAmount();
+
+        Product product = productRepository.findProductById(productId).orElseThrow(
+                ()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT)
+        );
+
+        // consuemrId, productId로 장바구니 조회
+        ShoppingCart shoppingCartItem = shoppingCartRepository.findByConsumerIdProductId(consumer.getId(), productId).orElse(null);
+
+        if (shoppingCartItem == null) {
+            ShoppingCart newData = ShoppingCart.builder()
+                    .consumer(consumer)
+                    .product(product)
+                    .amount(addedQuantity)
+                    .build();
+            newData.setIsDeleted(false);
+            JpaUtils.managedSave(shoppingCartRepository, newData);
+            return newData;
+        }
+
+        shoppingCartItem.setAmount(addedQuantity);
+        return shoppingCartItem;
     }
 }
