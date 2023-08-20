@@ -32,7 +32,7 @@ public class ReviewController {
 
     @ApiOperation(value = "상품 리뷰 조회", notes = "상품의 모든 리뷰를 조회합니다.")
     @GetMapping("/{productId}")
-    public CommonResponse<List<ReviewResponse>> getAllProductReview(@PathVariable String productId) {
+    public CommonResponse<List<ReviewResponse>> getAllProductReview(@PathVariable @ApiParam(value = "상품 id", required = true) String productId) {
         try {
             return reviewService.getAllProductReview(Long.parseLong(productId));
         } catch (NumberFormatException e) {
@@ -43,9 +43,9 @@ public class ReviewController {
     @ApiOperation(value = "상품 리뷰 조회 (pagination)", notes = "상품의 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/{productId}/query")
     public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllProductReviewWithPagination(
-            @PathVariable String productId,
-            @RequestParam("page") String page,
-            @RequestParam("size") String size){
+            @PathVariable @ApiParam(value = "상품 id", required = true) String productId,
+            @RequestParam("page") @ApiParam(value = "페이지 번호(0부터 시작)", required = true) String page,
+            @RequestParam("size") @ApiParam(value = "한 페이지에 보여줄 데이터 개수", required = true) String size){
         try {
             return reviewService.getAllProductREviewWithPagination(Long.parseLong(productId), Integer.parseInt(page), Integer.parseInt(size));
         } catch (NumberFormatException e) {
@@ -62,8 +62,8 @@ public class ReviewController {
     @ApiOperation(value = "내가 쓴 리뷰 조회 (pagination)", notes = "내가 작성한 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/query")
     public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllMyReviewWithPagenation(
-            @RequestParam("page") String page,
-            @RequestParam("size") String size
+            @RequestParam("page") @ApiParam(value = "페이지 번호(0부터 시작)", required = true) String page,
+            @RequestParam("size") @ApiParam(value = "한 페이지에 보여줄 데이터 개수", required = true) String size
     ) {
         try {
             return reviewService.getAllMyReviewWithPagination(Integer.parseInt(page), Integer.parseInt(size));
@@ -83,9 +83,24 @@ public class ReviewController {
         return reviewService.createReview(imageFile, productId, content, rating);
     }
 
+    @ApiOperation(value = "리뷰 수정", notes = "리뷰를 수정합니다.")
+    @PutMapping(value = "/{reviewId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public CommonResponse<ReviewResponse> modiryReview(
+            @PathVariable @ApiParam(value = "리뷰 id", required = true) String reviewId,
+            @RequestPart(required = false) @ApiParam(value = "리뷰 이미지 파일") MultipartFile imageFile,
+            @RequestParam @ApiParam(value = "리뷰 내용", required = true) String content,
+            @RequestParam @ApiParam(value = "별점", required = true) Double rating
+            ){
+        try {
+            return reviewService.modifyReview(Long.parseLong(reviewId), imageFile, content, rating);
+        } catch (NumberFormatException e) {
+            throw new CustomException(CommonErrorCode.INVALID_PATH_VARIABLE);
+        }
+    }
+
     @ApiOperation(value = "리뷰 삭제", notes = "리뷰를 삭제합니다.")
     @DeleteMapping("/query")
-    public CommonResponse<List<ReviewResponse>> deleteReviews(@RequestParam("id") Set<String> ids) {
+    public CommonResponse<List<ReviewResponse>> deleteReviews(@RequestParam("id") @ApiParam(value = "삭제할 리뷰 id", required = true) Set<String> ids) {
         Set<Long> idSet = ids.stream().map(Long::parseLong).collect(Collectors.toSet());
         return reviewService.softDeleteReviews(idSet);
     }
