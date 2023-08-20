@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
-@ApiModel("pagination 결과를 담는 객체")
+@ApiModel("pagination slice 결과를 담는 객체")
 public class PaginationSliceResponse<T> {
     @ApiModelProperty(required = true, value = "다음 페이지가 있는지 유무", example = "true")
     private boolean hasNext;
