@@ -68,4 +68,17 @@ public class ReviewController {
         return reviewService.getAllMyReview();
     }
 
+    @ApiOperation(value = "내가 쓴 리뷰 조회 (pagination)", notes = "내가 작성한 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
+    @GetMapping("/query")
+    public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllMyReviewWithPagenation(
+            @RequestParam("page") String page,
+            @RequestParam("size") String size
+    ) {
+        try {
+            return reviewService.getAllMyReviewWithPagination(Integer.parseInt(page), Integer.parseInt(size));
+        } catch (NumberFormatException e) {
+            throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAMETER);
+        }
+    }
+
 }
