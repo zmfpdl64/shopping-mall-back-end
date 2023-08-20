@@ -6,7 +6,7 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
-import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationSliceResponse;
 import com.supercoding.shoppingmallbackend.dto.response.PaymentResponse;
 import com.supercoding.shoppingmallbackend.dto.response.PurchaseResponse;
 import com.supercoding.shoppingmallbackend.dto.response.SaleResponse;
@@ -67,7 +67,7 @@ public class PaymentService {
     }
 
     @Cacheable(value = "payment", key = "'getPurchasePage('+#page+','+#size+')'")
-    public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(int page, int size) {
+    public CommonResponse<PaginationSliceResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(int page, int size) {
         Long profileId = AuthHolder.getUserIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
@@ -76,13 +76,13 @@ public class PaymentService {
                 .map(PurchaseResponse::from)
                 .collect(Collectors.toList());
 
-        PaginationResponse<PurchaseResponse> paginationResponse = new PaginationResponse<>(slice.hasNext(), slice.hasPrevious(), purchaseResponses);
+        PaginationSliceResponse<PurchaseResponse> paginationSliceResponse = new PaginationSliceResponse<>(slice.hasNext(), slice.hasPrevious(), purchaseResponses);
 
-        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", paginationResponse);
+        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", paginationSliceResponse);
     }
 
     @Cacheable(value = "payment", key = "'getSalePage('+#page+','+#size+')'")
-    public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistoryWithPagination(int page, int size) {
+    public CommonResponse<PaginationSliceResponse<SaleResponse>> getSaleHistoryWithPagination(int page, int size) {
         Long profileId = AuthHolder.getUserIdx();
         Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
@@ -91,9 +91,9 @@ public class PaymentService {
                 .map(SaleResponse::from)
                 .collect(Collectors.toList());
 
-        PaginationResponse<SaleResponse> paginationResponse = new PaginationResponse<>(slice.hasNext(), slice.hasPrevious(), saleResponses);
+        PaginationSliceResponse<SaleResponse> paginationSliceResponse = new PaginationSliceResponse<>(slice.hasNext(), slice.hasPrevious(), saleResponses);
 
-        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", paginationResponse);
+        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", paginationSliceResponse);
     }
 
     @CacheEvict(value = "payment", allEntries = true)
