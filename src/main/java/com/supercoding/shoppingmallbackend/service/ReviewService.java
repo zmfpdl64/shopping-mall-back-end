@@ -18,6 +18,7 @@ import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ReviewRepository;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
@@ -61,6 +62,13 @@ public class ReviewService {
         return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", responses);
     }
 
+    public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllMyReviewWithPagination(int page, int size) {
+        Consumer consumer = getConsumer();
+        Page<Review> dataPage = reviewRepository.findPageByConsumer(consumer);
+        List<ReviewResponse> contents = dataPage.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
+        PaginationPageResponse<ReviewResponse> response = new PaginationPageResponse<>(dataPage.getTotalPages(), contents);
+        return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", response);
+    }
 
     @Transactional
     @CacheEvict(value = "review", allEntries = true)
