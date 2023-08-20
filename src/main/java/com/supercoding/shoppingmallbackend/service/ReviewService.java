@@ -64,7 +64,7 @@ public class ReviewService {
 
     public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllMyReviewWithPagination(int page, int size) {
         Consumer consumer = getConsumer();
-        Page<Review> dataPage = reviewRepository.findPageByConsumer(consumer);
+        Page<Review> dataPage = reviewRepository.findPageByConsumer(consumer, PageRequest.of(page, size));
         List<ReviewResponse> contents = dataPage.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
         PaginationPageResponse<ReviewResponse> response = new PaginationPageResponse<>(dataPage.getTotalPages(), contents);
         return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", response);

@@ -54,5 +54,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "order by r.createdAt desc",
             countQuery = "select count(r) from Review r " +
                     "where r.consumer.id=:#{#consumer.getId()} and r.isDeleted=false")
-    Page<Review> findPageByConsumer(Consumer consumer);
+    Page<Review> findPageByConsumer(Consumer consumer, Pageable pageable);
 }
