@@ -83,6 +83,21 @@ public class ReviewController {
         return reviewService.createReview(imageFile, productId, content, rating);
     }
 
+    @ApiOperation(value = "리뷰 수정", notes = "리뷰를 수정합니다.")
+    @PutMapping(value = "/{reviewId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public CommonResponse<ReviewResponse> modiryReview(
+            @PathVariable String reviewId,
+            @RequestPart(required = false) @ApiParam(value = "리뷰 이미지 파일") MultipartFile imageFile,
+            @RequestParam @ApiParam(value = "리뷰 내용", required = true) String content,
+            @RequestParam @ApiParam(value = "별점", required = true) Double rating
+            ){
+        try {
+            return reviewService.modifyReview(Long.parseLong(reviewId), imageFile, content, rating);
+        } catch (NumberFormatException e) {
+            throw new CustomException(CommonErrorCode.INVALID_PATH_VARIABLE);
+        }
+    }
+
     @ApiOperation(value = "리뷰 삭제", notes = "리뷰를 삭제합니다.")
     @DeleteMapping("/query")
     public CommonResponse<List<ReviewResponse>> deleteReviews(@RequestParam("id") Set<String> ids) {

@@ -2,10 +2,7 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
-import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.ConsumerErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.ProductErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
+import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.FilePath;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
@@ -126,4 +123,17 @@ public class ReviewService {
         return consumerRepository.findByProfileId(AuthHolder.getUserIdx()).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
     }
 
+    @Transactional
+    public CommonResponse<ReviewResponse> modifyReview(long reviewId, MultipartFile imageFile, String content, Double rating) {
+        Consumer consumer = getConsumer();
+
+        Review data = reviewRepository.findByConsumerAndReviewId(consumer, reviewId).orElseThrow(()->new CustomException(ReviewErrorCode.BAD_ID));
+        if (imageFile != null) data.setReviewImageUrl(uploadImageFile(imageFile, String.valueOf(data.getId())));
+        else data.setReviewImageUrl(null);
+
+        data.setContent(content);
+        data.setRating(rating);
+
+        return ApiUtils.success("리뷰를 성공적으로 수정하였습니다.", ReviewResponse.from(data));
+    }
 }
