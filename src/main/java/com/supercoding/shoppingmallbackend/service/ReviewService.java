@@ -2,6 +2,7 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
+import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ConsumerErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProductErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
@@ -29,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,6 +96,22 @@ public class ReviewService {
         return ApiUtils.success("리뷰를 성공적으로 작성했습니다.", response);
     }
 
+    @Transactional
+    public CommonResponse<List<ReviewResponse>> softDeleteReviews(Set<Long> idSet) {
+        Consumer consumer = getConsumer();
+
+        List<Review> datas = reviewRepository.findAllByConsumer(consumer);
+        List<ReviewResponse> responses = datas.stream()
+                .filter(data->idSet.contains(data.getId()))
+                .map(data->{
+                    data.setIsDeleted(true);
+                    return ReviewResponse.from(data);
+                })
+                .collect(Collectors.toList());
+
+        return ApiUtils.success("리뷰를 성공적으로 삭제했습니다.", responses);
+    }
+
     private String uploadImageFile(MultipartFile imageFile, String imageId) {
         if (imageFile == null) return null;
 
@@ -107,4 +125,5 @@ public class ReviewService {
     private Consumer getConsumer() {
         return consumerRepository.findByProfileId(AuthHolder.getUserIdx()).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
     }
+
 }
