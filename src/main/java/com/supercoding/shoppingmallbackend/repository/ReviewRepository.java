@@ -23,6 +23,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "join fetch r.consumer c " +
             "join fetch p.genre g " +
             "join fetch c.profile pf  " +
-            "where c.id=#{consumer.id} and r.isDeleted=false")
+            "where c.id=:#{#consumer.getId()} and r.isDeleted=false")
     List<Review> findAllByConsumer(Consumer consumer);
 }
