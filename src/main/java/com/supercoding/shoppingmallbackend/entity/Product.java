@@ -34,12 +34,12 @@ public class Product extends CommonField {
     private Long id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_idx", nullable = false)
     private Seller seller;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "genre_idx", nullable = false)
     private Genre genre;
 
