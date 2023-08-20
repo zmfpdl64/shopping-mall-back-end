@@ -19,6 +19,7 @@ import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -39,12 +40,14 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final AwsS3Service awsS3Service;
 
+    @Cacheable(value = "review", key = "'getAllProductReview('+#productId+')'")
     public CommonResponse<List<ReviewResponse>> getAllProductReview(long productId) {
         List<Review> datas = reviewRepository.findAllByProductId(productId);
         List<ReviewResponse> responses = datas.stream().map(ReviewResponse::from).collect(Collectors.toList());
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", responses);
     }
 
+    @Cacheable(value = "review", key = "'getPageProductReivew('+#productId+')'")
     public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllProductREviewWithPagination(long productId, int page, int size) {
         Page<Review> pageData = reviewRepository.findAllByProductIdWithPagination(productId, PageRequest.of(page, size));
         List<ReviewResponse> datas = pageData.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
@@ -94,6 +97,22 @@ public class ReviewService {
     }
 
     @Transactional
+    @CacheEvict(value = "review", allEntries = true)
+    public CommonResponse<ReviewResponse> modifyReview(long reviewId, MultipartFile imageFile, String content, Double rating) {
+        Consumer consumer = getConsumer();
+
+        Review data = reviewRepository.findByConsumerAndReviewId(consumer, reviewId).orElseThrow(()->new CustomException(ReviewErrorCode.BAD_ID));
+        if (imageFile != null) data.setReviewImageUrl(uploadImageFile(imageFile, String.valueOf(data.getId())));
+        else data.setReviewImageUrl(null);
+
+        data.setContent(content);
+        data.setRating(rating);
+
+        return ApiUtils.success("리뷰를 성공적으로 수정하였습니다.", ReviewResponse.from(data));
+    }
+
+    @Transactional
+    @CacheEvict(value = "review", allEntries = true)
     public CommonResponse<List<ReviewResponse>> softDeleteReviews(Set<Long> idSet) {
         Consumer consumer = getConsumer();
 
@@ -121,19 +140,5 @@ public class ReviewService {
 
     private Consumer getConsumer() {
         return consumerRepository.findByProfileId(AuthHolder.getUserIdx()).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
-    }
-
-    @Transactional
-    public CommonResponse<ReviewResponse> modifyReview(long reviewId, MultipartFile imageFile, String content, Double rating) {
-        Consumer consumer = getConsumer();
-
-        Review data = reviewRepository.findByConsumerAndReviewId(consumer, reviewId).orElseThrow(()->new CustomException(ReviewErrorCode.BAD_ID));
-        if (imageFile != null) data.setReviewImageUrl(uploadImageFile(imageFile, String.valueOf(data.getId())));
-        else data.setReviewImageUrl(null);
-
-        data.setContent(content);
-        data.setRating(rating);
-
-        return ApiUtils.success("리뷰를 성공적으로 수정하였습니다.", ReviewResponse.from(data));
     }
 }
