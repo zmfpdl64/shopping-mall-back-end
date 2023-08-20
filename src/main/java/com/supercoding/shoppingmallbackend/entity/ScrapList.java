@@ -3,10 +3,7 @@ package com.supercoding.shoppingmallbackend.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -19,11 +16,13 @@ public class ScrapList {
     private Long id;
 
     @NotNull
-    @Column(name = "prdouct_idx", nullable = false)
-    private Long prdouctIdx;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @NotNull
-    @Column(name = "consumer_idx", nullable = false)
-    private Long consumerIdx;
+    @ManyToOne
+    @JoinColumn(name = "consumer_id")
+    private Consumer consumer;
 
 }
