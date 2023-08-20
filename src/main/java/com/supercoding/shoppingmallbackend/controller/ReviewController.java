@@ -48,4 +48,10 @@ public class ReviewController {
         }
     }
 
+    @ApiOperation(value = "내가 쓴 리뷰 조회", notes = "내가 작성한 모든 리뷰를 조회합니다.")
+    @GetMapping()
+    public CommonResponse<List<ReviewResponse>> getAllMyReview() {
+        return reviewService.getAllMyReview();
+    }
+
 }
