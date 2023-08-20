@@ -20,12 +20,12 @@ public class Review extends CommonField {
     private Long id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consumer_idx")
     private Consumer consumer;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_idx")
     private Product product;
 
