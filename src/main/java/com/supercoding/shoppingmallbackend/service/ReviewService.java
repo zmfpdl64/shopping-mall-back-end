@@ -42,6 +42,16 @@ public class ReviewService {
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", responses);
     }
 
+    public CommonResponse<List<ReviewResponse>> getAllMyReview() {
+        Consumer consumer = getConsumer();
+
+        List<Review> datas = reviewRepository.findAllByConsumer(consumer);
+        List<ReviewResponse> responses = datas.stream().map(ReviewResponse::from).collect(Collectors.toList());
+
+        return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", responses);
+    }
+
+
     @Transactional
     @CacheEvict(value = "review", allEntries = true)
     public CommonResponse<ReviewResponse> createReview(MultipartFile imageFile, Long productId, String content, Double rating) {
