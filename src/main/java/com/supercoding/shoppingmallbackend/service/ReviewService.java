@@ -9,6 +9,7 @@ import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.FilePath;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
 import com.supercoding.shoppingmallbackend.dto.request.ReviewRequest;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationPageResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ReviewResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Product;
@@ -19,6 +20,8 @@ import com.supercoding.shoppingmallbackend.repository.ReviewRepository;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +43,13 @@ public class ReviewService {
         List<Review> datas = reviewRepository.findAllByProductId(productId);
         List<ReviewResponse> responses = datas.stream().map(ReviewResponse::from).collect(Collectors.toList());
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", responses);
+    }
+
+    public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllProductREviewWithPagination(long productId, int page, int size) {
+        Page<Review> pageData = reviewRepository.findAllByProductIdWithPagination(productId, PageRequest.of(page, size));
+        List<ReviewResponse> datas = pageData.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
+        PaginationPageResponse<ReviewResponse> response = new PaginationPageResponse<>(pageData.getTotalPages(), datas);
+        return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", response);
     }
 
     public CommonResponse<List<ReviewResponse>> getAllMyReview() {

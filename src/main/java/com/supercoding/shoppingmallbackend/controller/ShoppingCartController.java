@@ -3,16 +3,14 @@ package com.supercoding.shoppingmallbackend.controller;
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
-import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.ListRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartIdSetRepuest;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
-import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationSliceResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
 import com.supercoding.shoppingmallbackend.service.ShoppingCartService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,7 +51,7 @@ public class ShoppingCartController {
 
     @ApiOperation(value = "장바구니 전체 조회 (pagination)", notes = "장바구니를 전체 조회합니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/query")
-    public CommonResponse<PaginationResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(@RequestParam String page, @RequestParam String size){
+    public CommonResponse<PaginationSliceResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(@RequestParam String page, @RequestParam String size){
         try {
             return shoppingCartService.getShoppingCartWithPagination(Integer.parseInt(page), Integer.parseInt(size));
         } catch(NumberFormatException e) {

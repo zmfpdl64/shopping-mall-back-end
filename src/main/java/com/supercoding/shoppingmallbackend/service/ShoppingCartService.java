@@ -6,7 +6,7 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
 import com.supercoding.shoppingmallbackend.dto.request.ShoppingCartItemRequest;
-import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationSliceResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ShoppingCartItemResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Product;
@@ -16,7 +16,6 @@ import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -49,15 +48,15 @@ public class ShoppingCartService {
     }
 
     @Cacheable(value = "shoppingcart", key = "'getPage('+#page+','+#size+')'")
-    public CommonResponse<PaginationResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(int page, int size) {
+    public CommonResponse<PaginationSliceResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(int page, int size) {
         Consumer consumer = getConsumer();
 
         Slice<ShoppingCart> shoppingCarts = shoppingCartRepository.findAllByConsumerIdWithPagination(consumer.getId(), PageRequest.of(page, size));
         List<ShoppingCartItemResponse> shoppingCartItemResponses = shoppingCarts.getContent().stream().map(ShoppingCartItemResponse::from).collect(Collectors.toList());
 
-        PaginationResponse<ShoppingCartItemResponse> paginationResponse = new PaginationResponse<>(shoppingCarts.hasNext(), shoppingCarts.hasPrevious(), shoppingCartItemResponses);
+        PaginationSliceResponse<ShoppingCartItemResponse> paginationSliceResponse = new PaginationSliceResponse<>(shoppingCarts.hasNext(), shoppingCarts.hasPrevious(), shoppingCartItemResponses);
 
-        return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", paginationResponse);
+        return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", paginationSliceResponse);
     }
 
     @Transactional
