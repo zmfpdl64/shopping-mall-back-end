@@ -1,5 +1,6 @@
 package com.supercoding.shoppingmallbackend.repository;
 
+import com.supercoding.shoppingmallbackend.dto.response.ReviewResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Review;
 import org.springframework.data.domain.Page;
@@ -43,4 +44,15 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "where c.id=:#{#consumer.getId()} and r.isDeleted=false " +
             "order by r.createdAt desc")
     List<Review> findAllByConsumer(Consumer consumer);
+
+    @Query(value = "select r from Review r " +
+            "join fetch r.product p " +
+            "join fetch r.consumer c " +
+            "join fetch p.genre g " +
+            "join fetch c.profile pf  " +
+            "where c.id=:#{#consumer.getId()} and r.isDeleted=false " +
+            "order by r.createdAt desc",
+            countQuery = "select count(r) from Review r " +
+                    "where r.consumer.id=:#{#consumer.getId()} and r.isDeleted=false")
+    Page<ReviewResponse> findPageByConsumer(Consumer consumer);
 }
