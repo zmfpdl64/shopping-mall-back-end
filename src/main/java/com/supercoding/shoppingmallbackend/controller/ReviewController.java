@@ -4,6 +4,7 @@ import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.dto.request.ReviewRequest;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationPageResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ReviewResponse;
 import com.supercoding.shoppingmallbackend.service.ReviewService;
 import io.swagger.annotations.Api;
@@ -45,6 +46,19 @@ public class ReviewController {
             return reviewService.getAllProductReview(Long.parseLong(productId));
         } catch (NumberFormatException e) {
             throw new CustomException(CommonErrorCode.INVALID_PATH_VARIABLE);
+        }
+    }
+
+    @ApiOperation(value = "상품 리뷰 조회 (pagination)", notes = "상품의 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
+    @GetMapping("/{productId}/query")
+    public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllProductReviewWithPagination(
+            @PathVariable String productId,
+            @RequestParam("page") String page,
+            @RequestParam("size") String size){
+        try {
+            return reviewService.getAllProductREviewWithPagination(Long.parseLong(productId), Integer.parseInt(page), Integer.parseInt(size));
+        } catch (NumberFormatException e) {
+            throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE);
         }
     }
 

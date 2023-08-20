@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -12,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
-@ApiModel("pagination 결과를 담는 객체")
-public class PaginationResponse<T> {
+@ApiModel("pagination slice 결과를 담는 객체")
+public class PaginationSliceResponse<T> {
     @ApiModelProperty(required = true, value = "다음 페이지가 있는지 유무", example = "true")
     private boolean hasNext;
     @ApiModelProperty(required = true, value = "이전 페이지가 있는지 유무", example = "false")
