@@ -1,6 +1,8 @@
 package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
+import com.supercoding.shoppingmallbackend.common.Error.CustomException;
+import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.dto.request.ReviewRequest;
 import com.supercoding.shoppingmallbackend.dto.response.ReviewResponse;
 import com.supercoding.shoppingmallbackend.service.ReviewService;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,4 +37,15 @@ public class ReviewController {
     ) {
         return reviewService.createReview(imageFile, productId, content, rating);
     }
+
+    @ApiOperation(value = "상품 리뷰 조회", notes = "상품의 모든 리뷰를 조회합니다.")
+    @GetMapping("/{productId}")
+    public CommonResponse<List<ReviewResponse>> getAllProductReview(@PathVariable String productId) {
+        try {
+            return reviewService.getAllProductReview(Long.parseLong(productId));
+        } catch (NumberFormatException e) {
+            throw new CustomException(CommonErrorCode.INVALID_PATH_VARIABLE);
+        }
+    }
+
 }

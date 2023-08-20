@@ -18,11 +18,14 @@ import com.supercoding.shoppingmallbackend.repository.ProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ReviewRepository;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +36,14 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final AwsS3Service awsS3Service;
 
+    public CommonResponse<List<ReviewResponse>> getAllProductReview(long productId) {
+        List<Review> datas = reviewRepository.findAllByProductId(productId);
+        List<ReviewResponse> responses = datas.stream().map(ReviewResponse::from).collect(Collectors.toList());
+        return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", responses);
+    }
+
     @Transactional
+    @CacheEvict(value = "review", allEntries = true)
     public CommonResponse<ReviewResponse> createReview(MultipartFile imageFile, Long productId, String content, Double rating) {
         Consumer consumer = getConsumer();
         Product product = productRepository.findProductById(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
