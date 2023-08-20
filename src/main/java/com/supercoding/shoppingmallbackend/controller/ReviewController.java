@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,17 +29,6 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
-
-    @ApiOperation(value = "리뷰 작성", notes = "리뷰를 작성합니다.")
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public CommonResponse<ReviewResponse> createReview(
-            @RequestPart(required = false) @ApiParam(value = "리뷰 이미지 파일") MultipartFile imageFile,
-            @RequestParam @ApiParam(value = "상품 id", required = true) Long productId,
-            @RequestParam @ApiParam(value = "리뷰 내용", required = true) String content,
-            @RequestParam @ApiParam(value = "별점", required = true) Double rating
-    ) {
-        return reviewService.createReview(imageFile, productId, content, rating);
-    }
 
     @ApiOperation(value = "상품 리뷰 조회", notes = "상품의 모든 리뷰를 조회합니다.")
     @GetMapping("/{productId}")
@@ -81,4 +72,21 @@ public class ReviewController {
         }
     }
 
+    @ApiOperation(value = "리뷰 작성", notes = "리뷰를 작성합니다.")
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public CommonResponse<ReviewResponse> createReview(
+            @RequestPart(required = false) @ApiParam(value = "리뷰 이미지 파일") MultipartFile imageFile,
+            @RequestParam @ApiParam(value = "상품 id", required = true) Long productId,
+            @RequestParam @ApiParam(value = "리뷰 내용", required = true) String content,
+            @RequestParam @ApiParam(value = "별점", required = true) Double rating
+    ) {
+        return reviewService.createReview(imageFile, productId, content, rating);
+    }
+
+    @ApiOperation(value = "리뷰 삭제", notes = "리뷰를 삭제합니다.")
+    @DeleteMapping("/query")
+    public CommonResponse<List<ReviewResponse>> deleteReviews(@RequestParam("id") Set<String> ids) {
+        Set<Long> idSet = ids.stream().map(Long::parseLong).collect(Collectors.toSet());
+        return reviewService.softDeleteReviews(idSet);
+    }
 }
