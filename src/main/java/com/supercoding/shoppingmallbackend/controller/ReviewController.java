@@ -31,7 +31,7 @@ public class ReviewController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public CommonResponse<ReviewResponse> createReview(
             @RequestPart(required = false) @ApiParam(value = "리뷰 이미지 파일") MultipartFile imageFile,
-            @RequestParam() @ApiParam(value = "상품 id", required = true) Long productId,
+            @RequestParam @ApiParam(value = "상품 id", required = true) Long productId,
             @RequestParam @ApiParam(value = "리뷰 내용", required = true) String content,
             @RequestParam @ApiParam(value = "별점", required = true) Double rating
     ) {
