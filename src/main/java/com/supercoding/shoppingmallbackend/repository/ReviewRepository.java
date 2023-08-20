@@ -24,21 +24,15 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByProductId(long productId);
 
     @Query(value = "select r from Review r " +
-            "join r.product p " +
-            "join r.consumer c " +
-            "join p.genre g " +
-            "join p.seller s " +
-            "join c.profile pf  " +
+            "join fetch r.product p " +
+            "join fetch r.consumer c " +
+            "join fetch p.genre g " +
+            "join fetch p.seller s " +
+            "join fetch c.profile pf  " +
             "where p.id=:productId and r.isDeleted=false " +
             "order by r.createdAt desc",
             countQuery = "select count(r) from Review r " +
-                    "join r.product p " +
-                    "join r.consumer c " +
-                    "join p.genre g " +
-                    "join p.seller s " +
-                    "join c.profile pf  " +
-                    "where p.id=:productId and r.isDeleted=false " +
-                    "order by r.createdAt desc")
+                    "where r.product.id=:productId and r.isDeleted=false")
     Page<Review> findAllByProductIdWithPagination(long productId, Pageable pageable);
 
     @Query("select r from Review r " +
