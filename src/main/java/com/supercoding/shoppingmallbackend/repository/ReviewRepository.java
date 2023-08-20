@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
@@ -55,4 +56,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             countQuery = "select count(r) from Review r " +
                     "where r.consumer.id=:#{#consumer.getId()} and r.isDeleted=false")
     Page<Review> findPageByConsumer(Consumer consumer, Pageable pageable);
+
+    @Query(value = "select r from Review r " +
+            "join fetch r.product p " +
+            "join fetch r.consumer c " +
+            "join fetch p.genre g " +
+            "join fetch c.profile pf  " +
+            "where c.id=:#{#consumer.getId()} and r.isDeleted=false and r.id=:reviewId ")
+    Optional<Review> findByConsumerAndReviewId(Consumer consumer, long reviewId);
 }
