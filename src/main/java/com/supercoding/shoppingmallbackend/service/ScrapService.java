@@ -37,7 +37,7 @@ public class ScrapService {
     @Cacheable(value = "scrap", key = "'getAll('+#profileId+')'")
     public CommonResponse<List<ScrapResponse>> getAllScrap(Long profileId) {
         Consumer consumer = getConsumer(profileId);
-        List<Scrap> datas = scrapRepository.findAllByConsumerIdAndIsDeletedIsFalse(consumer);
+        List<Scrap> datas = scrapRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
         List<ScrapResponse> responses = datas.stream().map(ScrapResponse::from).collect(Collectors.toList());
         return ApiUtils.success("찜 목록을 성공적으로 조회했습니다.", responses);
     }
