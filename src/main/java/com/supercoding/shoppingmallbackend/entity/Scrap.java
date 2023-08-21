@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @Entity
 @Table(name = "scrap_list")
-public class Scrap {
+public class Scrap extends CommonField {
     @Id
     @Column(name = "idx", nullable = false)
     private Long id;
