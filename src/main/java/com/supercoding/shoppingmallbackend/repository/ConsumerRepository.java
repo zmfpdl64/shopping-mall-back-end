@@ -10,14 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface ConsumerRepository extends JpaRepository<Consumer, Long> {
-
-    @Query("select c from Consumer c " +
-            "join fetch c.profile p " +
-            "where c.id=:consumerId and c.isDeleted=false")
-    Optional<Consumer> findConsumerById(Long consumerId);
-
-    @Query("select c from Consumer c " +
-            "join fetch c.profile p " +
-            "where p.id=:profileId and c.isDeleted=false")
-    Optional<Consumer> findByProfileId(Long profileId);
+    Optional<Consumer> findByProfileIdAndIsDeletedIsFalse(Long profileId);
 }

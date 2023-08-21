@@ -138,7 +138,7 @@ public class ShoppingCartService {
     }
 
     private Consumer getConsumer(Long profileId){
-        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
+        return consumerRepository.findByProfileIdAndIsDeletedIsFalse(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
 
     private ShoppingCart processSetProduct(Consumer consumer, ShoppingCartItemRequest request) {

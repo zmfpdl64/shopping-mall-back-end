@@ -174,6 +174,6 @@ public class ReviewService {
     }
 
     private Consumer getConsumer(Long profileId) {
-        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
+        return consumerRepository.findByProfileIdAndIsDeletedIsFalse(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
 }
