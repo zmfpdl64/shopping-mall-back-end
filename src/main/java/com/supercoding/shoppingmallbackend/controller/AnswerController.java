@@ -3,7 +3,9 @@ package com.supercoding.shoppingmallbackend.controller;
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.answer.CreateAnswerRequest;
+import com.supercoding.shoppingmallbackend.dto.request.answer.UpdateAnswerRequest;
 import com.supercoding.shoppingmallbackend.dto.response.answer.CreateAnswerResponse;
+import com.supercoding.shoppingmallbackend.dto.response.answer.UpdateAnswerResponse;
 import com.supercoding.shoppingmallbackend.service.AnswerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,5 +21,16 @@ public class AnswerController {
             @RequestBody CreateAnswerRequest request){
         CreateAnswerResponse createAnswerResponse = answerService.createAnswer(request);
         return ApiUtils.success("답변 작성 완료",createAnswerResponse);
+    }
+
+    @PutMapping("/{id}")
+    public CommonResponse<Object> updateAnswer(
+            @PathVariable Long id,
+            @RequestBody UpdateAnswerRequest request) {
+        UpdateAnswerResponse updateAnswer = answerService.updateAnswer(id,request);
+        if( updateAnswer == null ){
+            return ApiUtils.fail(404,"존재하지 않습니다.");
+        }
+        return ApiUtils.success("수정완료",updateAnswer);
     }
 }
