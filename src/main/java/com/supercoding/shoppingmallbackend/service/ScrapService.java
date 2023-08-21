@@ -102,6 +102,10 @@ public class ScrapService {
         return ApiUtils.success("찜하기를 성공적으로 취소했습니다.", responses);
     }
 
+    public void hardDelete() {
+        scrapRepository.deleteAllByIsDeletedIsTrue();
+    }
+
     private Consumer getConsumer(Long profileId) {
         return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }

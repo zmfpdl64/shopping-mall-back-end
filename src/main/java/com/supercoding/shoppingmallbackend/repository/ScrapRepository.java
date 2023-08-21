@@ -16,4 +16,6 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     List<Scrap> findAllByConsumerAndIsDeletedIsFalse(@NotNull Consumer consumer);
     Page<Scrap> findAllByConsumerAndIsDeletedIsFalse(@NotNull Consumer consumer, Pageable pageable);
+
+    void deleteAllByIsDeletedIsTrue();
 }
