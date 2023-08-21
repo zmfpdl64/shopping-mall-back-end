@@ -20,7 +20,13 @@ public enum ReviewOrderBy {
         for (ReviewOrderBy e : ReviewOrderBy.values()) {
             if (e.key.equals(key)) return e;
         }
+        return null;
+    }
 
+    public static String get(String key) {
+        for (ReviewOrderBy e : ReviewOrderBy.values()) {
+            if (e.key.equals(key)) return e.getValue();
+        }
         return null;
     }
 }
