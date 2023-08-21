@@ -82,10 +82,28 @@ public class ScrapService {
         return ApiUtils.success("상품을 성공적으로 찜했습니다.", responses);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "scrap-list", key = "#profileId"),
+            @CacheEvict(value = "scrap-page", allEntries = true)
+    })
+    @Transactional
+    public CommonResponse<List<ScrapResponse>> softDeleteScrap(Long profileId, Set<Long> scrapIdSet) {
+        Consumer consumer = getConsumer(profileId);
+
+        List<Scrap> datas = scrapRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<ScrapResponse> responses = datas.stream()
+                .filter(scrap -> scrapIdSet.contains(scrap.getId()))
+                .map(scrap -> {
+                    scrap.setIsDeleted(true);
+                    return ScrapResponse.from(scrap);
+                })
+                .collect(Collectors.toList());
+
+        return ApiUtils.success("찜하기를 성공적으로 취소했습니다.", responses);
+    }
+
     private Consumer getConsumer(Long profileId) {
         return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
-
-
 
 }
