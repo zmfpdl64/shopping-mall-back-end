@@ -33,4 +33,10 @@ public class AnswerController {
         }
         return ApiUtils.success("수정완료",updateAnswer);
     }
+
+    @DeleteMapping("/{id}")
+    public CommonResponse<Object> deleteAnswer(@PathVariable Long id){
+        answerService.deleteAnswer(id);
+        return ApiUtils.success("삭제 완료",null);
+    }
 }

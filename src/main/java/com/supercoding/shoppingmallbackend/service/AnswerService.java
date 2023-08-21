@@ -59,4 +59,11 @@ public class AnswerService {
                 .content(updatedAnswer.getContent())
                 .build();
     }
+
+    public void deleteAnswer(Long id) {
+        Answer answer = answerRepository.findById(id).orElse(null);
+        if(answer != null){
+            answerRepository.delete(answer);
+        }
+    }
 }
