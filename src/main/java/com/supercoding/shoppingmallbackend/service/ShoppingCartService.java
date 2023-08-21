@@ -101,7 +101,7 @@ public class ShoppingCartService {
     public CommonResponse<List<ShoppingCartItemResponse>> softDeleteShoppingCart(Long profileId) {
         Consumer consumer = getConsumer(profileId);
 
-        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
+        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
         List<ShoppingCartItemResponse> responses = datas.stream()
                 .map(data->{
                     data.setIsDeleted(true);
@@ -120,7 +120,7 @@ public class ShoppingCartService {
     public CommonResponse<List<ShoppingCartItemResponse>> softDeleteShoppingCartByIds(Long profileId, Set<Long> shoppingCartIdSet) {
         Consumer consumer = getConsumer(profileId);
 
-        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
+        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
         List<ShoppingCartItemResponse> responses = datas.stream()
                 .filter(data->shoppingCartIdSet.contains(data.getId()))
                 .map(data->{
@@ -144,7 +144,7 @@ public class ShoppingCartService {
         Long productId = request.getProductId();
         Long addedQuantity = request.getAmount();
         Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
-        ShoppingCart data = shoppingCartRepository.findByConsumerAndProductAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer, product).orElse(null);
+        ShoppingCart data = shoppingCartRepository.findByConsumerAndProductAndIsDeletedIsFalse(consumer, product).orElse(null);
 
         if (data == null) {
             ShoppingCart newData = ShoppingCart.builder()

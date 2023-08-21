@@ -15,7 +15,8 @@ import java.util.Optional;
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
 
     List<ShoppingCart> findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(Consumer consumer);
+    List<ShoppingCart> findAllByConsumerAndIsDeletedIsFalse(Consumer consumer);
     Page<ShoppingCart> findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(Consumer consumer, Pageable pageable);
-    Optional<ShoppingCart> findByConsumerAndProductAndIsDeletedIsFalseOrderByCreatedAtDesc(Consumer consumer, Product product);
+    Optional<ShoppingCart> findByConsumerAndProductAndIsDeletedIsFalse(Consumer consumer, Product product);
     void deleteAllByIsDeletedIsTrue();
 }

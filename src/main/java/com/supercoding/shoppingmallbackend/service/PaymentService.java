@@ -110,7 +110,7 @@ public class PaymentService {
     public CommonResponse<List<PaymentResponse>> buyWhole(PaymentRequest paymentRequest) {
         Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
-        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
 
         return processPayment(consumer, purchaseList, paymentRequest);
     }
@@ -120,7 +120,7 @@ public class PaymentService {
     public CommonResponse<List<PaymentResponse>> buySelected(PaymentRequest paymentRequest, Set<Long> shoppingCartIdSet) {
         Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
-        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer).stream()
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer).stream()
                 .filter(shoppingCart -> shoppingCartIdSet.contains(shoppingCart.getId()))
                 .collect(Collectors.toList());
 
