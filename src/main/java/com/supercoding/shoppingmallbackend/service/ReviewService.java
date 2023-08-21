@@ -99,7 +99,7 @@ public class ReviewService {
     })
     public CommonResponse<ReviewResponse> createReview(Long profileId, MultipartFile imageFile, Long productId, String content, Double rating) {
         Consumer consumer = getConsumer(profileId);
-        Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+        Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ReviewErrorCode.INVALID_PRODUCT));
 
         Review newData = Review.builder()
                 .consumer(consumer)
@@ -172,6 +172,6 @@ public class ReviewService {
     }
 
     private Consumer getConsumer(Long profileId) {
-        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
 }
