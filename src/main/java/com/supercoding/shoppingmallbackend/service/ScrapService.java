@@ -17,6 +17,8 @@ import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +34,16 @@ public class ScrapService {
     private final ConsumerRepository consumerRepository;
     private final ProductRepository productRepository;
 
+    @Cacheable(value = "scrap", key = "'getAll('+#profileId+')'")
+    public CommonResponse<List<ScrapResponse>> getAllScrap(Long profileId) {
+        Consumer consumer = getConsumer(profileId);
+        List<Scrap> datas = scrapRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<ScrapResponse> responses = datas.stream().map(ScrapResponse::from).collect(Collectors.toList());
+        return ApiUtils.success("찜 목록을 성공적으로 조회했습니다.", responses);
+    }
+
     @Transactional
+    @CacheEvict(value = "scrap", key = "'getAll('+#profileId+')'")
     public CommonResponse<List<ScrapResponse>> addScrap(Long profileId, Set<Long> productIdSet) {
         Consumer consumer = getConsumer(profileId);
 
@@ -56,4 +67,6 @@ public class ScrapService {
     private Consumer getConsumer(Long profileId) {
         return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
+
+
 }
