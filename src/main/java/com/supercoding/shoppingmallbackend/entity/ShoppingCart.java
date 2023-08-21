@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
 @Table(name = "shopping_cart")
 public class ShoppingCart extends CommonField {

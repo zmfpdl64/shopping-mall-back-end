@@ -5,6 +5,7 @@ import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ConsumerErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProductErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
+import com.supercoding.shoppingmallbackend.common.Error.domain.ScrapErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
 import com.supercoding.shoppingmallbackend.dto.response.ConsumerResponse;
@@ -36,8 +37,9 @@ public class ScrapService {
         Consumer consumer = getConsumer(profileId);
 
         List<ScrapResponse> responses = productIdSet.stream()
-                .map(id->productRepository.findProductById(id)
-                        .orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT))
+                .filter(productId->!scrapRepository.existsByConsumerAndProductIdAndIsDeletedIsFalse(consumer, productId))
+                .map(productId->productRepository.findProductById(productId)
+                        .orElseThrow(()->new CustomException(ScrapErrorCode.INVALID_PRODUCT))
                 )
                 .map(product -> {
                     Scrap newData = Scrap.builder().consumer(consumer).product(product).build();
@@ -52,6 +54,6 @@ public class ScrapService {
     }
 
     private Consumer getConsumer(Long profileId) {
-        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
 }
