@@ -81,6 +81,7 @@ public class PaymentService {
                 .hasPrivious(dataPage.hasPrevious())
                 .hasNext(dataPage.hasNext())
                 .totalPages(dataPage.getTotalPages())
+                .totalElements(dataPage.getTotalElements())
                 .build();
 
         return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", response);
@@ -101,6 +102,7 @@ public class PaymentService {
                 .hasNext(dataPage.hasNext())
                 .hasPrivious(dataPage.hasPrevious())
                 .contents(contents)
+                .totalElements(dataPage.getTotalElements())
                 .build();
 
         return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", response);

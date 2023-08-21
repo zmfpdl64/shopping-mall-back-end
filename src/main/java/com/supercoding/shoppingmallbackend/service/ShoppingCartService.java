@@ -59,6 +59,7 @@ public class ShoppingCartService {
                 .hasPrivious(dataPage.hasPrevious())
                 .hasNext(dataPage.hasNext())
                 .totalPages(dataPage.getTotalPages())
+                .totalElements(dataPage.getTotalElements())
                 .build();
 
         return ApiUtils.success("장바구니를 성공적으로 조회했습니다.", response);

@@ -21,4 +21,7 @@ public class PaginationResponse<T> {
     private Integer totalPages;
     @ApiModelProperty(required = true, value = "pagination으로 조회한 데이터들")
     private List<T> contents;
+
+    private Long totalElements;
+
 }

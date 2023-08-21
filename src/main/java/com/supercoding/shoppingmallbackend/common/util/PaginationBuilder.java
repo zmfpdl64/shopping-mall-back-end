@@ -8,9 +8,13 @@ public class PaginationBuilder<T> {
     private boolean hasNext;
     private boolean hasPrevious;
     private int totalPages;
+
+    private Long totalElements;
     private List<T> contents;
 
-    public PaginationResponse<T> build() { return new PaginationResponse<>(hasNext, hasPrevious, totalPages, contents); }
+//    public PaginationResponse<T> build() { return new PaginationResponse<>(hasNext, hasPrevious, totalPages, contents); }
+
+    public PaginationResponse<T> build() { return new PaginationResponse<>(hasNext, hasPrevious, totalPages, contents, totalElements); }
 
     public PaginationBuilder<T> hasNext(boolean hasNext) {
         this.hasNext = hasNext;
@@ -29,6 +33,11 @@ public class PaginationBuilder<T> {
 
     public PaginationBuilder<T> contents(List<T> contents) {
         this.contents = contents;
+        return this;
+    }
+
+    public PaginationBuilder<T> totalElements(Long totalElements) {
+        this.totalElements = totalElements;
         return this;
     }
 }
