@@ -30,14 +30,14 @@ public class ScrapController {
     @GetMapping()
     @ApiOperation(value = "찜한 상품 전체 조회", notes = "찜 목록 전체를 조회합니다.")
     public CommonResponse<List<ScrapResponse>> getAllScrap() {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         return scrapService.getAllScrap(profileId);
     }
 
     @PostMapping("query")
     @ApiOperation(value = "찜하기", notes = "찜 목록에 추가합니다.")
     public CommonResponse<List<ScrapResponse>> addScrap(@RequestParam("productId") Set<String> productIds) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         try {
             Set<Long> productIdSet = productIds.stream().map(Long::parseLong).collect(Collectors.toSet());
             return scrapService.addScrap(profileId, productIdSet);
