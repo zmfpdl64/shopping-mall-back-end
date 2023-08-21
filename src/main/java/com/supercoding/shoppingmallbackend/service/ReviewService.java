@@ -41,7 +41,7 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final AwsS3Service awsS3Service;
 
-    @Cacheable(value = "productReview", key = "#productId")
+    @Cacheable(value = "productReview", key = "#productId+'-'+#sort.toString()")
     public CommonResponse<List<ReviewResponse>> getAllProductReview(long productId, Sort sort) {
         Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ReviewErrorCode.INVALID_PRODUCT));
         List<Review> datas = reviewRepository.findAllByProductAndIsDeletedIsFalse(product, sort);
@@ -49,7 +49,7 @@ public class ReviewService {
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", responses);
     }
 
-    @Cacheable(value = "productReviewPage", key = "#productId+'-'+#pageable.pageNumber+'-'+#pageable.pageSize")
+    @Cacheable(value = "productReviewPage", key = "#productId+'-'+#pageable.pageNumber+'-'+#pageable.pageSize+'-'+#pageable.sort.toString()")
     public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductREviewWithPagination(long productId, Pageable pageable) {
         Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ReviewErrorCode.INVALID_PRODUCT));
 
@@ -92,7 +92,7 @@ public class ReviewService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "productReview", key = "#productId"),
+            @CacheEvict(value = "productReview", allEntries = true),
             @CacheEvict(value = "productReviewPage", allEntries = true),
             @CacheEvict(value = "myReview", key = "#profileId"),
             @CacheEvict(value = "myReivewPage", allEntries = true)
@@ -121,7 +121,7 @@ public class ReviewService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "productReview", key = "#productId"),
+            @CacheEvict(value = "productReview", allEntries = true),
             @CacheEvict(value = "productReviewPage", allEntries = true),
             @CacheEvict(value = "myReview", key = "#profileId"),
             @CacheEvict(value = "myReivewPage", allEntries = true)
@@ -141,7 +141,7 @@ public class ReviewService {
 
     @Transactional
     @Caching(evict = {
-            @CacheEvict(value = "productReview", key = "#productId"),
+            @CacheEvict(value = "productReview", allEntries = true),
             @CacheEvict(value = "productReviewPage", allEntries = true),
             @CacheEvict(value = "myReview", key = "#profileId"),
             @CacheEvict(value = "myReivewPage", allEntries = true)
