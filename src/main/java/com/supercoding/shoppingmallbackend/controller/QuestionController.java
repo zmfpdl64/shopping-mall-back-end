@@ -11,6 +11,7 @@ import com.supercoding.shoppingmallbackend.dto.response.questions.UpdateQuestion
 import com.supercoding.shoppingmallbackend.service.QuestionService;
 
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class QuestionController {
     public QuestionController(QuestionService questionService) {
         this.questionService = questionService;
     }
-    // 문의 조회
+    @ApiOperation(value = "문의 조회")
     @GetMapping("/{id}")
     public CommonResponse<Object> getQuestion(
             @PathVariable Long id) {
@@ -36,14 +37,15 @@ public class QuestionController {
         return ApiUtils.success("조회 완료", question);
     }
 
-    // 문의 작성
+
+    @ApiOperation(value = "문의 작성")
     @PostMapping
     public CommonResponse<Object> createQuestion(
             @RequestBody CreateQuestionRequest request) {
         CreateQuestionResponse createdQuestion = questionService.createQuestion(request);
         return ApiUtils.success("작성 완료",createdQuestion);
     }
-    // 문의 수정
+    @ApiOperation(value = "문의 수정")
     @PutMapping("/{id}")
     public CommonResponse<Object> updateQuestion(
             @PathVariable Long id,
@@ -55,7 +57,7 @@ public class QuestionController {
         return ApiUtils.success("수정 완료", updatedQuestion);
     }
 
-    // 문의 삭제
+    @ApiOperation(value = "문의 삭제")
     @DeleteMapping("/{id}")
     public CommonResponse<Object> deleteQuestion(@PathVariable Long id) {
         questionService.deleteQuestion(id);
