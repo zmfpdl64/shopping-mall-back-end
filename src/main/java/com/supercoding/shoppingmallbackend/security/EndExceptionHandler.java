@@ -17,12 +17,12 @@ public class EndExceptionHandler extends OncePerRequestFilter {
         try{
             filterChain.doFilter(request, response);
         }catch(CustomException e){
-            response.getWriter().write(CommonResponse.fail(e.getErrorCode()).toString());
+            response.getWriter().write(CommonResponse.fail(e.getErrorCode()).toStream());
         }catch(RuntimeException e) {
-            response.getWriter().write(CommonResponse.fail(e).toString());
+            response.getWriter().write(CommonResponse.fail(e).toStream());
         }
         catch (Exception e) {
-            response.getWriter().write(CommonResponse.fail(e).toString());
+            response.getWriter().write(CommonResponse.fail(e).toStream());
         }
 
     }

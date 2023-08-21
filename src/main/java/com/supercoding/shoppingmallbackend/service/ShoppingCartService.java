@@ -120,7 +120,7 @@ public class ShoppingCartService {
     }
 
     private Consumer getConsumer(){
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
     }
 

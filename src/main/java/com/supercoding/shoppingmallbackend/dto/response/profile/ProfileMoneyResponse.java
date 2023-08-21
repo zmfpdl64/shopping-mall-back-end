@@ -1,4 +1,4 @@
-package com.supercoding.shoppingmallbackend.dto.response;
+package com.supercoding.shoppingmallbackend.dto.response.profile;
 
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import lombok.AllArgsConstructor;

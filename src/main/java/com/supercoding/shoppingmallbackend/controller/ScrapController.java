@@ -29,14 +29,14 @@ public class ScrapController {
     @GetMapping()
     @ApiOperation(value = "찜한 상품 전체 조회", notes = "찜 목록 전체를 조회합니다.")
     public CommonResponse<List<ScrapResponse>> getAllScrap() {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         return scrapService.getAllScrap(profileId);
     }
 
     @GetMapping("/query")
     @ApiOperation(value = "찜한 상품 페이징 조회", notes = "찜 목록 전체를 조회합니다. 그런데 이제 이 페이지네이션을 곁들인...")
     public CommonResponse<PaginationResponse<ScrapResponse>> getScrapPage(@RequestParam("page") String page, @RequestParam("size") String size) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         try {
             return scrapService.getScrapPage(profileId, Integer.parseInt(page), Integer.parseInt(size));
         } catch (NumberFormatException e) {
@@ -47,7 +47,7 @@ public class ScrapController {
     @PostMapping("/query")
     @ApiOperation(value = "찜하기", notes = "찜 목록에 추가합니다.")
     public CommonResponse<List<ScrapResponse>> addScrap(@RequestParam("product-id") Set<String> productIds) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         try {
             Set<Long> productIdSet = productIds.stream().map(Long::parseLong).collect(Collectors.toSet());
             return scrapService.addScrap(profileId, productIdSet);

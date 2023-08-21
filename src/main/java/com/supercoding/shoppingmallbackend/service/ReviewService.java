@@ -149,6 +149,6 @@ public class ReviewService {
     }
 
     private Consumer getConsumer() {
-        return consumerRepository.findByProfileId(AuthHolder.getUserIdx()).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+        return consumerRepository.findByProfileId(AuthHolder.getProfileIdx()).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
     }
 }

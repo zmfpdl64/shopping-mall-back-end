@@ -5,10 +5,10 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.PaymentErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
-import com.supercoding.shoppingmallbackend.dto.response.ProfileMoneyResponse;
+import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
 import com.supercoding.shoppingmallbackend.security.JwtUtiles;
 import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
-import com.supercoding.shoppingmallbackend.dto.response.LoginResponse;
+import com.supercoding.shoppingmallbackend.dto.response.profile.LoginResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import com.supercoding.shoppingmallbackend.entity.ProfileRole;
@@ -75,7 +75,6 @@ public class ProfileService {
                 .phone(phoneNumber)
                 .paymoney(0L)
                 .build();
-        profile.setCreatedAt(Timestamp.valueOf(LocalDateTime.now())); //TODO: 제거 예정
         profile.setIsDeleted(false);
         profileRepository.save(profile);
         return profile;
@@ -135,13 +134,15 @@ public class ProfileService {
     }
 
     @Transactional
-    public void rechargeProfileMoney(Long profileIdx, Long rechargeMoney) {
+    public Long rechargeProfileMoney(Long profileIdx, Long rechargeMoney) {
         Profile findProfile = getFindProfile(profileIdx);
         Long profileLeftMoney = findProfile.getPaymoney();
         if(rechargeMoney < 0) {
             throw new CustomException(PaymentErrorCode.INVALID_RECHARGE_VALUE.getErrorCode());
         }
-        findProfile.setPaymoney(profileLeftMoney + rechargeMoney);
+        Long profileTotalMoney = profileLeftMoney + rechargeMoney;
+        findProfile.setPaymoney(profileTotalMoney);
+        return profileTotalMoney;
     }
 
     private Profile getFindProfile(Long profileIdx) {

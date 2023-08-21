@@ -1,5 +1,6 @@
 package com.supercoding.shoppingmallbackend.dto.response;
 
+import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import lombok.*;
 

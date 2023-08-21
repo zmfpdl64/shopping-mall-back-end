@@ -39,7 +39,7 @@ public class ProductController {
                                                 @ApiParam(value = "썸네일 이미지 파일 (선택)", required = false) @RequestPart(value = "mainImageFile", required = false) MultipartFile thumbNailFile,
                                                 @ApiParam(value = "본문 이미지 파일들 (선택)", required = false) @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles
     ) {
-        Long userIdx = AuthHolder.getUserIdx();
+        Long userIdx = AuthHolder.getProfileIdx();
         productService.createProductItem(productRequestBase, thumbNailFile, imageFiles, userIdx);
 
         return ApiUtils.success("상품 등록 성공", null);
@@ -70,7 +70,7 @@ public class ProductController {
     @DeleteMapping("/{product_idx}")
     public CommonResponse<Object> deleteProduct(@PathVariable("product_idx") Long productId) {
 
-        Long profileIdx = AuthHolder.getUserIdx();
+        Long profileIdx = AuthHolder.getProfileIdx();
         productService.deleteProductByProductId(productId, profileIdx);
 
         return ApiUtils.success(productId + "번 상품 삭제 성공", null);

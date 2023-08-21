@@ -39,7 +39,7 @@ public class PaymentService {
 
     @Cacheable(value = "payment", key = "'getPurchaseAll'")
     public CommonResponse<List<PurchaseResponse>> getPurchaseHistory() {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         // 구매내역 조회하기
@@ -53,7 +53,7 @@ public class PaymentService {
 
     @Cacheable(value = "payment", key = "'getSaleAll'")
     public CommonResponse<List<SaleResponse>> getSaleHistory() {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         // 판매내역 조회하기
@@ -67,7 +67,7 @@ public class PaymentService {
 
     @Cacheable(value = "payment", key = "'getPurchasePage('+#page+','+#size+')'")
     public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(int page, int size) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         Page<Payment> dataPage = paymentRepository.findAllByConsumerAndIsDeletedIsFalse(consumer, PageRequest.of(page, size));
@@ -88,7 +88,7 @@ public class PaymentService {
 
     @Cacheable(value = "payment", key = "'getSalePage('+#page+','+#size+')'")
     public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistoryWithPagination(int page, int size) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         Page<Payment> dataPage = paymentRepository.findAllBySellerId(seller.getId(), PageRequest.of(page, size));
@@ -109,7 +109,7 @@ public class PaymentService {
     @CacheEvict(value = "payment", allEntries = true)
     @Transactional
     public CommonResponse<List<PaymentResponse>> buyWhole(PaymentRequest paymentRequest) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
         List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
 
@@ -119,7 +119,7 @@ public class PaymentService {
     @CacheEvict(value = "payment", allEntries = true)
     @Transactional
     public CommonResponse<List<PaymentResponse>> buySelected(PaymentRequest paymentRequest, Set<Long> shoppingCartIdSet) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
         List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer).stream()
                 .filter(shoppingCart -> shoppingCartIdSet.contains(shoppingCart.getId()))
