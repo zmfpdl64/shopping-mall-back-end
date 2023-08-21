@@ -17,6 +17,7 @@ import com.supercoding.shoppingmallbackend.repository.ProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,7 @@ public class ScrapService {
     private final ConsumerRepository consumerRepository;
     private final ProductRepository productRepository;
 
+    @Transactional
     public CommonResponse<List<ScrapResponse>> addScrap(Long profileId, Set<Long> productIdSet) {
         Consumer consumer = getConsumer(profileId);
 

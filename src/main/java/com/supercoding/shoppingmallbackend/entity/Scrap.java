@@ -15,7 +15,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "scrap_list")
 public class Scrap extends CommonField {
     @Id
-    @Column(name = "idx", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idx")
     private Long id;
 
     @NotNull
