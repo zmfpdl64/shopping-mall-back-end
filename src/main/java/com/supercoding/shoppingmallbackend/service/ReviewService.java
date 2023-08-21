@@ -6,7 +6,6 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.FilePath;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
-import com.supercoding.shoppingmallbackend.dto.request.ReviewRequest;
 import com.supercoding.shoppingmallbackend.dto.response.PaginationPageResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ReviewResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
@@ -16,7 +15,6 @@ import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ReviewRepository;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
-import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -139,6 +137,6 @@ public class ReviewService {
     }
 
     private Consumer getConsumer() {
-        return consumerRepository.findByProfileId(AuthHolder.getUserIdx()).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+        return consumerRepository.findByProfileId(AuthHolder.getProfileIdx()).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
     }
 }

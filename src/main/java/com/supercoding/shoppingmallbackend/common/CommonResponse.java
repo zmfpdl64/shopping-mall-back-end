@@ -37,11 +37,10 @@ public class CommonResponse<T> {
         return new CommonResponse<T>(true, 200, message, data);
     }
     public static <T>CommonResponse<T> fail(ErrorCode code) {
-        return new CommonResponse<>(false, code.getStatus(), code.getMessage(), (T) emptyList);
+        return new CommonResponse<>(false, code.getStatus(), code.getMessage(), null);
     }
     public static <T extends Exception>CommonResponse<T> fail(T e) {
-
-        return new CommonResponse<T>(false, 500, e.getMessage(), (T) emptyList);
+        return new CommonResponse<T>(false, 500, e.getMessage(), null);
     }
 
     public String toStream() {

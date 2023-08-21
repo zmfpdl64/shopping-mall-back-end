@@ -8,7 +8,6 @@ import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "Token 복호화, 암호화 API")
@@ -34,7 +33,7 @@ public class TokenTestController {
     @Operation(summary = "token 복호화", description = "token을 전송했을 때 AuthHolder 객체를 사용해 반환")
     @GetMapping("/use/{token}")
     public CommonResponse<?> useToken() {
-        log.info("token: {}", AuthHolder.getUserIdx());
-        return CommonResponse.success(String.valueOf(AuthHolder.getUserIdx()), null);
+        log.info("token: {}", AuthHolder.getProfileIdx());
+        return CommonResponse.success(String.valueOf(AuthHolder.getProfileIdx()), null);
     }
 }
