@@ -51,21 +51,8 @@ public class ReviewController {
         }
     }
 
-//    @ApiOperation(value = "상품 리뷰 조회 (pagination)", notes = "상품의 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
-//    @GetMapping("/{productId}/query")
-//    public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductReviewWithPagination(
-//            @PathVariable @ApiParam(value = "상품 id", required = true) String productId,
-//            @RequestParam("page") @ApiParam(value = "페이지 번호(0부터 시작)", required = true) String page,
-//            @RequestParam("size") @ApiParam(value = "한 페이지에 보여줄 데이터 개수", required = true) String size){
-//        try {
-//            return reviewService.getAllProductREviewWithPagination(Long.parseLong(productId), Integer.parseInt(page), Integer.parseInt(size));
-//        } catch (NumberFormatException e) {
-//            throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE);
-//        }
-//    }
-
     @ApiOperation(value = "상품 리뷰 조회 (pagination)", notes = "상품의 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
-    @GetMapping("/{productId}/pagination")
+    @GetMapping("/{productId}/query")
     public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductReviewWithPagination(
             @PathVariable @ApiParam(value = "상품 id", required = true) String productId,
             @RequestParam(value = "sortBy", required = false, defaultValue = "creation-date") @ApiParam("정렬 기준") String sortBy,
