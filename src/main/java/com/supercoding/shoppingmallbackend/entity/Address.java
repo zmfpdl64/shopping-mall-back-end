@@ -18,11 +18,11 @@ public class Address extends CommonField {
     private Integer id;
 
     @NotNull
-    @Column(name = "profile_id", nullable = false)
-    private Long profileId;
+    @ManyToOne
+    @JoinColumn(name = "profile_id", nullable = false)
+    private Profile profile;
 
     @Size(max = 63)
-    @NotNull
     @Column(name = "name", nullable = false, length = 63)
     private String name;
 

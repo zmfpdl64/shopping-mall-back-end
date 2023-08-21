@@ -9,6 +9,8 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -54,6 +56,20 @@ public class Profile extends CommonField {
     @NotNull
     @Column(name = "paymoney", nullable = false)
     private Long paymoney;
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses =  new ArrayList<>();
+
+    public void addProfileAddress(Address address) {
+        addresses.add(address);
+        address.setProfile(this);
+    }
+
+    public void removeProfileAddress(Address address) {
+        addresses.remove(address);
+        address.setProfile(null);
+    }
+
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
