@@ -29,4 +29,4 @@ public class ShoppingCartItemResponse {
                 .quantity(shoppingCart.getAmount())
                 .build();
     }
-}t s
+}
