@@ -70,7 +70,7 @@ public class ReviewService {
     public CommonResponse<List<ReviewResponse>> getAllMyReview(Long profileId) {
         Consumer consumer = getConsumer(profileId);
 
-        List<Review> datas = reviewRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<Review> datas = reviewRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
         List<ReviewResponse> responses = datas.stream().map(ReviewResponse::from).collect(Collectors.toList());
 
         return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", responses);
@@ -79,7 +79,7 @@ public class ReviewService {
     @Cacheable(value = "myReivewPage", key = "#profileId+'-'+#page+'-'+#size")
     public CommonResponse<PaginationResponse<ReviewResponse>> getAllMyReviewWithPagination(Long profileId, int page, int size) {
         Consumer consumer = getConsumer(profileId);
-        Page<Review> dataPage = reviewRepository.findAllByConsumerAndIsDeletedIsFalse(consumer, PageRequest.of(page, size));
+        Page<Review> dataPage = reviewRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer, PageRequest.of(page, size));
         List<ReviewResponse> contents = dataPage.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
         PaginationResponse<ReviewResponse> response = new PaginationBuilder<ReviewResponse>()
                 .contents(contents)

@@ -15,6 +15,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByProductAndIsDeletedIsFalse(Product product, Sort sort);
     Page<Review> findAllByProductAndIsDeletedIsFalse(Product product, Pageable pageable);
     List<Review> findAllByConsumerAndIsDeletedIsFalse(Consumer consumer);
-    Page<Review> findAllByConsumerAndIsDeletedIsFalse(Consumer consumer, Pageable pageable);
+    List<Review> findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(Consumer consumer);
+    Page<Review> findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(Consumer consumer, Pageable pageable);
     Optional<Review> findByIdAndConsumerAndIsDeletedIsFalse(long reviewId, Consumer consumer);
 }
