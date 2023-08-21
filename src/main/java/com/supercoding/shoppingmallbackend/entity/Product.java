@@ -72,6 +72,9 @@ public class Product extends CommonField {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductContentImage> productContentImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
+
     public void addProductCategory(Category category) {
         ProductCategory productCategory = ProductCategory.from(this, category);
         productCategories.add(productCategory);
@@ -116,6 +119,19 @@ public class Product extends CommonField {
                 .filter(contentImage -> contentImage.equals(image))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public String calculateFormattedAverageRating() {
+        if (reviews.isEmpty()) {
+            return "0.00"; // 리뷰가 없을 때 0.00으로 표시
+        }
+
+        double totalRating = reviews.stream()
+                .mapToDouble(Review::getRating)
+                .sum();
+
+        double avgRating = totalRating / reviews.size();
+        return String.format("%.2f", avgRating); // 소수점 두 자리까지 포맷팅
     }
 
 

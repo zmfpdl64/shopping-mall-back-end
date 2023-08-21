@@ -14,6 +14,8 @@ public class ProductListResponse {
     private String title;
     private Long price;
     private String companyName;
+    private double avgRating;
+
 
 
 }

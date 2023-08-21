@@ -5,6 +5,7 @@ import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.ProductFileRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ProductListRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ProductRequestBase;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ProductDetailResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ProductListResponse;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +55,7 @@ public class ProductController {
                                                  @RequestParam(required = false) List<String> category,
                                                  Pageable pageable) {
         productListRequest.setCategory(category);
-        List<ProductListResponse> productListResponses = productService.getProductList(productListRequest, pageable);
+        PaginationResponse<ProductListResponse> productListResponses = productService.getProductList(productListRequest, pageable);
 
         return ApiUtils.success("상품 리스트 조회 성공", productListResponses);
     }

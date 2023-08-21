@@ -61,6 +61,7 @@ public class ReviewService {
                 .hasPrivious(pageData.hasPrevious())
                 .totalPages(pageData.getTotalPages())
                 .contents(contents)
+                .totalElements(pageData.getTotalElements())
                 .build();
 
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", response);
@@ -86,6 +87,7 @@ public class ReviewService {
                 .hasNext(dataPage.hasNext())
                 .hasPrivious(dataPage.hasPrevious())
                 .totalPages(dataPage.getTotalPages())
+                .totalElements(dataPage.getTotalElements())
                 .build();
         return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", response);
     }
