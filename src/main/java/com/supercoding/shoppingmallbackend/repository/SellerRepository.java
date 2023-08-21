@@ -11,9 +11,5 @@ import java.util.Optional;
 public interface SellerRepository extends JpaRepository<Seller, Long> {
 
     Optional<Seller> findByProfile_Id(Long profileIdx);
-
-    @Query("select s from Seller s " +
-            "join fetch s.profile p " +
-            "where p.id=:profileId and s.isDeleted=false")
-    Optional<Seller> findByProfileId(Long profileId);
+    Optional<Seller> findByProfileIdAndIsDeletedIsFalse(Long profileId);
 }
