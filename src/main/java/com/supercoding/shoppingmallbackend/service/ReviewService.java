@@ -21,6 +21,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,11 +49,13 @@ public class ReviewService {
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", responses);
     }
 
-    @Cacheable(value = "productReviewPage", key = "#productId+'-'+#page+'-'+#size")
-    public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductREviewWithPagination(long productId, int page, int size) {
+    @Cacheable(value = "productReviewPage", key = "#productId+'-'+#pageable.pageNumber+'-'+#pageable.pageSize")
+    public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductREviewWithPagination(long productId, Pageable pageable) {
         Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ReviewErrorCode.INVALID_PRODUCT));
-        Page<Review> pageData = reviewRepository.findAllByProductAndIsDeletedIsFalse(product, PageRequest.of(page, size));
+
+        Page<Review> pageData = reviewRepository.findAllByProductAndIsDeletedIsFalse(product, pageable);
         List<ReviewResponse> contents = pageData.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
+
         PaginationResponse<ReviewResponse> response = new PaginationBuilder<ReviewResponse>()
                 .hasNext(pageData.hasNext())
                 .hasPrivious(pageData.hasPrevious())

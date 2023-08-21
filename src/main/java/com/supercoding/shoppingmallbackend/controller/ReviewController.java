@@ -6,19 +6,19 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.OrderByErrorCode;
 import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ReviewResponse;
-import com.supercoding.shoppingmallbackend.entity.orderBy.ReviewOrderBy;
+import com.supercoding.shoppingmallbackend.entity.sortProperty.ReviewSortProperty;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.service.ReviewService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,13 +38,9 @@ public class ReviewController {
             @RequestParam(value = "sortBy", required = false, defaultValue = "creation-date") @ApiParam("정렬 기준") String sortBy,
             @RequestParam(value = "direction", required = false, defaultValue = "DESC") @ApiParam("정렬 방향") String direction
     ) {
-        String sortProperty = ReviewOrderBy.get(sortBy);
+        String sortProperty = ReviewSortProperty.get(sortBy);
         if (sortProperty == null) throw OrderByErrorCode.INVALID_SORT_PARAMS.exception();
-
-        Sort sort = direction.equals("DESC") ? Sort.by(Sort.Order.desc(sortProperty))
-                : direction.equals("ASC") ? Sort.by(Sort.Order.asc(sortProperty))
-                : null;
-
+        Sort sort = createSort(sortProperty, direction);
         if (sort == null) throw OrderByErrorCode.INVALID_SORT_PARAMS.exception();
 
         try {
@@ -55,14 +51,42 @@ public class ReviewController {
         }
     }
 
+//    @ApiOperation(value = "상품 리뷰 조회 (pagination)", notes = "상품의 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
+//    @GetMapping("/{productId}/query")
+//    public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductReviewWithPagination(
+//            @PathVariable @ApiParam(value = "상품 id", required = true) String productId,
+//            @RequestParam("page") @ApiParam(value = "페이지 번호(0부터 시작)", required = true) String page,
+//            @RequestParam("size") @ApiParam(value = "한 페이지에 보여줄 데이터 개수", required = true) String size){
+//        try {
+//            return reviewService.getAllProductREviewWithPagination(Long.parseLong(productId), Integer.parseInt(page), Integer.parseInt(size));
+//        } catch (NumberFormatException e) {
+//            throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE);
+//        }
+//    }
+
     @ApiOperation(value = "상품 리뷰 조회 (pagination)", notes = "상품의 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
-    @GetMapping("/{productId}/query")
+    @GetMapping("/{productId}/pagination")
     public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductReviewWithPagination(
             @PathVariable @ApiParam(value = "상품 id", required = true) String productId,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "creation-date") @ApiParam("정렬 기준") String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = "DESC") @ApiParam("정렬 방향") String direction,
             @RequestParam("page") @ApiParam(value = "페이지 번호(0부터 시작)", required = true) String page,
-            @RequestParam("size") @ApiParam(value = "한 페이지에 보여줄 데이터 개수", required = true) String size){
+            @RequestParam("size") @ApiParam(value = "한 페이지에 보여줄 데이터 개수", required = true) String size
+    ){
+        String sortProperty = ReviewSortProperty.get(sortBy);
+        if (sortProperty == null) throw OrderByErrorCode.INVALID_SORT_PARAMS.exception();
+        Sort sort = createSort(sortProperty, direction);
+        if (sort == null) throw OrderByErrorCode.INVALID_SORT_PARAMS.exception();
+
         try {
-            return reviewService.getAllProductREviewWithPagination(Long.parseLong(productId), Integer.parseInt(page), Integer.parseInt(size));
+            long productIdLong = Long.parseLong(productId);
+            int pageInt = Integer.parseInt(page);
+            int sizeInt = Integer.parseInt(size);
+
+            if (pageInt < 0 || sizeInt < 1) throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE);
+
+            PageRequest pageRequest = PageRequest.of(pageInt, sizeInt, sort);
+            return reviewService.getAllProductREviewWithPagination(productIdLong, pageRequest);
         } catch (NumberFormatException e) {
             throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE);
         }
@@ -124,5 +148,11 @@ public class ReviewController {
         Long profileId = AuthHolder.getProfileIdx();
         Set<Long> idSet = ids.stream().map(Long::parseLong).collect(Collectors.toSet());
         return reviewService.softDeleteReviews(profileId, idSet);
+    }
+
+    private Sort createSort(String sortProperty, String direction) {
+        return direction.equals("DESC") ? Sort.by(Sort.Order.desc(sortProperty))
+                : direction.equals("ASC") ? Sort.by(Sort.Order.asc(sortProperty))
+                : null;
     }
 }
