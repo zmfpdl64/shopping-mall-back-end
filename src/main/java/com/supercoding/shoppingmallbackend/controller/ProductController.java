@@ -2,6 +2,7 @@ package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
+import com.supercoding.shoppingmallbackend.dto.request.ProductFileRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ProductListRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ProductRequestBase;
 import com.supercoding.shoppingmallbackend.dto.response.ProductDetailResponse;
@@ -77,8 +78,18 @@ public class ProductController {
     }
 
     @Operation(summary = "상품 수정", description = "상품 식별값을 입력하여 단일의 product 레코드를 수정합니다.")
-    @PatchMapping("/{product_idx}")
-    public CommonResponse<Object> updateProduct(@PathVariable("product_idx") Long productId) {
+    @PatchMapping(value = "/{product_idx}", consumes = "multipart/form-data")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data",
+            schema = @Schema(implementation = MultipartFile.class)))
+    public CommonResponse<Object> updateProduct(@PathVariable("product_idx") Long productId,
+                                                @ModelAttribute ProductFileRequest productFileRequest,
+                                                @ApiParam(value = "썸네일 이미지 파일 (선택)") @RequestPart(value = "mainImageFile", required = false)
+                                                    MultipartFile thumbNailFile,
+                                                @ApiParam(value = "본문 이미지 파일들 (선택)") @RequestPart(value = "imageFiles", required = false)
+                                                    List<MultipartFile> imageFiles) {
+        Long profileIdx = AuthHolder.getProfileIdx();
+        productService.updateProductByProductId(productId, profileIdx, productFileRequest, thumbNailFile, imageFiles);
+
         return ApiUtils.success(productId + "번 상품 수정 성공", null);
     }
 
