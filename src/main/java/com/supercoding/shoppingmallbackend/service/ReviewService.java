@@ -86,7 +86,7 @@ public class ReviewService {
     @CacheEvict(value = "review", allEntries = true)
     public CommonResponse<ReviewResponse> createReview(MultipartFile imageFile, Long productId, String content, Double rating) {
         Consumer consumer = getConsumer();
-        Product product = productRepository.findProductById(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+        Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
 
         Review newData = Review.builder()
                 .consumer(consumer)

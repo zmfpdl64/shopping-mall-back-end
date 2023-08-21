@@ -67,7 +67,7 @@ public class ScrapService {
 
         List<ScrapResponse> responses = productIdSet.stream()
                 .filter(productId->!scrapRepository.existsByConsumerAndProductIdAndIsDeletedIsFalse(consumer, productId))
-                .map(productId->productRepository.findProductById(productId)
+                .map(productId->productRepository.findByIdAndIsDeletedIsFalse(productId)
                         .orElseThrow(()->new CustomException(ScrapErrorCode.INVALID_PRODUCT))
                 )
                 .map(product -> {

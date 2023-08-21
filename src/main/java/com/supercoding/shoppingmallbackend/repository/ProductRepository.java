@@ -16,11 +16,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("select p from Product p " +
-            "join fetch p.genre " +
-            "join fetch p.seller " +
-            "where p.id=:productId and p.isDeleted=false ")
-    Optional<Product> findProductById(Long productId);
+    Optional<Product> findByIdAndIsDeletedIsFalse(Long productId);
 
     @Query("SELECT new com.supercoding.shoppingmallbackend.dto.response.ProductListResponse(p.id, p.mainImageUrl, p.title, p.price, p.seller.profile.name) " +
             "FROM Product p " +
