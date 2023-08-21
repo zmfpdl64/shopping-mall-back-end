@@ -7,6 +7,7 @@ import com.supercoding.shoppingmallbackend.dto.request.answer.UpdateAnswerReques
 import com.supercoding.shoppingmallbackend.dto.response.answer.CreateAnswerResponse;
 import com.supercoding.shoppingmallbackend.dto.response.answer.UpdateAnswerResponse;
 import com.supercoding.shoppingmallbackend.service.AnswerService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class AnswerController {
     private final AnswerService answerService;
 
+    @ApiOperation(value = "문의 답변을 작성.")
     @PostMapping
     public CommonResponse<Object> createAnswer(
             @RequestBody CreateAnswerRequest request){
         CreateAnswerResponse createAnswerResponse = answerService.createAnswer(request);
         return ApiUtils.success("답변 작성 완료",createAnswerResponse);
     }
-
+    @ApiOperation(value = "문의 답변을 수정.")
     @PutMapping("/{id}")
     public CommonResponse<Object> updateAnswer(
             @PathVariable Long id,
@@ -33,7 +35,7 @@ public class AnswerController {
         }
         return ApiUtils.success("수정완료",updateAnswer);
     }
-
+    @ApiOperation(value = "문의 답변을 삭제.")
     @DeleteMapping("/{id}")
     public CommonResponse<Object> deleteAnswer(@PathVariable Long id){
         answerService.deleteAnswer(id);
