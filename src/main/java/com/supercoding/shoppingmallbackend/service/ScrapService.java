@@ -53,6 +53,7 @@ public class ScrapService {
                 .hasPrivious(dataPage.hasPrevious())
                 .hasNext(dataPage.hasNext())
                 .contents(contents)
+                .totalElements(dataPage.getTotalElements())
                 .build();
         return ApiUtils.success("찜 목록을 성공적으로 조회했습니다.", response);
     }

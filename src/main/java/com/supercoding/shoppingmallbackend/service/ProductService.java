@@ -4,12 +4,11 @@ package com.supercoding.shoppingmallbackend.service;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.FilePath;
+import com.supercoding.shoppingmallbackend.common.util.PaginationBuilder;
 import com.supercoding.shoppingmallbackend.dto.request.ProductFileRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ProductListRequest;
 import com.supercoding.shoppingmallbackend.dto.request.ProductRequestBase;
-import com.supercoding.shoppingmallbackend.dto.response.ProductDetailResponse;
-import com.supercoding.shoppingmallbackend.dto.response.ProductImageResponse;
-import com.supercoding.shoppingmallbackend.dto.response.ProductListResponse;
+import com.supercoding.shoppingmallbackend.dto.response.*;
 import com.supercoding.shoppingmallbackend.entity.*;
 import com.supercoding.shoppingmallbackend.repository.*;
 import lombok.*;
@@ -99,12 +98,17 @@ public class ProductService {
     }
 
     @Transactional
-    public List<ProductListResponse> getProductList(ProductListRequest productListRequest, Pageable pageable) {
+    public PaginationResponse<ProductListResponse> getProductList(ProductListRequest productListRequest, Pageable pageable) {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        Page<ProductListResponse> productList =
-                productRepository.findAvailableProductsBySearchCriteria(currentTimestamp, productListRequest, pageable);
+        Page<ProductListResponse> pageData = productRepository.findAvailableProductsBySearchCriteria(currentTimestamp, productListRequest, pageable);
 
-        return productList.getContent();
+        return new PaginationBuilder<ProductListResponse>()
+                .hasNext(pageData.hasNext())
+                .hasPrivious(pageData.hasPrevious())
+                .totalPages(pageData.getTotalPages())
+                .contents(pageData.getContent())
+                .totalElements(pageData.getTotalElements())
+                .build();
     }
 
 
@@ -112,7 +116,6 @@ public class ProductService {
     public void updateProductByProductId(Long productId, Long profileIdx, ProductFileRequest productFileRequest, MultipartFile thumbNailFile, List<MultipartFile> imageFiles) {
         Product originProduct = validProfileAndProduct(productId, profileIdx);
 
-        Seller seller = getSellerByProfileIdx(profileIdx);
         Genre genre = getGenreById(productFileRequest.getGenre());
 
         List<String> originCategoriesNames = originProduct.getProductCategories().stream().map(productCategory -> productCategory.getCategory().getName()).collect(Collectors.toList());
