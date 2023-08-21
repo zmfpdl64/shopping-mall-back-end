@@ -2,6 +2,7 @@ package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.dto.request.profile.RechargeRequest;
+import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.RechargeResponse;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
@@ -75,6 +76,14 @@ public class ProfileController {   //TODO: User -> Profile로 명칭 통일 예�
     public CommonResponse<?> changeProfile(@RequestParam("profile") MultipartFile profileImage){
         profileService.changeProfile(profileImage);
         return CommonResponse.success(null, null);
+    }
+
+    @GetMapping("/info")
+    public CommonResponse<Object> getUserProfile() {
+        Long profileIdx = AuthHolder.getProfileIdx();
+        ProfileInfoResponse profileInfoResponse = profileService.findProfileInfoByProfileIdx(profileIdx);
+        return CommonResponse.success("회원 조회 성공", profileInfoResponse);
+
     }
 
 }
