@@ -137,13 +137,13 @@ public class ShoppingCartService {
     }
 
     private Consumer getConsumer(Long profileId){
-        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
 
     private ShoppingCart processSetProduct(Consumer consumer, ShoppingCartItemRequest request) {
         Long productId = request.getProductId();
         Long addedQuantity = request.getAmount();
-        Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+        Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ShoppingCartErrorCode.INVALID_PRODUCT));
         ShoppingCart data = shoppingCartRepository.findByConsumerAndProductAndIsDeletedIsFalse(consumer, product).orElse(null);
 
         if (data == null) {
