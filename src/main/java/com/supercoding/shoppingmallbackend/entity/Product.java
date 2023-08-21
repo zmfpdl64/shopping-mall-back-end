@@ -24,6 +24,7 @@ import java.util.List;
 @Entity
 @DynamicInsert
 @DynamicUpdate
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Table(name = "product")
 @SQLDelete(sql = "UPDATE product as p SET p.is_deleted = true WHERE idx = ?")
 @Where(clause = "is_deleted = false")

@@ -3,8 +3,7 @@ package com.supercoding.shoppingmallbackend.controller;
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
-import com.supercoding.shoppingmallbackend.dto.request.ReviewRequest;
-import com.supercoding.shoppingmallbackend.dto.response.PaginationPageResponse;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ReviewResponse;
 import com.supercoding.shoppingmallbackend.service.ReviewService;
 import io.swagger.annotations.Api;
@@ -42,7 +41,7 @@ public class ReviewController {
 
     @ApiOperation(value = "상품 리뷰 조회 (pagination)", notes = "상품의 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/{productId}/query")
-    public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllProductReviewWithPagination(
+    public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductReviewWithPagination(
             @PathVariable @ApiParam(value = "상품 id", required = true) String productId,
             @RequestParam("page") @ApiParam(value = "페이지 번호(0부터 시작)", required = true) String page,
             @RequestParam("size") @ApiParam(value = "한 페이지에 보여줄 데이터 개수", required = true) String size){
@@ -61,7 +60,7 @@ public class ReviewController {
 
     @ApiOperation(value = "내가 쓴 리뷰 조회 (pagination)", notes = "내가 작성한 모든 리뷰를 조회합니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/query")
-    public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllMyReviewWithPagenation(
+    public CommonResponse<PaginationResponse<ReviewResponse>> getAllMyReviewWithPagenation(
             @RequestParam("page") @ApiParam(value = "페이지 번호(0부터 시작)", required = true) String page,
             @RequestParam("size") @ApiParam(value = "한 페이지에 보여줄 데이터 개수", required = true) String size
     ) {
