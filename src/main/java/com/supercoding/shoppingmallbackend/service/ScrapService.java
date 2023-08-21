@@ -67,7 +67,7 @@ public class ScrapService {
 
         List<ScrapResponse> responses = productIdSet.stream()
                 .filter(productId->!scrapRepository.existsByConsumerAndProductIdAndIsDeletedIsFalse(consumer, productId))
-                .map(productId->productRepository.findProductById(productId)
+                .map(productId->productRepository.findByIdAndIsDeletedIsFalse(productId)
                         .orElseThrow(()->new CustomException(ScrapErrorCode.INVALID_PRODUCT))
                 )
                 .map(product -> {
@@ -100,6 +100,10 @@ public class ScrapService {
                 .collect(Collectors.toList());
 
         return ApiUtils.success("찜하기를 성공적으로 취소했습니다.", responses);
+    }
+
+    public void hardDelete() {
+        scrapRepository.deleteAllByIsDeletedIsTrue();
     }
 
     private Consumer getConsumer(Long profileId) {
