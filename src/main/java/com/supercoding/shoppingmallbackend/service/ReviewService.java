@@ -15,12 +15,13 @@ import com.supercoding.shoppingmallbackend.entity.Review;
 import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ReviewRepository;
-import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,16 +40,18 @@ public class ReviewService {
     private final ProductRepository productRepository;
     private final AwsS3Service awsS3Service;
 
-    @Cacheable(value = "review", key = "'getAllProductReview('+#productId+')'")
-    public CommonResponse<List<ReviewResponse>> getAllProductReview(long productId) {
-        List<Review> datas = reviewRepository.findAllByProductId(productId);
+    @Cacheable(value = "productReview", key = "#productId")
+    public CommonResponse<List<ReviewResponse>> getAllProductReview(long productId, Sort sort) {
+        Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ReviewErrorCode.INVALID_PRODUCT));
+        List<Review> datas = reviewRepository.findAllByProductAndIsDeletedIsFalse(product, sort);
         List<ReviewResponse> responses = datas.stream().map(ReviewResponse::from).collect(Collectors.toList());
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", responses);
     }
 
-    @Cacheable(value = "review", key = "'getPageProductReivew('+#productId+')'")
+    @Cacheable(value = "productReviewPage", key = "#productId+'-'+#page+'-'+#size")
     public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductREviewWithPagination(long productId, int page, int size) {
-        Page<Review> pageData = reviewRepository.findAllByProductIdWithPagination(productId, PageRequest.of(page, size));
+        Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ReviewErrorCode.INVALID_PRODUCT));
+        Page<Review> pageData = reviewRepository.findAllByProductAndIsDeletedIsFalse(product, PageRequest.of(page, size));
         List<ReviewResponse> contents = pageData.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
         PaginationResponse<ReviewResponse> response = new PaginationBuilder<ReviewResponse>()
                 .hasNext(pageData.hasNext())
@@ -60,18 +63,20 @@ public class ReviewService {
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", response);
     }
 
-    public CommonResponse<List<ReviewResponse>> getAllMyReview() {
-        Consumer consumer = getConsumer();
+    @Cacheable(value = "myReview", key = "#profileId")
+    public CommonResponse<List<ReviewResponse>> getAllMyReview(Long profileId) {
+        Consumer consumer = getConsumer(profileId);
 
-        List<Review> datas = reviewRepository.findAllByConsumer(consumer);
+        List<Review> datas = reviewRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
         List<ReviewResponse> responses = datas.stream().map(ReviewResponse::from).collect(Collectors.toList());
 
         return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", responses);
     }
 
-    public CommonResponse<PaginationResponse<ReviewResponse>> getAllMyReviewWithPagination(int page, int size) {
-        Consumer consumer = getConsumer();
-        Page<Review> dataPage = reviewRepository.findPageByConsumer(consumer, PageRequest.of(page, size));
+    @Cacheable(value = "myReivewPage", key = "#profileId+'-'+#page+'-'+#size")
+    public CommonResponse<PaginationResponse<ReviewResponse>> getAllMyReviewWithPagination(Long profileId, int page, int size) {
+        Consumer consumer = getConsumer(profileId);
+        Page<Review> dataPage = reviewRepository.findAllByConsumerAndIsDeletedIsFalse(consumer, PageRequest.of(page, size));
         List<ReviewResponse> contents = dataPage.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
         PaginationResponse<ReviewResponse> response = new PaginationBuilder<ReviewResponse>()
                 .contents(contents)
@@ -83,9 +88,14 @@ public class ReviewService {
     }
 
     @Transactional
-    @CacheEvict(value = "review", allEntries = true)
-    public CommonResponse<ReviewResponse> createReview(MultipartFile imageFile, Long productId, String content, Double rating) {
-        Consumer consumer = getConsumer();
+    @Caching(evict = {
+            @CacheEvict(value = "productReview", key = "#productId"),
+            @CacheEvict(value = "productReviewPage", allEntries = true),
+            @CacheEvict(value = "myReview", key = "#profileId"),
+            @CacheEvict(value = "myReivewPage", allEntries = true)
+    })
+    public CommonResponse<ReviewResponse> createReview(Long profileId, MultipartFile imageFile, Long productId, String content, Double rating) {
+        Consumer consumer = getConsumer(profileId);
         Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
 
         Review newData = Review.builder()
@@ -107,11 +117,16 @@ public class ReviewService {
     }
 
     @Transactional
-    @CacheEvict(value = "review", allEntries = true)
-    public CommonResponse<ReviewResponse> modifyReview(long reviewId, MultipartFile imageFile, String content, Double rating) {
-        Consumer consumer = getConsumer();
+    @Caching(evict = {
+            @CacheEvict(value = "productReview", key = "#productId"),
+            @CacheEvict(value = "productReviewPage", allEntries = true),
+            @CacheEvict(value = "myReview", key = "#profileId"),
+            @CacheEvict(value = "myReivewPage", allEntries = true)
+    })
+    public CommonResponse<ReviewResponse> modifyReview(Long profileId, long reviewId, MultipartFile imageFile, String content, Double rating) {
+        Consumer consumer = getConsumer(profileId);
 
-        Review data = reviewRepository.findByConsumerAndReviewId(consumer, reviewId).orElseThrow(()->new CustomException(ReviewErrorCode.BAD_ID));
+        Review data = reviewRepository.findByIdAndConsumerAndIsDeletedIsFalse(reviewId, consumer).orElseThrow(()->new CustomException(ReviewErrorCode.BAD_ID));
         if (imageFile != null) data.setReviewImageUrl(uploadImageFile(imageFile, String.valueOf(data.getId())));
         else data.setReviewImageUrl(null);
 
@@ -122,11 +137,16 @@ public class ReviewService {
     }
 
     @Transactional
-    @CacheEvict(value = "review", allEntries = true)
-    public CommonResponse<List<ReviewResponse>> softDeleteReviews(Set<Long> idSet) {
-        Consumer consumer = getConsumer();
+    @Caching(evict = {
+            @CacheEvict(value = "productReview", key = "#productId"),
+            @CacheEvict(value = "productReviewPage", allEntries = true),
+            @CacheEvict(value = "myReview", key = "#profileId"),
+            @CacheEvict(value = "myReivewPage", allEntries = true)
+    })
+    public CommonResponse<List<ReviewResponse>> softDeleteReviews(Long profileId, Set<Long> idSet) {
+        Consumer consumer = getConsumer(profileId);
 
-        List<Review> datas = reviewRepository.findAllByConsumer(consumer);
+        List<Review> datas = reviewRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
         List<ReviewResponse> responses = datas.stream()
                 .filter(data->idSet.contains(data.getId()))
                 .map(data->{
@@ -148,7 +168,7 @@ public class ReviewService {
         }
     }
 
-    private Consumer getConsumer() {
-        return consumerRepository.findByProfileId(AuthHolder.getProfileIdx()).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+    private Consumer getConsumer(Long profileId) {
+        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
     }
 }
