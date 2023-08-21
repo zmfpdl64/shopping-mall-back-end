@@ -22,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,7 +38,7 @@ public class ShoppingCartService {
     public CommonResponse<List<ShoppingCartItemResponse>> getShoppingCart(Long profileId) {
         Consumer consumer = getConsumer(profileId);
 
-        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
         List<ShoppingCartItemResponse> responses = datas.stream()
                 .map(ShoppingCartItemResponse::from)
                 .collect(Collectors.toList());
@@ -51,7 +50,7 @@ public class ShoppingCartService {
     public CommonResponse<PaginationResponse<ShoppingCartItemResponse>> getShoppingCartWithPagination(Long profileId, int page, int size) {
         Consumer consumer = getConsumer(profileId);
 
-        Page<ShoppingCart> dataPage = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer, PageRequest.of(page, size));
+        Page<ShoppingCart> dataPage = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer, PageRequest.of(page, size));
         List<ShoppingCartItemResponse> contents = dataPage.getContent().stream().map(ShoppingCartItemResponse::from).collect(Collectors.toList());
 
         PaginationResponse<ShoppingCartItemResponse> response = new PaginationBuilder<ShoppingCartItemResponse>()
@@ -102,7 +101,7 @@ public class ShoppingCartService {
     public CommonResponse<List<ShoppingCartItemResponse>> softDeleteShoppingCart(Long profileId) {
         Consumer consumer = getConsumer(profileId);
 
-        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
         List<ShoppingCartItemResponse> responses = datas.stream()
                 .map(data->{
                     data.setIsDeleted(true);
@@ -121,7 +120,7 @@ public class ShoppingCartService {
     public CommonResponse<List<ShoppingCartItemResponse>> softDeleteShoppingCartByIds(Long profileId, Set<Long> shoppingCartIdSet) {
         Consumer consumer = getConsumer(profileId);
 
-        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
         List<ShoppingCartItemResponse> responses = datas.stream()
                 .filter(data->shoppingCartIdSet.contains(data.getId()))
                 .map(data->{
@@ -145,7 +144,7 @@ public class ShoppingCartService {
         Long productId = request.getProductId();
         Long addedQuantity = request.getAmount();
         Product product = productRepository.findByIdAndIsDeletedIsFalse(productId).orElseThrow(()->new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
-        ShoppingCart data = shoppingCartRepository.findByConsumerAndProductAndIsDeletedIsFalse(consumer, product).orElse(null);
+        ShoppingCart data = shoppingCartRepository.findByConsumerAndProductAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer, product).orElse(null);
 
         if (data == null) {
             ShoppingCart newData = ShoppingCart.builder()

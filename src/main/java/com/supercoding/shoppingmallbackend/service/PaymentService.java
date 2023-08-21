@@ -17,7 +17,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,7 +110,7 @@ public class PaymentService {
     public CommonResponse<List<PaymentResponse>> buyWhole(PaymentRequest paymentRequest) {
         Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
-        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
 
         return processPayment(consumer, purchaseList, paymentRequest);
     }
@@ -121,7 +120,7 @@ public class PaymentService {
     public CommonResponse<List<PaymentResponse>> buySelected(PaymentRequest paymentRequest, Set<Long> shoppingCartIdSet) {
         Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
-        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer).stream()
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer).stream()
                 .filter(shoppingCart -> shoppingCartIdSet.contains(shoppingCart.getId()))
                 .collect(Collectors.toList());
 
