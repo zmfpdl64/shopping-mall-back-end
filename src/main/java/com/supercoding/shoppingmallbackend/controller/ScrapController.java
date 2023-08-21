@@ -1,4 +1,4 @@
-package com.supercoding.shoppingmallbackend.controller.aop;
+package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
