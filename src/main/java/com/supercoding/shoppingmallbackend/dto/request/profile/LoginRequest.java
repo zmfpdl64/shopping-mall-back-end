@@ -1,4 +1,4 @@
-package com.supercoding.shoppingmallbackend.dto.request;
+package com.supercoding.shoppingmallbackend.dto.request.profile;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
@@ -21,15 +21,7 @@ public class LoginRequest {
     private String email;
 
     @NotBlank
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{8,63}", message="패스워드는 필수 항목입니다.")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{8,63}", message="숫자, 영어 8자 이상 작성해주세요")
     private String password;
 
-//    public LoginRequest(String email, String password) {
-//        if(!java.util.regex.Pattern.matches(Regex.EMAIL_PATTERN.getPattern(), email))
-//            throw new CustomException(ProfileErrorCode.INVALID_EMAIL.getErrorCode());
-//        else if(!java.util.regex.Pattern.matches(Regex.PASSWORD_PATTERN.getPattern(), password))
-//            throw new CustomException((ProfileErrorCode.INVALID_PASSWORD).getErrorCode());
-//        this.email = email;
-//        this.password = password;
-//    }
 }

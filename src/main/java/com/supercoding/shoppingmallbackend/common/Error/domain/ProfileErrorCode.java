@@ -5,7 +5,7 @@ import com.supercoding.shoppingmallbackend.common.Error.ErrorCodeInterface;
 import org.springframework.http.HttpStatus;
 
 public enum ProfileErrorCode implements ErrorCodeInterface {
-    INVALID_TYPE(HttpStatus.BAD_REQUEST.value(), "허용하지 않는 권한이 입력됐습니다."),
+    INVALID_TYPE(HttpStatus.BAD_REQUEST.value(), "허용하지 않는 값이 입력됐습니다."),
     DUPLICATE_USER(409, "회원 이메일이 중복됐습니다."),
     NOT_FOUND(404, "회원 정보를 찾지 못했습니다."),
     INVALID_PASSWORD(400, "숫자, 영어 8자 이상 작성해주세요"),

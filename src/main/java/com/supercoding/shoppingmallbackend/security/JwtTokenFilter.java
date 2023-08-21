@@ -43,7 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return ;
             }
             Long profileIdx = jwtUtiles.getProfileIdx(token);
-            AuthHolder.setUserIdx(profileIdx);
+            AuthHolder.setProfileIdx(profileIdx);
             log.info("auth idx: {}", profileIdx);
             UsernamePasswordAuthenticationToken authentication = jwtUtiles.getAuthentication(profileIdx);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -54,5 +54,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         filterChain.doFilter(request,response);
+        AuthHolder.clearUserIdx();
+
     }
 }

@@ -5,11 +5,9 @@ import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
+import com.supercoding.shoppingmallbackend.common.util.PaginationBuilder;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
-import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
-import com.supercoding.shoppingmallbackend.dto.response.PaymentResponse;
-import com.supercoding.shoppingmallbackend.dto.response.PurchaseResponse;
-import com.supercoding.shoppingmallbackend.dto.response.SaleResponse;
+import com.supercoding.shoppingmallbackend.dto.response.*;
 import com.supercoding.shoppingmallbackend.entity.*;
 import com.supercoding.shoppingmallbackend.repository.*;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
@@ -17,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,11 +38,11 @@ public class PaymentService {
 
     @Cacheable(value = "payment", key = "'getPurchaseAll'")
     public CommonResponse<List<PurchaseResponse>> getPurchaseHistory() {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         // 구매내역 조회하기
-        List<Payment> payments = paymentRepository.findAllByConsumerId(consumer.getId());
+        List<Payment> payments = paymentRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
         List<PurchaseResponse> purchaseResponses = payments.stream()
                 .map(PurchaseResponse::from)
                 .collect(Collectors.toList());
@@ -54,7 +52,7 @@ public class PaymentService {
 
     @Cacheable(value = "payment", key = "'getSaleAll'")
     public CommonResponse<List<SaleResponse>> getSaleHistory() {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
         // 판매내역 조회하기
@@ -68,40 +66,53 @@ public class PaymentService {
 
     @Cacheable(value = "payment", key = "'getPurchasePage('+#page+','+#size+')'")
     public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(int page, int size) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
-        Slice<Payment> slice = paymentRepository.findAllByConsumerIdWithPagination(consumer.getId(), PageRequest.of(page, size));
-        List<PurchaseResponse> purchaseResponses = slice.getContent().stream()
+        Page<Payment> dataPage = paymentRepository.findAllByConsumerAndIsDeletedIsFalse(consumer, PageRequest.of(page, size));
+
+        List<PurchaseResponse> contents = dataPage.getContent().stream()
                 .map(PurchaseResponse::from)
                 .collect(Collectors.toList());
 
-        PaginationResponse<PurchaseResponse> paginationResponse = new PaginationResponse<>(slice.hasNext(), slice.hasPrevious(), purchaseResponses);
+        PaginationResponse<PurchaseResponse> response = new PaginationBuilder<PurchaseResponse>()
+                .contents(contents)
+                .hasPrivious(dataPage.hasPrevious())
+                .hasNext(dataPage.hasNext())
+                .totalPages(dataPage.getTotalPages())
+                .totalElements(dataPage.getTotalElements())
+                .build();
 
-        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", paginationResponse);
+        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", response);
     }
 
     @Cacheable(value = "payment", key = "'getSalePage('+#page+','+#size+')'")
     public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistoryWithPagination(int page, int size) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Seller seller = sellerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
 
-        Slice<Payment> slice = paymentRepository.findAllBySellerIdWithPagination(seller.getId(), PageRequest.of(page, size));
-        List<SaleResponse> saleResponses = slice.getContent().stream()
+        Page<Payment> dataPage = paymentRepository.findAllBySellerId(seller.getId(), PageRequest.of(page, size));
+        List<SaleResponse> contents = dataPage.getContent().stream()
                 .map(SaleResponse::from)
                 .collect(Collectors.toList());
 
-        PaginationResponse<SaleResponse> paginationResponse = new PaginationResponse<>(slice.hasNext(), slice.hasPrevious(), saleResponses);
+        PaginationResponse<SaleResponse> response = new PaginationBuilder<SaleResponse>()
+                .totalPages(dataPage.getTotalPages())
+                .hasNext(dataPage.hasNext())
+                .hasPrivious(dataPage.hasPrevious())
+                .contents(contents)
+                .totalElements(dataPage.getTotalElements())
+                .build();
 
-        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", paginationResponse);
+        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", response);
     }
 
     @CacheEvict(value = "payment", allEntries = true)
     @Transactional
     public CommonResponse<List<PaymentResponse>> buyWhole(PaymentRequest paymentRequest) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
-        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerId(consumer.getId());
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
 
         return processPayment(consumer, purchaseList, paymentRequest);
     }
@@ -109,9 +120,9 @@ public class PaymentService {
     @CacheEvict(value = "payment", allEntries = true)
     @Transactional
     public CommonResponse<List<PaymentResponse>> buySelected(PaymentRequest paymentRequest, Set<Long> shoppingCartIdSet) {
-        Long profileId = AuthHolder.getUserIdx();
+        Long profileId = AuthHolder.getProfileIdx();
         Consumer consumer = consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ProfileErrorCode.NOT_FOUND));
-        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerId(consumer.getId()).stream()
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer).stream()
                 .filter(shoppingCart -> shoppingCartIdSet.contains(shoppingCart.getId()))
                 .collect(Collectors.toList());
 
@@ -150,7 +161,7 @@ public class PaymentService {
         profile.setPaymoney(profile.getPaymoney() - totalPrice);
 
         // 결제내역 응답
-        List<Payment> payments = paymentRepository.findAllByOrderNumber(orderNumber);
+        List<Payment> payments = paymentRepository.findAllByOrderNumberAndIsDeletedIsFalse(orderNumber);
         List<PaymentResponse> paymentResponses = payments.stream()
                 .map(PaymentResponse::from)
                 .collect(Collectors.toList());
@@ -179,7 +190,7 @@ public class PaymentService {
             int randomInt = new Random().nextInt(0xfff + 1);
             String orderNumber = dateString + Integer.toHexString(randomInt);
 
-            if (!paymentRepository.existsByOrderNumber(orderNumber))
+            if (!paymentRepository.existsByOrderNumberAndIsDeletedIsFalse(orderNumber))
                 return orderNumber;
 
             log.info("중복되는 주문번호 생성: '{}', {}회 시도", orderNumber, i);

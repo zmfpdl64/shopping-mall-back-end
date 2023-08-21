@@ -14,4 +14,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT pc.category FROM ProductCategory pc WHERE pc.product.id = :productIdx ORDER BY pc.category.type desc")
     List<Category> findCategoriesByProductId(Long productIdx);
 
+    @Query("SELECT c FROM Category c WHERE c.name in (:cateGoryNames) ORDER BY c.type")
+    List<Category> findCategoriesByName(List<String> cateGoryNames);
+
 }

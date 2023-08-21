@@ -13,24 +13,21 @@ import javax.validation.constraints.NotNull;
 @ToString
 @EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
-@Table(name = "shopping_cart")
-public class ShoppingCart extends CommonField {
+@Table(name = "scrap_list")
+public class Scrap extends CommonField {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idx", nullable = false)
+    @Column(name = "idx")
     private Long id;
 
     @NotNull
-    @Column(name = "amount", nullable = false)
-    private Long amount;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "consumer_id")
     private Consumer consumer;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
 }

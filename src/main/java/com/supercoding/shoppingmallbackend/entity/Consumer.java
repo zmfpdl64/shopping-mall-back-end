@@ -12,13 +12,14 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Builder
 @Table(name = "consumer")
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Consumer extends CommonField{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx", nullable = false)
     private Long id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "profile_idx")
     private Profile profile;
 

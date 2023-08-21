@@ -17,7 +17,7 @@ public class ShoppingCartItemResponse {
     @ApiModelProperty(required = true, value = "상품을 담은 구매자")
     private ConsumerResponse consumer;
     @ApiModelProperty( required = true, value = "장바구니에 담긴 상품")
-    private ProductSimpleResponse product;
+    private ProductResponse product;
     @ApiModelProperty(required = true, value = "장바구니에 담긴 수량", example = "1")
     private Long quantity;
 
@@ -25,7 +25,7 @@ public class ShoppingCartItemResponse {
         return ShoppingCartItemResponse.builder()
                 .id(shoppingCart.getId())
                 .consumer(ConsumerResponse.from(shoppingCart.getConsumer()))
-                .product(ProductSimpleResponse.from(shoppingCart.getProduct()))
+                .product(ProductResponse.from(shoppingCart.getProduct()))
                 .quantity(shoppingCart.getAmount())
                 .build();
     }

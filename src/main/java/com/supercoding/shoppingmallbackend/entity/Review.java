@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
 @Table(name = "reviews")
 public class Review extends CommonField {

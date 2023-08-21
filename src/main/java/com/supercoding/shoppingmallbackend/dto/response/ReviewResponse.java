@@ -10,7 +10,7 @@ import lombok.*;
 @ToString
 public class ReviewResponse {
     private Long id;
-    private ConsumerDetailResponse consumer;
+    private ConsumerSimpleResponse consumer;
     private ProductSimpleResponse product;
     private String reviewImageUrl;
     private String content;
@@ -19,7 +19,7 @@ public class ReviewResponse {
     public static ReviewResponse from(Review review) {
         return ReviewResponse.builder()
                 .id(review.getId())
-                .consumer(ConsumerDetailResponse.from(review.getConsumer()))
+                .consumer(ConsumerSimpleResponse.from(review.getConsumer()))
                 .product(ProductSimpleResponse.from(review.getProduct()))
                 .reviewImageUrl(review.getReviewImageUrl())
                 .content(review.getContent())

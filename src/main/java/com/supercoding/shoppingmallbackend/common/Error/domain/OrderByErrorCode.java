@@ -1,24 +1,28 @@
 package com.supercoding.shoppingmallbackend.common.Error.domain;
 
+import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCodeInterface;
 import org.springframework.http.HttpStatus;
 
-public enum ShoppingCartErrorCode implements ErrorCodeInterface {
-    EMPTY(HttpStatus.NOT_FOUND, "장바구니가 비어 있습니다."),
-    INVALID_PRODUCT(HttpStatus.BAD_REQUEST, "존재하지 않는 상품은 장바구니에 담을 수 없습니다.");
+public enum OrderByErrorCode implements ErrorCodeInterface {
+    INVALID_SORT_PARAMS(HttpStatus.BAD_REQUEST, "정렬 기준 혹은 정렬 방식이 유효하지 않습니다.");
 
     private final int status;
     private final String message;
 
-    ShoppingCartErrorCode(int status, String message) {
+    OrderByErrorCode(int status, String message) {
         this.status = status;
         this.message = message;
     }
 
-    ShoppingCartErrorCode(HttpStatus status, String message) {
+    OrderByErrorCode(HttpStatus status, String message) {
         this.status = status.value();
         this.message = message;
+    }
+
+    public CustomException exception() {
+        return new CustomException(this);
     }
 
     @Override

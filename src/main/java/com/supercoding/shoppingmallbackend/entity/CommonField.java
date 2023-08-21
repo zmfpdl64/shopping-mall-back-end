@@ -3,6 +3,7 @@ package com.supercoding.shoppingmallbackend.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
+@DynamicInsert
 @MappedSuperclass
 public class CommonField {
 
@@ -23,6 +25,6 @@ public class CommonField {
     private Timestamp updatedAt;
 
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
 }

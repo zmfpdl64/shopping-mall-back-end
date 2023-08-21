@@ -4,19 +4,19 @@ import com.supercoding.shoppingmallbackend.common.Error.ErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCodeInterface;
 import org.springframework.http.HttpStatus;
 
-public enum ShoppingCartErrorCode implements ErrorCodeInterface {
-    EMPTY(HttpStatus.NOT_FOUND, "장바구니가 비어 있습니다."),
-    INVALID_PRODUCT(HttpStatus.BAD_REQUEST, "존재하지 않는 상품은 장바구니에 담을 수 없습니다.");
+public enum ReviewErrorCode implements ErrorCodeInterface {
+    BAD_ID(HttpStatus.BAD_REQUEST, "해당 id의 리뷰가 존재하지 않습니다."),
+    INVALID_PRODUCT(HttpStatus.BAD_REQUEST, "존재하지 않는 상품에 대한 리뷰는 조회할 수 없습니다.");
 
-    private final int status;
-    private final String message;
+    private int status;
+    private String message;
 
-    ShoppingCartErrorCode(int status, String message) {
+    ReviewErrorCode(int status, String message) {
         this.status = status;
         this.message = message;
     }
 
-    ShoppingCartErrorCode(HttpStatus status, String message) {
+    ReviewErrorCode(HttpStatus status, String message) {
         this.status = status.value();
         this.message = message;
     }
