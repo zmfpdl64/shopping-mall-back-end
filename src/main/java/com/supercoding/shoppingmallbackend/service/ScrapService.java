@@ -38,7 +38,7 @@ public class ScrapService {
     @Cacheable(value = "scrap-list", key = "#profileId")
     public CommonResponse<List<ScrapResponse>> getAllScrap(Long profileId) {
         Consumer consumer = getConsumer(profileId);
-        List<Scrap> datas = scrapRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<Scrap> datas = scrapRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer);
         List<ScrapResponse> responses = datas.stream().map(ScrapResponse::from).collect(Collectors.toList());
         return ApiUtils.success("찜 목록을 성공적으로 조회했습니다.", responses);
     }
@@ -46,7 +46,7 @@ public class ScrapService {
     @Cacheable(value = "scrap-page", key = "#profileId+'-'+#page+'-'+#size")
     public CommonResponse<PaginationResponse<ScrapResponse>> getScrapPage(Long profileId, int page, int size) {
         Consumer consumer = getConsumer(profileId);
-        Page<Scrap> dataPage = scrapRepository.findAllByConsumerAndIsDeletedIsFalse(consumer, PageRequest.of(page, size));
+        Page<Scrap> dataPage = scrapRepository.findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(consumer, PageRequest.of(page, size));
         List<ScrapResponse> contents = dataPage.getContent().stream().map(ScrapResponse::from).collect(Collectors.toList());
         PaginationResponse<ScrapResponse> response = new PaginationBuilder<ScrapResponse>()
                 .totalPages(dataPage.getTotalPages())
