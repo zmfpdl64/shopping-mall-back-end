@@ -4,10 +4,7 @@ import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
-import com.supercoding.shoppingmallbackend.dto.response.PaginationSliceResponse;
-import com.supercoding.shoppingmallbackend.dto.response.PaymentResponse;
-import com.supercoding.shoppingmallbackend.dto.response.PurchaseResponse;
-import com.supercoding.shoppingmallbackend.dto.response.SaleResponse;
+import com.supercoding.shoppingmallbackend.dto.response.*;
 import com.supercoding.shoppingmallbackend.service.PaymentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,7 +49,7 @@ public class PaymentsController {
 
     @ApiOperation(value = "구매내역 가져오기 (pagination)", notes = "구매자의 구매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/purchased/query")
-    public CommonResponse<PaginationSliceResponse<PurchaseResponse>> getPurchaseHistory(@RequestParam String page, @RequestParam String size) {
+    public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistory(@RequestParam String page, @RequestParam String size) {
         try {
             return paymentService.getPurchaseHistoryWithPagination(Integer.parseInt(page), Integer.parseInt(size));
         } catch(NumberFormatException e) {
@@ -68,7 +65,7 @@ public class PaymentsController {
 
     @ApiOperation(value = "판매내역 가져오기 (pagination)", notes = "판매자의 판매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/sold/query")
-    public CommonResponse<PaginationSliceResponse<SaleResponse>> getSaleHistory(@RequestParam String page, @RequestParam String size) {
+    public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistory(@RequestParam String page, @RequestParam String size) {
         try {
             return paymentService.getSaleHistoryWithPagination(Integer.parseInt(page), Integer.parseInt((size)));
         } catch (NumberFormatException e) {

@@ -6,8 +6,8 @@ import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.FilePath;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
-import com.supercoding.shoppingmallbackend.dto.request.ReviewRequest;
-import com.supercoding.shoppingmallbackend.dto.response.PaginationPageResponse;
+import com.supercoding.shoppingmallbackend.common.util.PaginationBuilder;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ReviewResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
 import com.supercoding.shoppingmallbackend.entity.Product;
@@ -16,7 +16,6 @@ import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProductRepository;
 import com.supercoding.shoppingmallbackend.repository.ReviewRepository;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
-import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -48,10 +47,16 @@ public class ReviewService {
     }
 
     @Cacheable(value = "review", key = "'getPageProductReivew('+#productId+')'")
-    public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllProductREviewWithPagination(long productId, int page, int size) {
+    public CommonResponse<PaginationResponse<ReviewResponse>> getAllProductREviewWithPagination(long productId, int page, int size) {
         Page<Review> pageData = reviewRepository.findAllByProductIdWithPagination(productId, PageRequest.of(page, size));
-        List<ReviewResponse> datas = pageData.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
-        PaginationPageResponse<ReviewResponse> response = new PaginationPageResponse<>(pageData.getTotalPages(), datas);
+        List<ReviewResponse> contents = pageData.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
+        PaginationResponse<ReviewResponse> response = new PaginationBuilder<ReviewResponse>()
+                .hasNext(pageData.hasNext())
+                .hasPrivious(pageData.hasPrevious())
+                .totalPages(pageData.getTotalPages())
+                .contents(contents)
+                .build();
+
         return ApiUtils.success("상품 리뷰를 성공적으로 조회했습니다.", response);
     }
 
@@ -64,11 +69,16 @@ public class ReviewService {
         return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", responses);
     }
 
-    public CommonResponse<PaginationPageResponse<ReviewResponse>> getAllMyReviewWithPagination(int page, int size) {
+    public CommonResponse<PaginationResponse<ReviewResponse>> getAllMyReviewWithPagination(int page, int size) {
         Consumer consumer = getConsumer();
         Page<Review> dataPage = reviewRepository.findPageByConsumer(consumer, PageRequest.of(page, size));
         List<ReviewResponse> contents = dataPage.getContent().stream().map(ReviewResponse::from).collect(Collectors.toList());
-        PaginationPageResponse<ReviewResponse> response = new PaginationPageResponse<>(dataPage.getTotalPages(), contents);
+        PaginationResponse<ReviewResponse> response = new PaginationBuilder<ReviewResponse>()
+                .contents(contents)
+                .hasNext(dataPage.hasNext())
+                .hasPrivious(dataPage.hasPrevious())
+                .totalPages(dataPage.getTotalPages())
+                .build();
         return ApiUtils.success("내가 작성한 리뷰를 성공적으로 조회했습니다.", response);
     }
 
