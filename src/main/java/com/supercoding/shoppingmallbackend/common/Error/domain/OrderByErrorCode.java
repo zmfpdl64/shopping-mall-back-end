@@ -1,5 +1,6 @@
 package com.supercoding.shoppingmallbackend.common.Error.domain;
 
+import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCodeInterface;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,10 @@ public enum OrderByErrorCode implements ErrorCodeInterface {
     OrderByErrorCode(HttpStatus status, String message) {
         this.status = status.value();
         this.message = message;
+    }
+
+    public CustomException exception() {
+        return new CustomException(this);
     }
 
     @Override
