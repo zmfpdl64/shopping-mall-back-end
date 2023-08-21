@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @Entity
 @Table(name = "scrap_list")
-public class ScrapList {
+public class Scrap {
     @Id
     @Column(name = "idx", nullable = false)
     private Long id;
