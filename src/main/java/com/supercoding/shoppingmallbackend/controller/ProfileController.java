@@ -70,4 +70,11 @@ public class ProfileController {   //TODO: User -> Profile로 명칭 통일 예�
         Long profileTotalMoney = profileService.rechargeProfileMoney(profileIdx, rechargeRequest.getRechargeMoney());
         return CommonResponse.success("충전이 완료됐습니다", new RechargeResponse(profileTotalMoney));
     }
+
+    @PostMapping("/profile")
+    public CommonResponse<?> changeProfile(@RequestParam("profile") MultipartFile profileImage){
+        profileService.changeProfile(profileImage);
+        return CommonResponse.success(null, null);
+    }
+
 }
