@@ -1,5 +1,6 @@
 package com.supercoding.shoppingmallbackend.dto.response;
 
+import com.supercoding.shoppingmallbackend.entity.Scrap;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -17,4 +18,12 @@ public class ScrapResponse {
     private ProductSimpleResponse product;
     @ApiModelProperty(value = "찜한 구매자 정보", required = true)
     private ConsumerResponse consumer;
+
+    public static ScrapResponse from(Scrap scrap) {
+        return ScrapResponse.builder()
+                .id(scrap.getId())
+                .product(ProductSimpleResponse.from(scrap.getProduct()))
+                .consumer(ConsumerResponse.from(scrap.getConsumer()))
+                .build();
+    }
 }
