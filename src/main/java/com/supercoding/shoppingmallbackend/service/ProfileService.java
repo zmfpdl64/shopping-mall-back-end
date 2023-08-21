@@ -1,11 +1,10 @@
 package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
-import com.supercoding.shoppingmallbackend.common.Error.domain.PaymentErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
+import com.supercoding.shoppingmallbackend.common.Error.domain.*;
+import com.supercoding.shoppingmallbackend.common.util.FilePath;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
+import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.security.JwtUtiles;
 import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
 import com.supercoding.shoppingmallbackend.dto.response.profile.LoginResponse;
@@ -149,4 +148,15 @@ public class ProfileService {
         return profileRepository.findById(profileIdx).orElseThrow(() -> new CustomException(ProfileErrorCode.NOT_FOUND.getErrorCode()));
     }
 
+    // 예시코드
+    @Transactional
+    public void changeProfile(MultipartFile profileImage) {
+        try {
+            Profile profile = getFindProfile(AuthHolder.getProfileIdx());
+            String updateImageUrl = awsS3Service.updateFile(profileImage, profile.getImageUrl());
+            profile.setImageUrl(updateImageUrl);
+        } catch (IOException e) {
+            throw new CustomException(UtilErrorCode.IOE_ERROR);
+        }
+    }
 }
