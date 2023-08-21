@@ -3,16 +3,13 @@ package com.supercoding.shoppingmallbackend.service;
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ConsumerErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.ProductErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ScrapErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.common.util.JpaUtils;
-import com.supercoding.shoppingmallbackend.dto.response.ConsumerResponse;
-import com.supercoding.shoppingmallbackend.dto.response.PaginationPageResponse;
+import com.supercoding.shoppingmallbackend.common.util.PaginationBuilder;
+import com.supercoding.shoppingmallbackend.dto.response.PaginationResponse;
 import com.supercoding.shoppingmallbackend.dto.response.ScrapResponse;
 import com.supercoding.shoppingmallbackend.entity.Consumer;
-import com.supercoding.shoppingmallbackend.entity.Product;
 import com.supercoding.shoppingmallbackend.entity.Scrap;
 import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProductRepository;
@@ -47,11 +44,16 @@ public class ScrapService {
     }
 
     @Cacheable(value = "scrap-page", key = "#profileId+'-'+#page+'-'+#size")
-    public CommonResponse<PaginationPageResponse<ScrapResponse>> getScrapPage(Long profileId, int page, int size) {
+    public CommonResponse<PaginationResponse<ScrapResponse>> getScrapPage(Long profileId, int page, int size) {
         Consumer consumer = getConsumer(profileId);
         Page<Scrap> dataPage = scrapRepository.findAllByConsumerAndIsDeletedIsFalse(consumer, PageRequest.of(page, size));
         List<ScrapResponse> contents = dataPage.getContent().stream().map(ScrapResponse::from).collect(Collectors.toList());
-        PaginationPageResponse<ScrapResponse> response = new PaginationPageResponse<>(dataPage.getTotalPages(), contents);
+        PaginationResponse<ScrapResponse> response = new PaginationBuilder<ScrapResponse>()
+                .totalPages(dataPage.getTotalPages())
+                .hasPrivious(dataPage.hasPrevious())
+                .hasNext(dataPage.hasNext())
+                .contents(contents)
+                .build();
         return ApiUtils.success("찜 목록을 성공적으로 조회했습니다.", response);
     }
 
