@@ -1,13 +1,16 @@
 package com.supercoding.shoppingmallbackend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 @Entity
 @Table(name = "scrap_list")
 public class Scrap {
