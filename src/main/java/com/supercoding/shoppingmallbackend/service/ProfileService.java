@@ -2,7 +2,6 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.*;
-import com.supercoding.shoppingmallbackend.common.util.FilePath;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
@@ -18,19 +17,15 @@ import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import com.supercoding.shoppingmallbackend.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.supercoding.shoppingmallbackend.common.util.FilePath.MEMBER_PROFILE_DIR;
-import static com.supercoding.shoppingmallbackend.common.util.FilePath.PRODUCT_CONTENT_DIR;
 
 @Slf4j
 @Service
@@ -109,7 +104,7 @@ public class ProfileService {
 
     public LoginResponse login(String email, String password) {
         //유저 존재여부 확인
-        Profile profile = getProfile(email);
+        Profile profile = getProfileByEmail(email);
         //패스워드 확인
         if(!encoder.matches(password, profile.getPassword())) throw new CustomException(UserErrorCode.LOGIN_INPUT_INVALID.getErrorCode());
         //jwt 토큰 생성
@@ -117,7 +112,7 @@ public class ProfileService {
         return LoginResponse.from(profile, token);
     }
 
-    private Profile getProfile(String email) {
+    private Profile getProfileByEmail(String email) {
         return profileRepository.findByEmail(email).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
     }
 
@@ -190,5 +185,9 @@ public class ProfileService {
             default:
                 throw new CustomException(ProfileErrorCode.INVALID_TYPE);
         }
+    }
+
+    public void checkDuplicateEmail(String email) {
+        if(profileRepository.findByEmail(email).isPresent()) throw new CustomException(ProfileErrorCode.DUPLICATE_USER);
     }
 }
