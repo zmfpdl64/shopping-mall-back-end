@@ -159,6 +159,7 @@ public class Product extends CommonField {
                 .productCategories(originProduct.getProductCategories())
                 .productContentImages(originProduct.getProductContentImages())
                 .mainImageUrl(originProduct.getMainImageUrl())
+                .reviews(originProduct.getReviews())
                 .build();
     }
 
