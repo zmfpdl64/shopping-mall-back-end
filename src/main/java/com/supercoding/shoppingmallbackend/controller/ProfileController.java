@@ -1,13 +1,9 @@
 package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
-//<<<<<<< Updated upstream
-import com.supercoding.shoppingmallbackend.common.util.PhoneUtils;
 import com.supercoding.shoppingmallbackend.dto.request.profile.RechargeRequest;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoResponse;
-//=======
 import com.supercoding.shoppingmallbackend.dto.request.profile.*;
-//>>>>>>> Stashed changes
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.RechargeResponse;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
@@ -115,6 +111,13 @@ public class ProfileController {
         Long profileIdx = AuthHolder.getProfileIdx();
         ProfileInfoResponse profileInfoResponse = profileService.findProfileInfoByProfileIdx(profileIdx);
         return CommonResponse.success("회원 조회 성공", profileInfoResponse);
+    }
+
+    @Operation(summary = "회원 정보 반환", description = "토큰을 확인하고 유저의 정보를 반환함")
+    @PostMapping("/email")
+    public CommonResponse<?> checkDuplicateEmail(@RequestBody EmailRequest emailRequest) {
+        profileService.checkDuplicateEmail(emailRequest.getEmail());
+        return CommonResponse.success("이메일 사용할 수 있습니다.", null);
     }
 
 }
