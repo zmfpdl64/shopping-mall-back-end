@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.supercoding.shoppingmallbackend.common.util.FilePath.MEMBER_PROFILE_DIR;
+import static com.supercoding.shoppingmallbackend.common.util.FilePath.PRODUCT_CONTENT_DIR;
 
 @Slf4j
 @Service
@@ -96,18 +97,13 @@ public class ProfileService {
 
     private void createSeller(Profile profile) {
         Seller seller = Seller.builder().profile(profile).build();
-        seller.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        seller.setIsDeleted(false);
         profile.setRole(ProfileRole.SELLER);
         sellerRepository.save(seller);
     }
     private void createConsumer(Profile profile) {
         Consumer consumer = Consumer.builder().profile(profile).build();
-        consumer.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        consumer.setIsDeleted(false);
         profile.setRole(ProfileRole.CONSUMER);
         consumerRepository.save(consumer);
-
     }
 
 
@@ -172,5 +168,27 @@ public class ProfileService {
         Profile profile = profileRepository.findById(validProfileIdx).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
 
         return ProfileInfoResponse.from(profile);
+    }
+
+    @Transactional
+    public void deleteProfile(Long profileIdx) {
+        Profile profile = getFindProfile(profileIdx);
+        removeConsumerOrSeller(profileIdx, profile);
+        profile.setIsDeleted(true);
+    }
+
+    private void removeConsumerOrSeller(Long profileIdx, Profile profile) {
+        switch (profile.getRole()) {
+            case CONSUMER:
+                Consumer findConsumer = consumerRepository.findByProfileIdAndIsDeletedIsFalse(profileIdx).orElseThrow(() -> new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+                findConsumer.setIsDeleted(true);
+                break;
+            case SELLER:
+                Seller findSeller = sellerRepository.findByProfileIdAndIsDeletedIsFalse(profileIdx).orElseThrow(() -> new CustomException(SellerErrorCode.NOT_FOUND_BY_ID));
+                findSeller.setIsDeleted(true);
+                break;
+            default:
+                throw new CustomException(ProfileErrorCode.INVALID_TYPE);
+        }
     }
 }

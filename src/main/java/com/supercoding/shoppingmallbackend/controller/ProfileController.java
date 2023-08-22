@@ -2,6 +2,7 @@ package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
 //<<<<<<< Updated upstream
+import com.supercoding.shoppingmallbackend.common.util.PhoneUtils;
 import com.supercoding.shoppingmallbackend.dto.request.profile.RechargeRequest;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoResponse;
 //=======
@@ -28,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Api(tags = "유저 회원가입, 로그인 API")
 @RequestMapping("/api/v1/user")
-public class ProfileController {   //TODO: User -> Profile로 명칭 통일 예정
+public class ProfileController {
 
     private final ProfileService profileService;
     private final SmsService smsService;
@@ -58,6 +59,14 @@ public class ProfileController {   //TODO: User -> Profile로 명칭 통일 예�
     public CommonResponse<?> login(@Validated @RequestBody LoginRequest loginRequest) {
         LoginResponse loginResponse= profileService.login(loginRequest.getEmail(), loginRequest.getPassword());
         return CommonResponse.success("로그인에 성공했습니다", loginResponse);
+    }
+
+    @Operation(summary = "유저 소프트 딜리트", description = "토큰을 이용해 유저 소프트 딜리트")
+    @DeleteMapping
+    public CommonResponse<?> deleteProfile() {
+        Long profileIdx = AuthHolder.getProfileIdx();
+        profileService.deleteProfile(profileIdx);
+        return CommonResponse.success("회원탈퇴에 성공했습니다.", null);
     }
 
     @Operation(summary = "남은 요금 조회", description = "토큰을 이용해 유저의 남은 잔액 확인")
@@ -93,6 +102,7 @@ public class ProfileController {   //TODO: User -> Profile로 명칭 통일 예�
     }
 
 
+    @Operation(summary = "회원 프로필 변경", description = "회원 프로필 전송시 기존 프로필 삭제 후 업데이트")
     @PostMapping("/profile")
     public CommonResponse<?> changeProfile(@RequestParam("profile") MultipartFile profileImage){
         profileService.changeProfile(profileImage);
@@ -105,7 +115,6 @@ public class ProfileController {   //TODO: User -> Profile로 명칭 통일 예�
         Long profileIdx = AuthHolder.getProfileIdx();
         ProfileInfoResponse profileInfoResponse = profileService.findProfileInfoByProfileIdx(profileIdx);
         return CommonResponse.success("회원 조회 성공", profileInfoResponse);
-
     }
 
 }
