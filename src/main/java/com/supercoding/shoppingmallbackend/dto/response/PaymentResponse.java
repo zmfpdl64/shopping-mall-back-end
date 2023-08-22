@@ -27,7 +27,7 @@ public class PaymentResponse {
     private Long paidQuantity;
     @ApiModelProperty(required = true, value = "구매 가격", example = "20000")
     private Long paidPrice;
-    @ApiModelProperty(required = true, value = "구매 가격", example = "23.08.18")
+    @ApiModelProperty(required = true, value = "구매 일시", example = "23.08.18")
     private String paidAt;
     @ApiModelProperty(required = true, value = "받는 주소", example = "부산 중구 중구로24번길 22")
     private String receivedAddress;
