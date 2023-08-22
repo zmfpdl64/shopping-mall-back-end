@@ -1,5 +1,6 @@
 package com.supercoding.shoppingmallbackend.dto.response.profile;
 
+import com.supercoding.shoppingmallbackend.dto.response.AddressResponse;
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
@@ -18,9 +19,11 @@ public class ProfileInfoResponse {
     private String phone;
     private String imageUrl;
     private Long payMoney;
+
+    private AddressResponse address;
     private String role;
 
-    public static ProfileInfoResponse from(Profile profile) {
+    public static ProfileInfoResponse from(Profile profile, AddressResponse addressResponse) {
         return ProfileInfoResponse.builder()
                 .profileIdx(profile.getId())
                 .email(profile.getEmail())
@@ -28,6 +31,7 @@ public class ProfileInfoResponse {
                 .phone(profile.getPhone())
                 .imageUrl(profile.getImageUrl())
                 .payMoney(profile.getPaymoney())
+                .address(addressResponse)
                 .role(profile.getRole().name())
                 .build();
     }

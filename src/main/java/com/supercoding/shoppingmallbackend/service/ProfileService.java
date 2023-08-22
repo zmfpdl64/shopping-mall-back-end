@@ -2,16 +2,15 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.*;
+import com.supercoding.shoppingmallbackend.dto.response.AddressResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
+import com.supercoding.shoppingmallbackend.entity.*;
+import com.supercoding.shoppingmallbackend.repository.AddressRepository;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.security.JwtUtiles;
 import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
 import com.supercoding.shoppingmallbackend.dto.response.profile.LoginResponse;
-import com.supercoding.shoppingmallbackend.entity.Consumer;
-import com.supercoding.shoppingmallbackend.entity.Profile;
-import com.supercoding.shoppingmallbackend.entity.ProfileRole;
-import com.supercoding.shoppingmallbackend.entity.Seller;
 import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import com.supercoding.shoppingmallbackend.repository.SellerRepository;
@@ -34,6 +33,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ConsumerRepository consumerRepository;
     private final SellerRepository sellerRepository;
+    private final AddressRepository addressRepository;
     private final BCryptPasswordEncoder encoder;
     private final AwsS3Service awsS3Service;
     private final JwtUtiles jwtUtiles;
@@ -161,8 +161,9 @@ public class ProfileService {
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
 
         Profile profile = profileRepository.findById(validProfileIdx).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-
-        return ProfileInfoResponse.from(profile);
+        Optional<Address> addressOptional = addressRepository.findByProfile(profile);
+        AddressResponse addressResponse = addressOptional.map(AddressResponse::from).orElse(null);
+        return ProfileInfoResponse.from(profile, addressResponse);
     }
 
     @Transactional
