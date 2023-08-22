@@ -48,9 +48,10 @@ public class PaymentsController {
 
     @ApiOperation(value = "구매내역 가져오기", notes = "구매자의 구매내역을 가져옵니다.")
     @GetMapping("/purchased")
-    public CommonResponse<List<PurchaseResponse>> getPurchaseHistory() {
+    public CommonResponse<List<PurchaseResponse>> getPurchaseHistory(@RequestParam(value = "orderNumber", required = false) @ApiParam("주문번호") Set<String> orderNumber) {
         Long profileId = AuthHolder.getProfileIdx();
-        return paymentService.getPurchaseHistory(profileId);
+        if (orderNumber == null) return paymentService.getPurchaseHistory(profileId);
+        return paymentService.getPurchaseHistory(profileId, orderNumber);
     }
 
     @ApiOperation(value = "구매내역 가져오기 (pagination)", notes = "구매자의 구매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
@@ -66,9 +67,10 @@ public class PaymentsController {
 
     @ApiOperation(value = "판매내역 가져오기", notes = "판매자의 판매내역을 가져옵니다.")
     @GetMapping("/sold")
-    public CommonResponse<List<SaleResponse>> getSaleHistory() {
+    public CommonResponse<List<SaleResponse>> getSaleHistory(@RequestParam(value = "orderNumber", required = false) @ApiParam("주문번호") Set<String> orderNumber) {
         Long profileId = AuthHolder.getProfileIdx();
-        return paymentService.getSaleHistory(profileId);
+        if (orderNumber == null) return paymentService.getSaleHistory(profileId);
+        return paymentService.getSaleHistory(profileId, orderNumber);
     }
 
     @ApiOperation(value = "판매내역 가져오기 (pagination)", notes = "판매자의 판매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
