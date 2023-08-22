@@ -1,5 +1,6 @@
 package com.supercoding.shoppingmallbackend.dto.response;
 
+import com.supercoding.shoppingmallbackend.common.util.DateUtils;
 import com.supercoding.shoppingmallbackend.entity.Genre;
 import com.supercoding.shoppingmallbackend.entity.Payment;
 import io.swagger.annotations.ApiModel;
@@ -26,7 +27,7 @@ public class PurchaseResponse {
     @ApiModelProperty(required = true, value = "구매 가격")
     private Long purchasePrice;
     @ApiModelProperty(required = true, value = "구매 일시")
-    private Timestamp purchasedAt;
+    private String purchasedAt;
     @ApiModelProperty(required = true, value = "받는 주소")
     private String receivedAddress;
     @ApiModelProperty(required = true, value = "받는 상세 주소")
@@ -43,7 +44,7 @@ public class PurchaseResponse {
                 .product(ProductSimpleResponse.from(payment.getProduct()))
                 .purchaseQuantity(payment.getPaidQuantity())
                 .purchasePrice(payment.getPaidPrice())
-                .purchasedAt(payment.getPaidAt())
+                .purchasedAt(DateUtils.convertToString(payment.getPaidAt()))
                 .receivedAddress(payment.getReceivedAddress())
                 .receivedAddressDetail(payment.getReceivedAddressDetail())
                 .recipientName(payment.getRecipientName())
