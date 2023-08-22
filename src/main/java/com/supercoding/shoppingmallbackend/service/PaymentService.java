@@ -63,6 +63,20 @@ public class PaymentService {
         return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", saleResponses);
     }
 
+    @Cacheable(value = "saleListOrderNumber", key = "#profileId+'-'+#orderNumber.toString()")
+    public CommonResponse<List<SaleResponse>> getSaleHistory(Long profileId, Set<String> orderNumber) {
+        Seller seller = getSeller(profileId);
+
+        // 판매내역 조회하기
+        List<Payment> payments = paymentRepository.findAllByProductSellerAndIsDeletedIsFalseOrderByPaidAtDesc(seller);
+        List<SaleResponse> saleResponses = payments.stream()
+                .filter(payment -> orderNumber.contains(payment.getOrderNumber()))
+                .map(SaleResponse::from)
+                .collect(Collectors.toList());
+
+        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", saleResponses);
+    }
+
     @Cacheable(value = "purchaseListPage", key = "#profileId+'-'+#page+'-'+#size")
     public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(Long profileId, int page, int size) {
         Consumer consumer = getConsumer(profileId);
@@ -107,6 +121,7 @@ public class PaymentService {
     @Caching(evict = {
             @CacheEvict(value = "purchaseList", key = "#profileId"),
             @CacheEvict(value = "saleList", key = "#profileId"),
+            @CacheEvict(value = "saleListOrderNumber", allEntries = true),
             @CacheEvict(value = "purchaseListPage", allEntries = true),
             @CacheEvict(value = "saleListPage", allEntries = true)
     })
@@ -121,6 +136,7 @@ public class PaymentService {
     @Caching(evict = {
             @CacheEvict(value = "purchaseList", key = "#profileId"),
             @CacheEvict(value = "saleList", key = "#profileId"),
+            @CacheEvict(value = "saleListOrderNumber", allEntries = true),
             @CacheEvict(value = "purchaseListPage", allEntries = true),
             @CacheEvict(value = "saleListPage", allEntries = true)
     })

@@ -66,9 +66,10 @@ public class PaymentsController {
 
     @ApiOperation(value = "판매내역 가져오기", notes = "판매자의 판매내역을 가져옵니다.")
     @GetMapping("/sold")
-    public CommonResponse<List<SaleResponse>> getSaleHistory() {
+    public CommonResponse<List<SaleResponse>> getSaleHistory(@RequestParam(value = "orderNumber", required = false) @ApiParam("주문번호") Set<String> orderNumber) {
         Long profileId = AuthHolder.getProfileIdx();
-        return paymentService.getSaleHistory(profileId);
+        if (orderNumber == null) return paymentService.getSaleHistory(profileId);
+        return paymentService.getSaleHistory(profileId, orderNumber);
     }
 
     @ApiOperation(value = "판매내역 가져오기 (pagination)", notes = "판매자의 판매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
