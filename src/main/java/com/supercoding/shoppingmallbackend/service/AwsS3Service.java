@@ -57,7 +57,7 @@ public class AwsS3Service {
         File updateFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
 
-        removeFile(filePath);
+        removeFile(imageUrl);
 
         return putS3(updateFile, filePath);
     }
