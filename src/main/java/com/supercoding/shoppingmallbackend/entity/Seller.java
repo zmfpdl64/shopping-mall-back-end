@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Entity
 @Table(name = "seller")
 public class Seller extends CommonField {

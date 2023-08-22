@@ -12,9 +12,7 @@ public class PaginationBuilder<T> {
     private Long totalElements;
     private List<T> contents;
 
-//    public PaginationResponse<T> build() { return new PaginationResponse<>(hasNext, hasPrevious, totalPages, contents); }
-
-    public PaginationResponse<T> build() { return new PaginationResponse<>(hasNext, hasPrevious, totalPages, contents, totalElements); }
+    public PaginationResponse<T> build() { return new PaginationResponse<>(hasNext, hasPrevious, totalPages, totalElements, contents); }
 
     public PaginationBuilder<T> hasNext(boolean hasNext) {
         this.hasNext = hasNext;

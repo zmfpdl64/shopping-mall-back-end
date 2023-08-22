@@ -151,9 +151,8 @@ public class ReviewService {
     public CommonResponse<List<ReviewResponse>> softDeleteReviews(Long profileId, Set<Long> idSet) {
         Consumer consumer = getConsumer(profileId);
 
-        List<Review> datas = reviewRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<Review> datas = reviewRepository.findAllByConsumerAndIsDeletedIsFalseAndIdIsIn(consumer, idSet);
         List<ReviewResponse> responses = datas.stream()
-                .filter(data->idSet.contains(data.getId()))
                 .map(data->{
                     data.setIsDeleted(true);
                     return ReviewResponse.from(data);
@@ -174,6 +173,6 @@ public class ReviewService {
     }
 
     private Consumer getConsumer(Long profileId) {
-        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
+        return consumerRepository.findByProfileIdAndIsDeletedIsFalse(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
 }

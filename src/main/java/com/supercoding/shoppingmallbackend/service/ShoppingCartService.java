@@ -121,9 +121,8 @@ public class ShoppingCartService {
     public CommonResponse<List<ShoppingCartItemResponse>> softDeleteShoppingCartByIds(Long profileId, Set<Long> shoppingCartIdSet) {
         Consumer consumer = getConsumer(profileId);
 
-        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseAndIdIsIn(consumer, shoppingCartIdSet);
         List<ShoppingCartItemResponse> responses = datas.stream()
-                .filter(data->shoppingCartIdSet.contains(data.getId()))
                 .map(data->{
                     data.setIsDeleted(true);
                     return ShoppingCartItemResponse.from(data);
@@ -138,7 +137,7 @@ public class ShoppingCartService {
     }
 
     private Consumer getConsumer(Long profileId){
-        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
+        return consumerRepository.findByProfileIdAndIsDeletedIsFalse(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
 
     private ShoppingCart processSetProduct(Consumer consumer, ShoppingCartItemRequest request) {

@@ -3,6 +3,7 @@ package com.supercoding.shoppingmallbackend.service;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.*;
 import com.supercoding.shoppingmallbackend.common.util.FilePath;
+import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.security.JwtUtiles;
@@ -17,6 +18,7 @@ import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import com.supercoding.shoppingmallbackend.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,16 +127,25 @@ public class ProfileService {
 
 
     public ProfileDetail loadProfileByProfileIdx(Long idx) {
+
         return ProfileDetail.from(profileRepository.loadProfileByProfileIdx(idx));
     }
 
     public ProfileMoneyResponse findProfileLeftMoney(Long profileIdx) {
-        return ProfileMoneyResponse.from(getFindProfile(profileIdx));
+
+        Long validProfileIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+        return ProfileMoneyResponse.from(getFindProfile(validProfileIdx));
     }
 
     @Transactional
     public Long rechargeProfileMoney(Long profileIdx, Long rechargeMoney) {
-        Profile findProfile = getFindProfile(profileIdx);
+
+        Long validProfileIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+        Profile findProfile = getFindProfile(validProfileIdx);
         Long profileLeftMoney = findProfile.getPaymoney();
         if(rechargeMoney < 0) {
             throw new CustomException(PaymentErrorCode.INVALID_RECHARGE_VALUE.getErrorCode());
@@ -158,5 +169,15 @@ public class ProfileService {
         } catch (IOException e) {
             throw new CustomException(UtilErrorCode.IOE_ERROR);
         }
+    }
+
+    public ProfileInfoResponse findProfileInfoByProfileIdx(Long profileIdx) {
+
+        Long validProfileIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+        Profile profile = profileRepository.findById(validProfileIdx).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+        return ProfileInfoResponse.from(profile);
     }
 }

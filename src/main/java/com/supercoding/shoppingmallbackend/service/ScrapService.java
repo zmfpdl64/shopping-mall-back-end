@@ -91,9 +91,8 @@ public class ScrapService {
     public CommonResponse<List<ScrapResponse>> softDeleteScrap(Long profileId, Set<Long> scrapIdSet) {
         Consumer consumer = getConsumer(profileId);
 
-        List<Scrap> datas = scrapRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<Scrap> datas = scrapRepository.findAllByConsumerAndIsDeletedIsFalseAndIdIsIn(consumer, scrapIdSet);
         List<ScrapResponse> responses = datas.stream()
-                .filter(scrap -> scrapIdSet.contains(scrap.getId()))
                 .map(scrap -> {
                     scrap.setIsDeleted(true);
                     return ScrapResponse.from(scrap);
@@ -108,7 +107,7 @@ public class ScrapService {
     }
 
     private Consumer getConsumer(Long profileId) {
-        return consumerRepository.findByProfileId(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
+        return consumerRepository.findByProfileIdAndIsDeletedIsFalse(profileId).orElseThrow(()->new CustomException(ConsumerErrorCode.INVALID_PROFILE_ID));
     }
 
 }
