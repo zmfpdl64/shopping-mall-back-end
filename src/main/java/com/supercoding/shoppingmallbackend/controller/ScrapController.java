@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@RestController("/api/v1/scrap-list")
+@RestController
+@RequestMapping("/api/v1/scrap-list")
 @RequiredArgsConstructor
 @Api(tags = "찜 목록 API")
 public class ScrapController {
