@@ -57,6 +57,13 @@ public class ProfileController {
         return CommonResponse.success("로그인에 성공했습니다", loginResponse);
     }
 
+    @Operation(summary = "비밀번호 수정", description = "회원 이메일과 비밀번호를 입력해 로그인을 진행합니다.")
+    @PatchMapping("/password")
+    public CommonResponse<?> updatePassword(@Validated @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+        profileService.updatePassword(updatePasswordRequest.getEmail(), updatePasswordRequest.getPassword(), updatePasswordRequest.getUpdatePassword());
+        return CommonResponse.success("비밀번호 수정에 성공했습니다.", null);
+    }
+
     @Operation(summary = "유저 소프트 딜리트", description = "토큰을 이용해 유저 소프트 딜리트")
     @DeleteMapping
     public CommonResponse<?> deleteProfile() {
@@ -113,7 +120,7 @@ public class ProfileController {
         return CommonResponse.success("회원 조회 성공", profileInfoResponse);
     }
 
-    @Operation(summary = "회원 정보 반환", description = "토큰을 확인하고 유저의 정보를 반환함")
+    @Operation(summary = "이메일 중복 확인", description = "이메일 중복 없으면 200 반환")
     @PostMapping("/email")
     public CommonResponse<?> checkDuplicateEmail(@RequestBody EmailRequest emailRequest) {
         profileService.checkDuplicateEmail(emailRequest.getEmail());

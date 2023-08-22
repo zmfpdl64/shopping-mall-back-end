@@ -16,6 +16,7 @@ public enum CommonErrorCode implements ErrorCodeInterface {
     INVALID_QUERY_PARAMETER(HttpStatus.BAD_REQUEST.value(), "형식에 맞지 않는 query parameter입니다."),
     INVALID_QUERY_PARAM_OR_PATH_VARIABLE(HttpStatus.BAD_REQUEST.value(), "형식에 맞지 않는ㄴ path variable 혹은 query parameter입니다."),
     FAIL_TO_SAVE(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 측의 문제로 데이터의 저장에 실패했습니다. 다시 한 번 시도해주세요."),
+    INVALID_CONTENT_TYPE(HttpStatus.BAD_REQUEST.value(), "text/plain, application/json, multipart/form-data 전송 타입 확인해주세요"),
     INVALID_TYPE_VALUE(400, " Invalid Type Value");
 
 

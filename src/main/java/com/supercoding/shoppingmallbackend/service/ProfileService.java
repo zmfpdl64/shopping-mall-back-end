@@ -191,4 +191,11 @@ public class ProfileService {
     public void checkDuplicateEmail(String email) {
         if(profileRepository.findByEmail(email).isPresent()) throw new CustomException(ProfileErrorCode.DUPLICATE_USER);
     }
+
+    @Transactional
+    public void updatePassword(String email, String password, String updatePassword) {
+        Profile findProfile = getProfileByEmail(email);
+        if(!encoder.matches(password, findProfile.getPassword())) throw new CustomException(ProfileErrorCode.NOT_FOUND);
+        findProfile.setPassword(encoder.encode(updatePassword));
+    }
 }
