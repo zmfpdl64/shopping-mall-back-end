@@ -1,17 +1,12 @@
 package com.supercoding.shoppingmallbackend.service;
 
-import com.amazonaws.services.kms.model.CustomKeyStoreNameInUseException;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
+import com.supercoding.shoppingmallbackend.common.util.PhoneUtils;
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.nurigo.java_sdk.api.Message;
-import net.nurigo.java_sdk.exceptions.CoolsmsException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.WeakHashMap;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,7 +45,7 @@ public class SmsService {
         StringBuilder numStr = generateAuthCode();
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("to", phoneNum);
+        params.put("to", PhoneUtils.joinPhoneString(phoneNum));
         params.put("from", "01021106737");
         params.put("type", "sms");
         params.put("text", "인증번호는 [" + numStr + "] 입니다.");
