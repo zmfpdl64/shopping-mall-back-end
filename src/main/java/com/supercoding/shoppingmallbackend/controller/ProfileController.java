@@ -1,15 +1,18 @@
 package com.supercoding.shoppingmallbackend.controller;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
+//<<<<<<< Updated upstream
 import com.supercoding.shoppingmallbackend.dto.request.profile.RechargeRequest;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoResponse;
+//=======
+import com.supercoding.shoppingmallbackend.dto.request.profile.*;
+//>>>>>>> Stashed changes
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.RechargeResponse;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
-import com.supercoding.shoppingmallbackend.dto.request.profile.LoginRequest;
-import com.supercoding.shoppingmallbackend.dto.request.profile.SignupRequest;
 import com.supercoding.shoppingmallbackend.dto.response.profile.LoginResponse;
 import com.supercoding.shoppingmallbackend.service.ProfileService;
+import com.supercoding.shoppingmallbackend.service.SmsService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProfileController {   //TODO: User -> Profile로 명칭 통일 예정
 
     private final ProfileService profileService;
+    private final SmsService smsService;
 
     @Operation(summary = "회원 가입", description = "구매자, 판매자를 선택하여 회원 가입을 진행합니다.")
     @PostMapping("/signup")
@@ -72,12 +76,30 @@ public class ProfileController {   //TODO: User -> Profile로 명칭 통일 예�
         return CommonResponse.success("충전이 완료됐습니다", new RechargeResponse(profileTotalMoney));
     }
 
+    @Operation(summary = "휴대폰 인증 코드 생성", description = "이메일과 휴대폰번호를 보내면 인증코드를 발송함 ")
+    @PostMapping("/sms")
+    public CommonResponse<?> generateAuthCode(@RequestBody SmsRequest request) {
+        //개발 배포 시 변경 예정
+        String authCode = smsService.sendAuthenticationCode(request.getPhoneNum());
+        return CommonResponse.success("인증 번호가 전송 됐습니다.", authCode);
+
+    }
+
+    @Operation(summary = "인증 코드 확인", description = "이메일과 인증코드를 보내면 검증 후 임시 비밀번호 반환")
+    @PostMapping("/sms/auth")
+    public CommonResponse<?> validateAuthCode(@RequestBody ValidateAuthRequest request){
+        String authPassword = smsService.authenticationSms(request.getPhoneNum(), request.getAuthCode());
+        return CommonResponse.success("인증에 성공했습니다.", authPassword);
+    }
+
+
     @PostMapping("/profile")
     public CommonResponse<?> changeProfile(@RequestParam("profile") MultipartFile profileImage){
         profileService.changeProfile(profileImage);
         return CommonResponse.success(null, null);
     }
 
+    @Operation(summary = "회원 정보 반환", description = "토큰을 확인하고 유저의 정보를 반환함")
     @GetMapping("/info")
     public CommonResponse<Object> getUserProfile() {
         Long profileIdx = AuthHolder.getProfileIdx();
