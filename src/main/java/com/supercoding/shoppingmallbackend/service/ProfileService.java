@@ -2,31 +2,26 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.*;
-import com.supercoding.shoppingmallbackend.common.util.FilePath;
+import com.supercoding.shoppingmallbackend.dto.response.AddressResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
+import com.supercoding.shoppingmallbackend.entity.*;
+import com.supercoding.shoppingmallbackend.repository.AddressRepository;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.security.JwtUtiles;
 import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
 import com.supercoding.shoppingmallbackend.dto.response.profile.LoginResponse;
-import com.supercoding.shoppingmallbackend.entity.Consumer;
-import com.supercoding.shoppingmallbackend.entity.Profile;
-import com.supercoding.shoppingmallbackend.entity.ProfileRole;
-import com.supercoding.shoppingmallbackend.entity.Seller;
 import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import com.supercoding.shoppingmallbackend.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.supercoding.shoppingmallbackend.common.util.FilePath.MEMBER_PROFILE_DIR;
@@ -38,6 +33,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ConsumerRepository consumerRepository;
     private final SellerRepository sellerRepository;
+    private final AddressRepository addressRepository;
     private final BCryptPasswordEncoder encoder;
     private final AwsS3Service awsS3Service;
     private final JwtUtiles jwtUtiles;
@@ -96,24 +92,19 @@ public class ProfileService {
 
     private void createSeller(Profile profile) {
         Seller seller = Seller.builder().profile(profile).build();
-        seller.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        seller.setIsDeleted(false);
         profile.setRole(ProfileRole.SELLER);
         sellerRepository.save(seller);
     }
     private void createConsumer(Profile profile) {
         Consumer consumer = Consumer.builder().profile(profile).build();
-        consumer.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        consumer.setIsDeleted(false);
         profile.setRole(ProfileRole.CONSUMER);
         consumerRepository.save(consumer);
-
     }
 
 
     public LoginResponse login(String email, String password) {
         //유저 존재여부 확인
-        Profile profile = getProfile(email);
+        Profile profile = getProfileByEmail(email);
         //패스워드 확인
         if(!encoder.matches(password, profile.getPassword())) throw new CustomException(UserErrorCode.LOGIN_INPUT_INVALID.getErrorCode());
         //jwt 토큰 생성
@@ -121,7 +112,7 @@ public class ProfileService {
         return LoginResponse.from(profile, token);
     }
 
-    private Profile getProfile(String email) {
+    private Profile getProfileByEmail(String email) {
         return profileRepository.findByEmail(email).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
     }
 
@@ -132,20 +123,13 @@ public class ProfileService {
     }
 
     public ProfileMoneyResponse findProfileLeftMoney(Long profileIdx) {
-
-        Long validProfileIdx = Optional.ofNullable(profileIdx)
-                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-
-        return ProfileMoneyResponse.from(getFindProfile(validProfileIdx));
+        return ProfileMoneyResponse.from(getFindProfile(profileIdx));
     }
 
     @Transactional
     public Long rechargeProfileMoney(Long profileIdx, Long rechargeMoney) {
 
-        Long validProfileIdx = Optional.ofNullable(profileIdx)
-                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-
-        Profile findProfile = getFindProfile(validProfileIdx);
+        Profile findProfile = getFindProfile(profileIdx);
         Long profileLeftMoney = findProfile.getPaymoney();
         if(rechargeMoney < 0) {
             throw new CustomException(PaymentErrorCode.INVALID_RECHARGE_VALUE.getErrorCode());
@@ -177,7 +161,34 @@ public class ProfileService {
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
 
         Profile profile = profileRepository.findById(validProfileIdx).orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+        Optional<Address> addressOptional = addressRepository.findByProfile(profile);
+        AddressResponse addressResponse = addressOptional.map(AddressResponse::from).orElse(null);
+        return ProfileInfoResponse.from(profile, addressResponse);
+    }
 
-        return ProfileInfoResponse.from(profile);
+    @Transactional
+    public void deleteProfile(Long profileIdx) {
+        Profile profile = getFindProfile(profileIdx);
+        removeConsumerOrSeller(profileIdx, profile);
+        profile.setIsDeleted(true);
+    }
+
+    private void removeConsumerOrSeller(Long profileIdx, Profile profile) {
+        switch (profile.getRole()) {
+            case CONSUMER:
+                Consumer findConsumer = consumerRepository.findByProfileIdAndIsDeletedIsFalse(profileIdx).orElseThrow(() -> new CustomException(ConsumerErrorCode.NOT_FOUND_BY_ID));
+                findConsumer.setIsDeleted(true);
+                break;
+            case SELLER:
+                Seller findSeller = sellerRepository.findByProfileIdAndIsDeletedIsFalse(profileIdx).orElseThrow(() -> new CustomException(SellerErrorCode.NOT_FOUND_BY_ID));
+                findSeller.setIsDeleted(true);
+                break;
+            default:
+                throw new CustomException(ProfileErrorCode.INVALID_TYPE);
+        }
+    }
+
+    public void checkDuplicateEmail(String email) {
+        if(profileRepository.findByEmail(email).isPresent()) throw new CustomException(ProfileErrorCode.DUPLICATE_USER);
     }
 }

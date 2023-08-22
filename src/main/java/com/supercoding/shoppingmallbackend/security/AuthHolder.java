@@ -1,5 +1,8 @@
 package com.supercoding.shoppingmallbackend.security;
 
+import com.supercoding.shoppingmallbackend.common.Error.CustomException;
+import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
+
 public class AuthHolder {
     private static final ThreadLocal<Long> profileIdxHolder = new ThreadLocal<>();
 
@@ -8,6 +11,7 @@ public class AuthHolder {
     }
 
     public static Long getProfileIdx() {
+        if(profileIdxHolder.get() == null) throw new CustomException(ProfileErrorCode.INVALID_TOKEN);
         return profileIdxHolder.get();
     }
 
