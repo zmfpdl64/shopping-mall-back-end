@@ -46,3 +46,5 @@ cloud:
       secretKey: ENC(w4Uf+DmpExPTKIvIajXPLEZ7lWovWvyVn9gh6yHc5hE/EERKzXfeO7Iz6ip7vXzm7JlA/MsYlME=)
 
 secret-key-source: ${SECRET_KEY_SOURCE}
+sms-key: ENC(EjM7Vn4YTaBm49u/UbAK6jDJVOUrtKWl+fAqNqepw/U=)
+sms-secret-key: ENC(BGLvLtXfkPRBSi93767OjJVJd4KJMR0VmZMjcterwLrzanQHnNSPkNx4sj5PX7vJ)
