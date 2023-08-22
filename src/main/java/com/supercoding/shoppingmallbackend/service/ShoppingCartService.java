@@ -121,9 +121,8 @@ public class ShoppingCartService {
     public CommonResponse<List<ShoppingCartItemResponse>> softDeleteShoppingCartByIds(Long profileId, Set<Long> shoppingCartIdSet) {
         Consumer consumer = getConsumer(profileId);
 
-        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
+        List<ShoppingCart> datas = shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseAndIdIsIn(consumer, shoppingCartIdSet);
         List<ShoppingCartItemResponse> responses = datas.stream()
-                .filter(data->shoppingCartIdSet.contains(data.getId()))
                 .map(data->{
                     data.setIsDeleted(true);
                     return ShoppingCartItemResponse.from(data);

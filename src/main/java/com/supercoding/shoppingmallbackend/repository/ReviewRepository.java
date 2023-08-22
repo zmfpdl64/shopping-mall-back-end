@@ -7,6 +7,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByProductAndIsDeletedIsFalse(Product product, Sort sort);
     Page<Review> findAllByProductAndIsDeletedIsFalse(Product product, Pageable pageable);
-    List<Review> findAllByConsumerAndIsDeletedIsFalse(Consumer consumer);
+    List<Review> findAllByConsumerAndIsDeletedIsFalseAndIdIsIn(Consumer consumer, Collection<Long> ids);
     List<Review> findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(Consumer consumer);
     Page<Review> findAllByConsumerAndIsDeletedIsFalseOrderByCreatedAtDesc(Consumer consumer, Pageable pageable);
     Optional<Review> findByIdAndConsumerAndIsDeletedIsFalse(long reviewId, Consumer consumer);
