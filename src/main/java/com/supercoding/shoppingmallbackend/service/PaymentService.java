@@ -108,11 +108,52 @@ public class PaymentService {
         return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", response);
     }
 
+    @Cacheable(value = "purchaseListPage", key = "#profileId+'-'+#page+'-'+#size+'-'+#orderNumberSet.toString()")
+    public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistoryWithPagination(Long profileId, int page, int size, Set<String> orderNumberSet) {
+        Consumer consumer = getConsumer(profileId);
+
+        Page<Payment> dataPage = paymentRepository.findAllByConsumerAndOrderNumberIsInAndIsDeletedIsFalseOrderByPaidAtDesc(consumer, orderNumberSet, PageRequest.of(page, size));
+
+        List<PurchaseResponse> contents = dataPage.getContent().stream()
+                .map(PurchaseResponse::from)
+                .collect(Collectors.toList());
+
+        PaginationResponse<PurchaseResponse> response = new PaginationBuilder<PurchaseResponse>()
+                .contents(contents)
+                .hasPrivious(dataPage.hasPrevious())
+                .hasNext(dataPage.hasNext())
+                .totalPages(dataPage.getTotalPages())
+                .totalElements(dataPage.getTotalElements())
+                .build();
+
+        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", response);
+    }
+
     @Cacheable(value = "saleListPage", key = "#profileId+'-'+#page+'-'+#size")
     public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistoryWithPagination(Long profileId, int page, int size) {
         Seller seller = getSeller(profileId);
 
         Page<Payment> dataPage = paymentRepository.findAllByProductSellerAndIsDeletedIsFalseOrderByPaidAtDesc(seller, PageRequest.of(page, size));
+        List<SaleResponse> contents = dataPage.getContent().stream()
+                .map(SaleResponse::from)
+                .collect(Collectors.toList());
+
+        PaginationResponse<SaleResponse> response = new PaginationBuilder<SaleResponse>()
+                .totalPages(dataPage.getTotalPages())
+                .hasNext(dataPage.hasNext())
+                .hasPrivious(dataPage.hasPrevious())
+                .contents(contents)
+                .totalElements(dataPage.getTotalElements())
+                .build();
+
+        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", response);
+    }
+
+    @Cacheable(value = "saleListPage", key = "#profileId+'-'+#page+'-'+#size+'-'+#orderNumberSet.toString()")
+    public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistoryWithPagination(Long profileId, int page, int size, Set<String> orderNumberSet) {
+        Seller seller = getSeller(profileId);
+
+        Page<Payment> dataPage = paymentRepository.findAllByProductSellerAndOrderNumberIsInAndIsDeletedIsFalseOrderByPaidAtDesc(seller, orderNumberSet, PageRequest.of(page, size));
         List<SaleResponse> contents = dataPage.getContent().stream()
                 .map(SaleResponse::from)
                 .collect(Collectors.toList());
@@ -134,7 +175,9 @@ public class PaymentService {
             @CacheEvict(value = "saleList", key = "#profileId"),
             @CacheEvict(value = "saleListOrderNumber", allEntries = true),
             @CacheEvict(value = "purchaseListPage", allEntries = true),
-            @CacheEvict(value = "saleListPage", allEntries = true)
+            @CacheEvict(value = "saleListPage", allEntries = true),
+            @CacheEvict(value = "shoppingcart", key = "#profileId"),
+            @CacheEvict(value = "shoppingCartPage", allEntries = true)
     })
     @Transactional
     public CommonResponse<List<PaymentResponse>> buyWhole(Long profileId, PaymentRequest paymentRequest) {
@@ -150,7 +193,9 @@ public class PaymentService {
             @CacheEvict(value = "saleList", key = "#profileId"),
             @CacheEvict(value = "saleListOrderNumber", allEntries = true),
             @CacheEvict(value = "purchaseListPage", allEntries = true),
-            @CacheEvict(value = "saleListPage", allEntries = true)
+            @CacheEvict(value = "saleListPage", allEntries = true),
+            @CacheEvict(value = "shoppingcart", key = "#profileId"),
+            @CacheEvict(value = "shoppingCartPage", allEntries = true)
     })
     @Transactional
     public CommonResponse<List<PaymentResponse>> buySelected(Long profileId, PaymentRequest paymentRequest, Set<Long> shoppingCartIdSet) {
