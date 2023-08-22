@@ -21,7 +21,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Page<Payment> findAllByConsumerAndIsDeletedIsFalseOrderByPaidAtDesc(Consumer consumer, Pageable pageable);
     List<Payment> findAllByConsumerAndIsDeletedIsFalseOrderByPaidAtDesc(Consumer consumer);
     List<Payment> findAllByConsumerAndOrderNumberIsInAndIsDeletedIsFalseOrderByPaidAtDesc(Consumer consumer, Collection<String> collection);
+    Page<Payment> findAllByConsumerAndOrderNumberIsInAndIsDeletedIsFalseOrderByPaidAtDesc(Consumer consumer, Collection<String> collection, Pageable pageable);
     List<Payment> findAllByProductSellerAndIsDeletedIsFalseOrderByPaidAtDesc(Seller seller);
     List<Payment> findAllByProductSellerAndOrderNumberIsInAndIsDeletedIsFalseOrderByPaidAtDesc(Seller seller, Collection<String> collection);
+    Page<Payment> findAllByProductSellerAndOrderNumberIsInAndIsDeletedIsFalseOrderByPaidAtDesc(Seller seller, Collection<String> collection, Pageable pageable);
     Page<Payment> findAllByProductSellerAndIsDeletedIsFalseOrderByPaidAtDesc(Seller seller, Pageable pageable);
 }
