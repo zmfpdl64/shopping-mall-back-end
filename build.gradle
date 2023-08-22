@@ -43,8 +43,9 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
     implementation 'org.springframework.boot:spring-boot-starter-cache'  // spring caching
+    implementation 'net.nurigo:javaSDK:2.2' //coolsms 휴대폰 인증
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJunitTest()
 }

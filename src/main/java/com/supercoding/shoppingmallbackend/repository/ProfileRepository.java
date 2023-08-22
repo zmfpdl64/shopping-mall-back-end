@@ -20,4 +20,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     @Query("SELECT p FROM  Profile p WHERE p.id = :idx")
     Profile loadProfileByProfileIdx(@Param("idx") Long idx);
+
+    @Query("SELECT p FROM Profile p WHERE p.phone = :phoneNum")
+    Optional<Profile> findByPhoneNum(@Param("phoneNum") String phoneNum);
 }
