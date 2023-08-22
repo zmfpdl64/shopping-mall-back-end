@@ -1,6 +1,7 @@
 package com.supercoding.shoppingmallbackend.common.Error;
 
 import com.supercoding.shoppingmallbackend.common.CommonResponse;
+import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UtilErrorCode;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -48,6 +50,12 @@ public class GlobalExceptionHandler {
                 .message(method + ": 해당 메소드가 존재하지 않습니다")
                 .build();
     }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public CommonResponse<?> handleMethodNotFoundException(HttpMediaTypeNotSupportedException mnse){
+        return CommonResponse.fail(new CustomException(CommonErrorCode.INVALID_CONTENT_TYPE));
+    }
+
 
     @ExceptionHandler(CustomException.class)
     public CommonResponse<?> handleCustomException(CustomException ex) {
