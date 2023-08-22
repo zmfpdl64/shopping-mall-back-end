@@ -10,7 +10,6 @@ import com.supercoding.shoppingmallbackend.dto.request.PaymentRequest;
 import com.supercoding.shoppingmallbackend.dto.response.*;
 import com.supercoding.shoppingmallbackend.entity.*;
 import com.supercoding.shoppingmallbackend.repository.*;
-import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -50,12 +49,37 @@ public class PaymentService {
         return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", purchaseResponses);
     }
 
+    @Cacheable(value = "purchaseListOrderNumber", key = "#profileId+'-'+#orderNumber.toString()")
+    public CommonResponse<List<PurchaseResponse>> getPurchaseHistory(Long profileId, Set<String> orderNumber) {
+        Consumer consumer = getConsumer(profileId);
+
+        List<Payment> payments = paymentRepository.findAllByConsumerAndOrderNumberIsInAndIsDeletedIsFalseOrderByPaidAtDesc(consumer, orderNumber);
+        List<PurchaseResponse> purchaseResponses = payments.stream()
+                .map(PurchaseResponse::from)
+                .collect(Collectors.toList());
+
+        return ApiUtils.success("구매내역을 성공적으로 조회했습니다.", purchaseResponses);
+    }
+
     @Cacheable(value = "saleList", key = "#profileId")
     public CommonResponse<List<SaleResponse>> getSaleHistory(Long profileId) {
         Seller seller = getSeller(profileId);
 
         // 판매내역 조회하기
         List<Payment> payments = paymentRepository.findAllByProductSellerAndIsDeletedIsFalseOrderByPaidAtDesc(seller);
+        List<SaleResponse> saleResponses = payments.stream()
+                .map(SaleResponse::from)
+                .collect(Collectors.toList());
+
+        return ApiUtils.success("판매내역을 성공적으로 조회했습니다.", saleResponses);
+    }
+
+    @Cacheable(value = "saleListOrderNumber", key = "#profileId+'-'+#orderNumber.toString()")
+    public CommonResponse<List<SaleResponse>> getSaleHistory(Long profileId, Set<String> orderNumber) {
+        Seller seller = getSeller(profileId);
+
+        // 판매내역 조회하기
+        List<Payment> payments = paymentRepository.findAllByProductSellerAndOrderNumberIsInAndIsDeletedIsFalseOrderByPaidAtDesc(seller, orderNumber);
         List<SaleResponse> saleResponses = payments.stream()
                 .map(SaleResponse::from)
                 .collect(Collectors.toList());
@@ -106,7 +130,9 @@ public class PaymentService {
 
     @Caching(evict = {
             @CacheEvict(value = "purchaseList", key = "#profileId"),
+            @CacheEvict(value = "purchaseListOrderNumber", allEntries = true),
             @CacheEvict(value = "saleList", key = "#profileId"),
+            @CacheEvict(value = "saleListOrderNumber", allEntries = true),
             @CacheEvict(value = "purchaseListPage", allEntries = true),
             @CacheEvict(value = "saleListPage", allEntries = true)
     })
@@ -120,17 +146,16 @@ public class PaymentService {
 
     @Caching(evict = {
             @CacheEvict(value = "purchaseList", key = "#profileId"),
+            @CacheEvict(value = "purchaseListOrderNumber", allEntries = true),
             @CacheEvict(value = "saleList", key = "#profileId"),
+            @CacheEvict(value = "saleListOrderNumber", allEntries = true),
             @CacheEvict(value = "purchaseListPage", allEntries = true),
             @CacheEvict(value = "saleListPage", allEntries = true)
     })
     @Transactional
     public CommonResponse<List<PaymentResponse>> buySelected(Long profileId, PaymentRequest paymentRequest, Set<Long> shoppingCartIdSet) {
         Consumer consumer = getConsumer(profileId);
-        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer).stream()
-                .filter(shoppingCart -> shoppingCartIdSet.contains(shoppingCart.getId()))
-                .collect(Collectors.toList());
-
+        List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalseAndIdIsIn(consumer, shoppingCartIdSet);
         return processPayment(consumer, purchaseList, paymentRequest);
     }
 
