@@ -9,10 +9,7 @@ import com.supercoding.shoppingmallbackend.service.AddressService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +21,7 @@ public class AddressController {
 
     @Operation(summary = "주소 등록및 수정", description = "주소 정보를 입력하여 Address 레코드를 생성및 수정합니다.")
     @PostMapping("/address")
-    public CommonResponse<Object> createOrUpdateShippingAddress(AddressRequest addressRequest) {
+    public CommonResponse<Object> createOrUpdateShippingAddress(@RequestBody AddressRequest addressRequest) {
         Long profileIdx = AuthHolder.getProfileIdx();
         addressService.saveAddress(addressRequest, profileIdx);
         return ApiUtils.success("주소 저장 성공", null);
