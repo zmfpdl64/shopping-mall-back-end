@@ -132,20 +132,13 @@ public class ProfileService {
     }
 
     public ProfileMoneyResponse findProfileLeftMoney(Long profileIdx) {
-
-        Long validProfileIdx = Optional.ofNullable(profileIdx)
-                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-
-        return ProfileMoneyResponse.from(getFindProfile(validProfileIdx));
+        return ProfileMoneyResponse.from(getFindProfile(profileIdx));
     }
 
     @Transactional
     public Long rechargeProfileMoney(Long profileIdx, Long rechargeMoney) {
 
-        Long validProfileIdx = Optional.ofNullable(profileIdx)
-                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-
-        Profile findProfile = getFindProfile(validProfileIdx);
+        Profile findProfile = getFindProfile(profileIdx);
         Long profileLeftMoney = findProfile.getPaymoney();
         if(rechargeMoney < 0) {
             throw new CustomException(PaymentErrorCode.INVALID_RECHARGE_VALUE.getErrorCode());
