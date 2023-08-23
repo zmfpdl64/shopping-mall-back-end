@@ -2,14 +2,20 @@ package com.supercoding.shoppingmallbackend.dto.request.questions;
 
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class UpdateQuestionRequest {
-    private Long id; // 수정할 문의의 ID
+    @NotNull
+    @Size(max = 256)
     private String title;
+
+    @NotNull
     private String content;
-    private String imageUrl;
+
 }

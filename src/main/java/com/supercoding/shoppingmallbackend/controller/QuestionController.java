@@ -34,6 +34,7 @@ public class QuestionController {
         GetQuestionResponse question = questionService.getQuestionByQuestionId(questionId);
         return ApiUtils.success("조회 완료", question);
     }
+
     @ApiOperation(value = "판매자 또는 구매자의 문의 목록 조회")
     @GetMapping
     public CommonResponse<Object> getQuestions() {
@@ -67,12 +68,17 @@ public class QuestionController {
     }
 
     @ApiOperation(value = "문의 수정")
-    @PutMapping("/{id}")
+    @PostMapping(value = "/{question_idx}", consumes = "multipart/form-data")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data",
+            schema = @Schema(implementation = MultipartFile.class)))
+
     public CommonResponse<Object> updateQuestion(
-            @PathVariable Long id,
-            @RequestBody UpdateQuestionRequest request) {
-//        UpdateQuestionResponse updatedQuestion = questionService.updateQuestion(id, request);
-        return ApiUtils.success("수정 완료", null);
+            @PathVariable("question_idx") Long questionId,
+            @ModelAttribute UpdateQuestionRequest updateQuestionRequest,
+            @RequestPart(value = "imageFile", required = false)  MultipartFile imageFile) {
+        Long profileIdx = AuthHolder.getProfileIdx();
+        questionService.updateQuestionByQuestionId(questionId,profileIdx,updateQuestionRequest,imageFile);
+        return ApiUtils.success(questionId + "번 문의 수정 성공", null);
     }
 
 //    @ApiOperation(value = "문의 삭제")
