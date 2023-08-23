@@ -1,12 +1,16 @@
 package com.supercoding.shoppingmallbackend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.supercoding.shoppingmallbackend.dto.request.questions.CreateQuestionRequest;
+import com.supercoding.shoppingmallbackend.dto.request.questions.UpdateQuestionRequest;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -18,12 +22,14 @@ public class Question extends CommonField {
     private Long id;
 
     @NotNull
-    @Column(name = "product_idx", nullable = false)
-    private Long productIdx;
+    @ManyToOne
+    @JoinColumn(name = "product_idx", nullable = false)
+    private Product product;
 
     @NotNull
-    @Column(name = "consumer_idx", nullable = false)
-    private Long consumerIdx;
+    @ManyToOne
+    @JoinColumn(name = "consumer_idx", nullable = false)
+    private Consumer consumer;
 
     @Size(max = 256)
     @NotNull
@@ -39,4 +45,22 @@ public class Question extends CommonField {
     @Column(name = "image_url")
     private String imageUrl;
 
+    public static Question from(CreateQuestionRequest createQuestionRequest,Consumer consumer,Product product){
+        return Question.builder()
+                .consumer(consumer)
+                .product(product)
+                .title(createQuestionRequest.getTitle())
+                .content(createQuestionRequest.getContent())
+                .build();
+    }
+
+    public static Question from(Question originQuestion, UpdateQuestionRequest updateQuestionRequest) {
+        return Question.builder()
+                .id(originQuestion.getId())
+                .consumer(originQuestion.getConsumer())
+                .product(originQuestion.getProduct())
+                .title(updateQuestionRequest.getTitle())
+                .content(updateQuestionRequest.getContent())
+                .build();
+    }
 }

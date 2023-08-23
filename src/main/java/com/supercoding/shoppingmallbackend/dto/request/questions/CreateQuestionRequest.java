@@ -15,15 +15,10 @@ public class CreateQuestionRequest {
     private Long productIdx;
 
     @NotNull
-    private Long consumerIdx;
-
-    @NotNull
     @Size(max = 256)
     private String title;
 
     @NotNull
     private String content;
 
-    // If imageUrl can be null, remove the @NotNull annotation
-    private String imageUrl;
 }
