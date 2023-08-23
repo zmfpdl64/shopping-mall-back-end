@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -70,12 +72,12 @@ public class QuestionService {
         List<Question> questionList = questionRepository.findAllByProduct(product);
         return questionList.stream().map(GetQuestionResponse::from).collect(Collectors.toList());
     }
+  
     // 문의 수정
     @Transactional
     public void updateQuestionByQuestionId(Long questionId, Long profileIdx, UpdateQuestionRequest updateQuestionRequest, MultipartFile imageFile) {
         Question originQuestion = validProfileAndQuestion(questionId,profileIdx);
         Question updateQuestion = Question.from(originQuestion,updateQuestionRequest);
-
         questionRepository.save(updateQuestion);
     }
 

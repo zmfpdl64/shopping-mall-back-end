@@ -54,7 +54,6 @@ public class QuestionController {
     @PostMapping(value = "/{question_idx}", consumes = "multipart/form-data")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data",
             schema = @Schema(implementation = MultipartFile.class)))
-
     public CommonResponse<Object> updateQuestion(
             @PathVariable("question_idx") Long questionId,
             @ModelAttribute UpdateQuestionRequest updateQuestionRequest,
