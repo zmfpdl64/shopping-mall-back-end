@@ -1,10 +1,12 @@
 package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
+import com.supercoding.shoppingmallbackend.common.Error.domain.AnswerErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
 import com.supercoding.shoppingmallbackend.dto.request.answer.CreateAnswerRequest;
 import com.supercoding.shoppingmallbackend.dto.request.answer.UpdateAnswerRequest;
+import com.supercoding.shoppingmallbackend.dto.response.GetMyAnswerResponse;
 import com.supercoding.shoppingmallbackend.entity.Answer;
 import com.supercoding.shoppingmallbackend.entity.Question;
 import com.supercoding.shoppingmallbackend.entity.Seller;
@@ -15,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -35,6 +39,9 @@ public class AnswerService {
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
         Question question = questionRepository.findById(createAnswerRequest.getQuestionIdx())
                 .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_INPUT_VALUE.getErrorCode()));
+        Optional.ofNullable(question.getAnswer()).ifPresent(answer -> {
+            throw new CustomException(AnswerErrorCode.ALREADY_HAVE_ANSWER);
+        });
         Answer answer = Answer.from(createAnswerRequest,seller,question);
         answerRepository.save(answer);
 
@@ -43,7 +50,7 @@ public class AnswerService {
     @Transactional
     public void deleteAnswerByAnswerId(Long answerId, Long profileIdx) {
         Answer variAnswer = validProfileAndAnswer(answerId,profileIdx);
-        answerRepository.deleteById(variAnswer.getId());
+        answerRepository.hardDelete(variAnswer.getId());
     }
     private Answer validProfileAndAnswer(Long answerId, Long profileIdx) {
         Long validQuestionIdx = Optional.ofNullable(profileIdx)
@@ -61,5 +68,17 @@ public class AnswerService {
         Answer updateAnswer = Answer.from(originAnswer,updateAnswerRequest);
 
         answerRepository.save(updateAnswer);
+    }
+
+    public List<GetMyAnswerResponse> getWriterByMe(Long profileIdx) {
+        Long validProfileIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+        Seller seller = sellerRepository.findByProfile_Id(validProfileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+        List<Answer> answerList = answerRepository.findAllBySeller(seller);
+
+        return answerList.stream().map(GetMyAnswerResponse::from).collect(Collectors.toList());
     }
 }

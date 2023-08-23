@@ -9,6 +9,8 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @DynamicUpdate
 @SQLDelete(sql = "UPDATE questions as q SET q.is_deleted = true WHERE idx = ?")
@@ -49,6 +51,9 @@ public class Question extends CommonField {
     @Lob
     @Column(name = "image_url")
     private String imageUrl;
+
+    @OneToOne(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Answer answer;
 
     public static Question from(CreateQuestionRequest createQuestionRequest,Consumer consumer,Product product){
         return Question.builder()
