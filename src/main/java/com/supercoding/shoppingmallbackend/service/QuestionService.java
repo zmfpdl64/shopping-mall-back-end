@@ -75,6 +75,7 @@ public class QuestionService {
     public void updateQuestionByQuestionId(Long questionId, Long profileIdx, UpdateQuestionRequest updateQuestionRequest, MultipartFile imageFile) {
         Question originQuestion = validProfileAndQuestion(questionId,profileIdx);
         Question updateQuestion = Question.from(originQuestion,updateQuestionRequest);
+
         questionRepository.save(updateQuestion);
     }
 
