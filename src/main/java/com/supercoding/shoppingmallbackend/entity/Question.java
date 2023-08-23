@@ -3,11 +3,16 @@ package com.supercoding.shoppingmallbackend.entity;
 import com.supercoding.shoppingmallbackend.dto.request.questions.CreateQuestionRequest;
 import com.supercoding.shoppingmallbackend.dto.request.questions.UpdateQuestionRequest;
 import lombok.*;
-
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@DynamicUpdate
+@SQLDelete(sql = "UPDATE questions as q SET q.is_deleted = true WHERE idx = ?")
+@Where(clause = "is_deleted = false")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -61,6 +66,7 @@ public class Question extends CommonField {
                 .product(originQuestion.getProduct())
                 .title(updateQuestionRequest.getTitle())
                 .content(updateQuestionRequest.getContent())
+                .imageUrl(originQuestion.getImageUrl())
                 .build();
     }
 }
