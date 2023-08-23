@@ -10,6 +10,7 @@ import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.service.QuestionService;
 
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 @RequiredArgsConstructor
 @RestController
+@Api(tags = "문의 API")
 @RequestMapping("/api/v1/questions")
 public class QuestionController {
 
@@ -33,13 +35,6 @@ public class QuestionController {
             @PathVariable("product_idx") Long productIdx) {
         List<GetQuestionResponse> question = questionService.getQuestionByQuestionId(productIdx);
         return ApiUtils.success("조회 완료", question);
-    }
-
-    @ApiOperation(value = "판매자 또는 구매자의 문의 목록 조회")
-    @GetMapping
-    public CommonResponse<Object> getQuestions() {
-        Long userIdx = AuthHolder.getProfileIdx();
-        return null;
     }
 
     @ApiOperation(value = "문의 작성")

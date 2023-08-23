@@ -6,12 +6,14 @@ import com.supercoding.shoppingmallbackend.dto.request.answer.CreateAnswerReques
 import com.supercoding.shoppingmallbackend.dto.request.answer.UpdateAnswerRequest;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.service.AnswerService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Api(tags = "문의 답변 API")
 @RequestMapping("/api/v1/questions/answers")
 public class AnswerController {
 
