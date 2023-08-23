@@ -28,10 +28,10 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @ApiOperation(value = "문의 조회")
-    @GetMapping("/{question_idx}")
+    @GetMapping("/{product_idx}")
     public CommonResponse<Object> getQuestion(
-            @PathVariable("question_idx") Long questionId) {
-        GetQuestionResponse question = questionService.getQuestionByQuestionId(questionId);
+            @PathVariable("product_idx") Long productIdx) {
+        List<GetQuestionResponse> question = questionService.getQuestionByQuestionId(productIdx);
         return ApiUtils.success("조회 완료", question);
     }
 
@@ -39,18 +39,6 @@ public class QuestionController {
     @GetMapping
     public CommonResponse<Object> getQuestions() {
         Long userIdx = AuthHolder.getProfileIdx();
-
-//        List<GetQuestionResponse> questions;
-//
-//        if ("seller".equals(userType)) {
-//            questions = questionService.getQuestionsBySellerId(userId);
-//        } else if ("consumer".equals(userType)) {
-//            questions = questionService.getQuestionsByConsumerId(userId);
-//        } else {
-//            return ApiUtils.fail(400, "유효하지 않은 사용자 유형입니다.");
-//        }
-//
-//        return ApiUtils.success("문의 목록 조회 완료", questions);
         return null;
     }
 

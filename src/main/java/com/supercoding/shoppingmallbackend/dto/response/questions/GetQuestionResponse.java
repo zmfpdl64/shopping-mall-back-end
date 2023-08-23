@@ -11,7 +11,7 @@ import lombok.*;
 public class GetQuestionResponse {
     private Long id;
     private Long productIdx;
-    private Long consumerIdx;
+    private String consumerName;
     private String title;
     private String content;
     private String imageUrl;
@@ -20,8 +20,8 @@ public class GetQuestionResponse {
 
         return GetQuestionResponse.builder()
                 .id(question.getId())
-                .consumerIdx(question.getId())
-                .productIdx(question.getId())
+                .consumerName(question.getConsumer().getProfile().getName())
+                .productIdx(question.getProduct().getId())
                 .title(question.getTitle())
                 .content(question.getContent())
                 .imageUrl(question.getImageUrl())
