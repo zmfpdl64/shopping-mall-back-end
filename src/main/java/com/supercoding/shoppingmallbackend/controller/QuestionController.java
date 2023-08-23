@@ -5,6 +5,8 @@ import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.questions.CreateQuestionRequest;
 
 import com.supercoding.shoppingmallbackend.dto.request.questions.UpdateQuestionRequest;
+import com.supercoding.shoppingmallbackend.dto.response.GetMyAnswerResponse;
+import com.supercoding.shoppingmallbackend.dto.response.GetMyQuestionResponse;
 import com.supercoding.shoppingmallbackend.dto.response.questions.GetQuestionResponse;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.service.QuestionService;
@@ -70,5 +72,13 @@ public class QuestionController {
         Long profileIdx = AuthHolder.getProfileIdx();
         questionService.deleteQuestionByQuestionId(questionId,profileIdx);
         return ApiUtils.success(questionId + "번 문의 삭제 성공", null);
+    }
+
+    @ApiOperation(value = "내가 작성한 문의 조회")
+    @GetMapping("/me")
+    public CommonResponse<Object> getQuestionWriterByMe() {
+        Long profileIdx = AuthHolder.getProfileIdx();
+        List<GetMyQuestionResponse> getMyQuestionResponseList = questionService.getWriterByMe(profileIdx);
+        return ApiUtils.success("내가 작성한 답변 조회 성공", getMyQuestionResponseList);
     }
 }

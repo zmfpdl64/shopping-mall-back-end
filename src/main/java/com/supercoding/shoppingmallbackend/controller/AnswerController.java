@@ -4,12 +4,15 @@ import com.supercoding.shoppingmallbackend.common.CommonResponse;
 import com.supercoding.shoppingmallbackend.common.util.ApiUtils;
 import com.supercoding.shoppingmallbackend.dto.request.answer.CreateAnswerRequest;
 import com.supercoding.shoppingmallbackend.dto.request.answer.UpdateAnswerRequest;
+import com.supercoding.shoppingmallbackend.dto.response.GetMyAnswerResponse;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.service.AnswerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,6 +49,14 @@ public class AnswerController {
         Long profileIdx = AuthHolder.getProfileIdx();
         answerService.deleteAnswerByAnswerId(answerId,profileIdx);
         return ApiUtils.success(answerId + "번 문의 삭제 성공", null);
+    }
+
+    @ApiOperation(value = "내가 작성한 답변 조회")
+    @GetMapping("/me")
+    public CommonResponse<Object> getAnswerWriterByMe() {
+        Long profileIdx = AuthHolder.getProfileIdx();
+        List<GetMyAnswerResponse> getMyAnswerResponse = answerService.getWriterByMe(profileIdx);
+        return ApiUtils.success("내가 작성한 답변 조회 성공", getMyAnswerResponse);
     }
 
 }
