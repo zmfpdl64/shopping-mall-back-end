@@ -1,6 +1,7 @@
 package com.supercoding.shoppingmallbackend.entity;
 
 import com.supercoding.shoppingmallbackend.dto.request.questions.CreateQuestionRequest;
+import com.supercoding.shoppingmallbackend.dto.request.questions.UpdateQuestionRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -53,4 +54,13 @@ public class Question extends CommonField {
                 .build();
     }
 
+    public static Question from(Question originQuestion, UpdateQuestionRequest updateQuestionRequest) {
+        return Question.builder()
+                .id(originQuestion.getId())
+                .consumer(originQuestion.getConsumer())
+                .product(originQuestion.getProduct())
+                .title(updateQuestionRequest.getTitle())
+                .content(updateQuestionRequest.getContent())
+                .build();
+    }
 }
