@@ -210,4 +210,12 @@ public class ProfileService {
             profile.setPhone(updatePhoneNum);
         }
     }
+
+    @Transactional
+    public void updateProfileInfo(String updateName, String updatePhone) {
+        Long profileIdx = AuthHolder.getProfileIdx();
+        Profile findProfile = getFindProfile(profileIdx);
+        if(updateName!=null) findProfile.setName(updateName);
+        if(updatePhone!=null) findProfile.setPhone(updatePhone);
+    }
 }

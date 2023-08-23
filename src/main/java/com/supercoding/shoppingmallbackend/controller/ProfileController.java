@@ -40,10 +40,10 @@ public class ProfileController {
         log.info("===================회원가입====================");
         profileService.signup(
                 signupRequest.getType(),
-                signupRequest.getNickname(),
+                signupRequest.getName(),
                 signupRequest.getPassword(),
                 signupRequest.getEmail(),
-                signupRequest.getPhoneNumber(),
+                signupRequest.getPhone(),
                 profileImage
         );
 
@@ -62,6 +62,13 @@ public class ProfileController {
     public CommonResponse<?> updatePassword(@Validated @RequestBody UpdatePasswordRequest updatePasswordRequest) {
         profileService.updatePassword(updatePasswordRequest.getEmail(), updatePasswordRequest.getPassword(), updatePasswordRequest.getUpdatePassword());
         return CommonResponse.success("비밀번호 수정에 성공했습니다.", null);
+    }
+
+    @Operation(summary = "회원정보 수정 사용 토큰 O", description = "유저 이름, 유저 핸드폰번호 변경할 수 있습니다.")
+    @PatchMapping
+    public CommonResponse<?> updateProfileInfo(@RequestBody UpdateProfileRequest updateProfileRequest) {
+        profileService.updateProfileInfo(updateProfileRequest.getName(), updateProfileRequest.getPhone());
+        return CommonResponse.success("회원정보를 수정했습니다.", null);
     }
 
     @Operation(summary = "유저 소프트 딜리트 사용 토큰 o 주의 삭제 시 예제 안될 수 있음", description = "토큰을 이용해 유저 소프트 딜리트")
@@ -92,7 +99,7 @@ public class ProfileController {
     @PostMapping("/sms")
     public CommonResponse<?> generateAuthCode(@RequestBody SmsRequest request) {
         //개발 배포 시 변경 예정
-        String authCode = smsService.sendAuthenticationCode(request.getPhoneNum());
+        String authCode = smsService.sendAuthenticationCode(request.getPhone());
         return CommonResponse.success("인증 번호가 전송 됐습니다.", authCode);
 
     }
@@ -100,7 +107,7 @@ public class ProfileController {
     @Operation(summary = "인증 코드 확인 토큰 x 사용 주의 테스트 시 minhyeok@consumer.com로는 하지마세요", description = "이메일과 인증코드를 보내면 검증 후 임시 비밀번호 반환")
     @PostMapping("/sms/auth")
     public CommonResponse<?> validateAuthCode(@RequestBody ValidateAuthRequest request){
-        String authPassword = smsService.authenticationSms(request.getPhoneNum(), request.getAuthCode());
+        String authPassword = smsService.authenticationSms(request.getPhone(), request.getAuthCode());
         return CommonResponse.success("인증에 성공했습니다.", authPassword);
     }
 

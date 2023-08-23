@@ -19,7 +19,7 @@ public class LoginResponse {
     @ApiModelProperty(required = true, value = "로그인 역할 CONSUMER | SELLER", example = "CONSUMER")
     private String role;
     @ApiModelProperty(required = true, value = "로그인 프로밀 URL", example = "$2a$10$tOtPkQHjeM0HxjrdGClYoOO.T4XFrhPgvDvRh9KDVdUT35vBP1SyG")
-    private String profileUrl;
+    private String imageUrl;
 
     public static LoginResponse from(Profile profile, String token){
         log.info("imageProfile: {}", profile.getImageUrl());
