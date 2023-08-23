@@ -81,11 +81,12 @@ public class QuestionController {
         return ApiUtils.success(questionId + "번 문의 수정 성공", null);
     }
 
-//    @ApiOperation(value = "문의 삭제")
-//    @DeleteMapping
-//    public CommonResponse<Object> deleteQuestion() {
-//        Long userIdx = AuthHolder.getProfileIdx();
-//        questionService.deleteQuestion(userIdx);
-//        return CommonResponse.success("문의 삭제 성공", null);
-//    }
+    @ApiOperation(value = "문의 삭제")
+    @DeleteMapping("/{question_idx}")
+    public CommonResponse<Object> deleteQuestion(
+            @PathVariable("question_idx") Long questionId) {
+        Long profileIdx = AuthHolder.getProfileIdx();
+        questionService.deleteQuestionByQuestionId(questionId,profileIdx);
+        return ApiUtils.success(questionId + "번 문의 삭제 성공", null);
+    }
 }
