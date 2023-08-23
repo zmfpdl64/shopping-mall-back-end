@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static com.supercoding.shoppingmallbackend.common.util.FilePath.MEMBER_PROFILE_DIR;
@@ -197,5 +198,16 @@ public class ProfileService {
         Profile findProfile = getProfileByEmail(email);
         if(!encoder.matches(password, findProfile.getPassword())) throw new CustomException(ProfileErrorCode.NOT_FOUND);
         findProfile.setPassword(encoder.encode(updatePassword));
+    }
+
+    @Transactional
+    public void changePhoneNums() {
+        List<Profile> all = profileRepository.findAll();
+        for(int i = 1000; i < all.size() + 1000; i++) {
+            Profile profile = all.get(i - 1000);
+            String phoneNum = profile.getPhone();
+            String updatePhoneNum = phoneNum.substring(0, phoneNum.length()-4) + i;
+            profile.setPhone(updatePhoneNum);
+        }
     }
 }
