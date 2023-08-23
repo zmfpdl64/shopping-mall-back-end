@@ -1,6 +1,7 @@
 package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
+import com.supercoding.shoppingmallbackend.common.Error.domain.AnswerErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
 import com.supercoding.shoppingmallbackend.dto.request.answer.CreateAnswerRequest;
@@ -35,6 +36,9 @@ public class AnswerService {
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
         Question question = questionRepository.findById(createAnswerRequest.getQuestionIdx())
                 .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_INPUT_VALUE.getErrorCode()));
+        Optional.ofNullable(question.getAnswer()).ifPresent(answer -> {
+            throw new CustomException(AnswerErrorCode.ALREADY_HAVE_ANSWER);
+        });
         Answer answer = Answer.from(createAnswerRequest,seller,question);
         answerRepository.save(answer);
 
@@ -43,7 +47,7 @@ public class AnswerService {
     @Transactional
     public void deleteAnswerByAnswerId(Long answerId, Long profileIdx) {
         Answer variAnswer = validProfileAndAnswer(answerId,profileIdx);
-        answerRepository.deleteById(variAnswer.getId());
+        answerRepository.hardDelete(variAnswer.getId());
     }
     private Answer validProfileAndAnswer(Long answerId, Long profileIdx) {
         Long validQuestionIdx = Optional.ofNullable(profileIdx)

@@ -8,7 +8,6 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@SQLDelete(sql = "UPDATE answers as a SET a.is_deleted = true WHERE idx = ?")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -42,7 +41,6 @@ public class Answer extends CommonField {
                 .seller(seller)
                 .content(createAnswerRequest.getContent())
                 .build();
-
     }
 
     public static Answer from(Answer originAnswer, UpdateAnswerRequest updateAnswerRequest) {
