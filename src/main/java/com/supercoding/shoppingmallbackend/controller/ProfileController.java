@@ -40,10 +40,10 @@ public class ProfileController {
         log.info("===================회원가입====================");
         profileService.signup(
                 signupRequest.getType(),
-                signupRequest.getNickname(),
+                signupRequest.getName(),
                 signupRequest.getPassword(),
                 signupRequest.getEmail(),
-                signupRequest.getPhoneNumber(),
+                signupRequest.getPhone(),
                 profileImage
         );
 
@@ -92,7 +92,7 @@ public class ProfileController {
     @PostMapping("/sms")
     public CommonResponse<?> generateAuthCode(@RequestBody SmsRequest request) {
         //개발 배포 시 변경 예정
-        String authCode = smsService.sendAuthenticationCode(request.getPhoneNum());
+        String authCode = smsService.sendAuthenticationCode(request.getPhone());
         return CommonResponse.success("인증 번호가 전송 됐습니다.", authCode);
 
     }
@@ -100,7 +100,7 @@ public class ProfileController {
     @Operation(summary = "인증 코드 확인 토큰 x 사용 주의 테스트 시 minhyeok@consumer.com로는 하지마세요", description = "이메일과 인증코드를 보내면 검증 후 임시 비밀번호 반환")
     @PostMapping("/sms/auth")
     public CommonResponse<?> validateAuthCode(@RequestBody ValidateAuthRequest request){
-        String authPassword = smsService.authenticationSms(request.getPhoneNum(), request.getAuthCode());
+        String authPassword = smsService.authenticationSms(request.getPhone(), request.getAuthCode());
         return CommonResponse.success("인증에 성공했습니다.", authPassword);
     }
 
