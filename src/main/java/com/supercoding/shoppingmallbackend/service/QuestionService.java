@@ -20,8 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class QuestionService {
@@ -61,12 +66,13 @@ public class QuestionService {
 
     // 문의 조회
     @Transactional
-    public GetQuestionResponse getQuestionByQuestionId(Long questionId) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_INPUT_VALUE.getErrorCode()));
-        GetQuestionResponse response = GetQuestionResponse.from(question);
-        return response;
+    public List<GetQuestionResponse> getQuestionByQuestionId(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+        List<Question> questionList = questionRepository.findAllByProduct(product);
+        return questionList.stream().map(GetQuestionResponse::from).collect(Collectors.toList());
     }
+  
     // 문의 수정
     @Transactional
     public void updateQuestionByQuestionId(Long questionId, Long profileIdx, UpdateQuestionRequest updateQuestionRequest, MultipartFile imageFile) {

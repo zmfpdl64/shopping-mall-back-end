@@ -1,69 +1,65 @@
 package com.supercoding.shoppingmallbackend.service;
 
+import com.supercoding.shoppingmallbackend.common.Error.CustomException;
+import com.supercoding.shoppingmallbackend.common.Error.domain.CommonErrorCode;
+import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
 import com.supercoding.shoppingmallbackend.dto.request.answer.CreateAnswerRequest;
 import com.supercoding.shoppingmallbackend.dto.request.answer.UpdateAnswerRequest;
-import com.supercoding.shoppingmallbackend.dto.response.answer.CreateAnswerResponse;
-import com.supercoding.shoppingmallbackend.dto.response.answer.UpdateAnswerResponse;
 import com.supercoding.shoppingmallbackend.entity.Answer;
+import com.supercoding.shoppingmallbackend.entity.Question;
+import com.supercoding.shoppingmallbackend.entity.Seller;
 import com.supercoding.shoppingmallbackend.repository.AnswerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.supercoding.shoppingmallbackend.repository.QuestionRepository;
+import com.supercoding.shoppingmallbackend.repository.SellerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
 
-
+@RequiredArgsConstructor
 @Service
 public class AnswerService {
+
+    private final SellerRepository sellerRepository;
+    private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
-    @Autowired
-    public AnswerService(AnswerRepository answerRepository) {
-        this.answerRepository = answerRepository;
+    // 답변 작성
+    @Transactional
+    public void createAnswer(CreateAnswerRequest createAnswerRequest, Long profileIdx) {
+        Long validProfileIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+        Seller seller = sellerRepository.findByProfile_Id(validProfileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+        Question question = questionRepository.findById(createAnswerRequest.getQuestionIdx())
+                .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_INPUT_VALUE.getErrorCode()));
+        Answer answer = Answer.from(createAnswerRequest,seller,question);
+        answerRepository.save(answer);
+
     }
 
-
-    public CreateAnswerResponse createAnswer(CreateAnswerRequest request) {
-        Answer answer = new Answer();
-
-        answer.setQuestionIdx(request.getQuestionIdx());
-        answer.setContent(request.getContent());
-        answer.setIsDeleted(false);
-        answer.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-
-        Answer savedAnswer = answerRepository.save(answer);
-
-        CreateAnswerResponse response = CreateAnswerResponse.builder()
-                .id(savedAnswer.getId())
-                .questionIdx(savedAnswer.getQuestionIdx())
-                .sellerIdx(savedAnswer.getSellerIdx())
-                .content(savedAnswer.getContent())
-                .build();
-        return response;
+    @Transactional
+    public void deleteAnswerByAnswerId(Long answerId, Long profileIdx) {
+        Answer variAnswer = validProfileAndAnswer(answerId,profileIdx);
+        answerRepository.deleteById(variAnswer.getId());
     }
-
-    public UpdateAnswerResponse updateAnswer(Long id, UpdateAnswerRequest request) {
-        Answer answer = answerRepository.findById(id).orElse(null);
-        if(answer == null) {
-            return null;
+    private Answer validProfileAndAnswer(Long answerId, Long profileIdx) {
+        Long validQuestionIdx = Optional.ofNullable(profileIdx)
+                .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_INPUT_VALUE.getErrorCode()));
+        if(!Objects.equals(answer.getSeller().getProfile().getId(), validQuestionIdx)){
+            throw new CustomException(UserErrorCode.NOT_AUTHORIZED.getErrorCode());
         }
-
-        answer.setContent(request.getContent());
-
-        Answer updatedAnswer = answerRepository.save(answer);
-
-        return UpdateAnswerResponse.builder()
-                .id(answer.getId())
-                .questionIdx(answer.getQuestionIdx())
-                .sellerIdx(answer.getSellerIdx())
-                .content(updatedAnswer.getContent())
-                .build();
+        return answer;
     }
 
-    public void deleteAnswer(Long id) {
-        Answer answer = answerRepository.findById(id).orElse(null);
-        if(answer != null){
-            answerRepository.delete(answer);
-        }
+    public void updateAnswerByAnswerId(Long answerId, Long profileIdx, UpdateAnswerRequest updateAnswerRequest) {
+        Answer originAnswer = validProfileAndAnswer(answerId,profileIdx);
+        Answer updateAnswer = Answer.from(originAnswer,updateAnswerRequest);
+
+        answerRepository.save(updateAnswer);
     }
 }
