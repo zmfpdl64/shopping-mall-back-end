@@ -64,6 +64,13 @@ public class ProfileController {
         return CommonResponse.success("비밀번호 수정에 성공했습니다.", null);
     }
 
+    @Operation(summary = "회원정보 수정 사용 토큰 O", description = "유저 이름, 유저 핸드폰번호 변경할 수 있습니다.")
+    @PatchMapping
+    public CommonResponse<?> updateProfileInfo(@RequestBody UpdateProfileRequest updateProfileRequest) {
+        profileService.updateProfileInfo(updateProfileRequest.getName(), updateProfileRequest.getPhone());
+        return CommonResponse.success("회원정보를 수정했습니다.", null);
+    }
+
     @Operation(summary = "유저 소프트 딜리트 사용 토큰 o 주의 삭제 시 예제 안될 수 있음", description = "토큰을 이용해 유저 소프트 딜리트")
     @DeleteMapping
     public CommonResponse<?> deleteProfile() {
