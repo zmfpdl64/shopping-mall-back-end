@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SmsRequest {
     @ApiModelProperty(value = "휴대폰 번호", required = true, example = "010-0000-1031")
-    private String phoneNum;
+    private String phone;
 }

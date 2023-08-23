@@ -1,16 +1,9 @@
 package com.supercoding.shoppingmallbackend.dto.request.profile;
 
-import com.supercoding.shoppingmallbackend.common.Error.CustomException;
-import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
-import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
-import com.supercoding.shoppingmallbackend.common.util.Regex;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -32,9 +25,9 @@ public class SignupRequest {
 
     @ApiModelProperty(value = "이름 홍길동", required = true, example = "홍길동")
     @NotBlank(message="이름은 필수 항목입니다.")
-    private String nickname;
+    private String name;
 
     @ApiModelProperty(value = "휴대폰 번호 010-1234-1234", required = true, example = "010-1234-1234")
     @Pattern(regexp = "[0-9]{2,3}-[0-9]{3,4}-[0-9]{3,4}", message = "10~13자리의 -와 숫자를 입력가능합니다")
-    private String phoneNumber;
+    private String phone;
 }
