@@ -23,4 +23,10 @@ public class DateUtils {
         return sdf.format(inputDate);
     }
 
+    public static String convertToStringSecond(Timestamp inputDate) {
+        String pattern = "yyyy.MM.dd hh:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.format(inputDate);
+    }
+
 }

@@ -23,7 +23,7 @@ public class Answer extends CommonField {
     private Long id;
 
     @NotNull
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "question_idx")
     private Question question;
 
