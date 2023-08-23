@@ -2,6 +2,7 @@ package com.supercoding.shoppingmallbackend.service;
 
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.UserErrorCode;
+import com.supercoding.shoppingmallbackend.common.TimeTrace;
 import com.supercoding.shoppingmallbackend.dto.request.AddressRequest;
 import com.supercoding.shoppingmallbackend.dto.response.AddressResponse;
 import com.supercoding.shoppingmallbackend.entity.Address;
@@ -21,6 +22,7 @@ public class AddressService {
     private final AddressRepository addressRepository;
 
 
+    @TimeTrace
     public void saveAddress(AddressRequest addressRequest, Long profileIdx) {
 
         Long validProfileIdx = Optional.ofNullable(profileIdx)
@@ -34,6 +36,7 @@ public class AddressService {
         addressRepository.save(saveAddress);
     }
 
+    @TimeTrace
     public AddressResponse findAddressByProfileId(Long profileIdx) {
         Long validProfileIdx = Optional.ofNullable(profileIdx)
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));

@@ -56,10 +56,17 @@ public class PaymentsController {
 
     @ApiOperation(value = "구매내역 가져오기 (pagination)", notes = "구매자의 구매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/purchased/query")
-    public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistory(@RequestParam String page, @RequestParam String size) {
+    public CommonResponse<PaginationResponse<PurchaseResponse>> getPurchaseHistory(
+            @RequestParam String page,
+            @RequestParam String size,
+            @RequestParam(value = "orderNumber", required = false) @ApiParam("주문번호") Set<String> orderNumber
+    ) {
         Long profileId = AuthHolder.getProfileIdx();
         try {
-            return paymentService.getPurchaseHistoryWithPagination(profileId, Integer.parseInt(page), Integer.parseInt(size));
+            int pageInt = Integer.parseInt(page);
+            int sizeInt = Integer.parseInt(size);
+            if (orderNumber == null) return paymentService.getPurchaseHistoryWithPagination(profileId, pageInt, sizeInt);
+            return paymentService.getPurchaseHistoryWithPagination(profileId, pageInt, sizeInt, orderNumber);
         } catch(NumberFormatException e) {
             throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAMETER);
         }
@@ -75,10 +82,17 @@ public class PaymentsController {
 
     @ApiOperation(value = "판매내역 가져오기 (pagination)", notes = "판매자의 판매내역을 가져옵니다. 그런데 이제 이 pagination을 곁들인...")
     @GetMapping("/sold/query")
-    public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistory(@RequestParam String page, @RequestParam String size) {
+    public CommonResponse<PaginationResponse<SaleResponse>> getSaleHistory(
+            @RequestParam String page,
+            @RequestParam String size,
+            @RequestParam(value = "orderNumber", required = false) @ApiParam("주문번호") Set<String> orderNumber
+    ) {
         Long profileId = AuthHolder.getProfileIdx();
         try {
-            return paymentService.getSaleHistoryWithPagination(profileId, Integer.parseInt(page), Integer.parseInt((size)));
+            int pageInt = Integer.parseInt(page);
+            int sizeInt = Integer.parseInt(size);
+            if (orderNumber == null) return paymentService.getSaleHistoryWithPagination(profileId, pageInt, sizeInt);
+            return paymentService.getSaleHistoryWithPagination(profileId, pageInt, sizeInt, orderNumber);
         } catch (NumberFormatException e) {
             throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAMETER);
         }

@@ -5,7 +5,9 @@ public enum FilePath {
     PRODUCT_THUMB_NAIL_DIR("product/thumbnails/"),
     PRODUCT_CONTENT_DIR("product/content/"),
     REVIEW_IMAGE_DIR("review/image/"),
-    SEPARATE_POINT(".com/");
+    SEPARATE_POINT(".com/"),
+
+    QUESTION_IMAGE_DIR("questions/image/");
 
     FilePath(String path) {
         this.path = path;

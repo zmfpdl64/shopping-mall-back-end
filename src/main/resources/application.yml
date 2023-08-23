@@ -9,7 +9,6 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: none
-    show-sql: true
     open-in-view: false
   thymeleaf:
     cache: false
@@ -24,6 +23,11 @@ spring:
   devtools:
     livereload:
       enabled: true
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 30MB
+      max-file-size: 10MB
 logging:
   config: classpath:logback.xml
   level:
