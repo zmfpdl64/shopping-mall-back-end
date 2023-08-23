@@ -86,5 +86,10 @@ public class QuestionService {
         return question;
     }
 
-
+    // 문의 삭제
+    @Transactional
+    public void deleteQuestionByQuestionId(Long questionId, Long profileIdx) {
+        Question valiQuestion = validProfileAndQuestion(questionId,profileIdx);
+        questionRepository.deleteById(valiQuestion.getId());
+    }
 }
