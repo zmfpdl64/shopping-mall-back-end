@@ -23,21 +23,22 @@ public class AnswerController {
     private final AnswerService answerService;
 
     @ApiOperation(value = "문의 답변 작성")
-    @PostMapping
+    @PostMapping("/{questionIdx}")
     public CommonResponse<Object> createAnswer(
-            @ModelAttribute CreateAnswerRequest createAnswerRequest){
+            @PathVariable("questionIdx") Long questionIdx,
+            @RequestBody CreateAnswerRequest createAnswerRequest){
         Long userIdx = AuthHolder.getProfileIdx();
-        answerService.createAnswer(createAnswerRequest,userIdx);
+        answerService.createAnswer(createAnswerRequest,questionIdx,userIdx);
         return ApiUtils.success("작성 완료",null);
     }
 
     @ApiOperation(value = "답변 수정")
-    @PostMapping("/{answer_idx}")
+    @PutMapping("/{answer_idx}")
     public CommonResponse<Object> updateAnswer(
             @PathVariable("answer_idx") Long answerId,
-            @ModelAttribute UpdateAnswerRequest updateAnswerRequest){
+            @RequestBody CreateAnswerRequest createAnswerRequest){
         Long profileIdx = AuthHolder.getProfileIdx();
-        answerService.updateAnswerByAnswerId(answerId,profileIdx,updateAnswerRequest);
+        answerService.updateAnswerByAnswerId(answerId,profileIdx,createAnswerRequest);
         return ApiUtils.success(answerId+"번 답변 수정 성공",null);
 
     }

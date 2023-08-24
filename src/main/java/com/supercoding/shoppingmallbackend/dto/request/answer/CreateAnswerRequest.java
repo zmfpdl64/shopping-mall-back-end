@@ -8,6 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CreateAnswerRequest {
-    private Long questionIdx; // 해당 문의의 ID
     private String content;
 }

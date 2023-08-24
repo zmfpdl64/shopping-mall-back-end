@@ -43,12 +43,12 @@ public class Answer extends CommonField {
                 .build();
     }
 
-    public static Answer from(Answer originAnswer, UpdateAnswerRequest updateAnswerRequest) {
+    public static Answer from(Answer originAnswer, CreateAnswerRequest createAnswerRequest) {
         return Answer.builder()
                 .id(originAnswer.getId())
                 .question(originAnswer.getQuestion())
                 .seller(originAnswer.getSeller())
-                .content(updateAnswerRequest.getContent())
+                .content(createAnswerRequest.getContent())
                 .build();
 
     }
