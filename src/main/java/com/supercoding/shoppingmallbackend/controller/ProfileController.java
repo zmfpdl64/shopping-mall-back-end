@@ -141,11 +141,9 @@ public class ProfileController {
 
     @Operation(summary = "kakao 로그인, 회원가입 토큰 x", description = "카카오 url 접속시 auth code 전달 받아 로그인, 회원가입 진행" +
             "https://kauth.kakao.com/oauth/authorize?client_id=39e024cd16a47a29d9162ee86e85b69a&redirect_uri=http://52.79.168.48:8080/api/v1/user/kakao&response_type=code")
-    @GetMapping("/kakao")
-    public CommonResponse<?> OauthLogin(@RequestParam("code") String  code) {
-        log.info(code);
-        KakaoLoginParams kakaoLoginParams = new KakaoLoginParams(code);
-        LoginResponse loginResponse = oAuthLoginService.login(kakaoLoginParams);
+    @PostMapping("/kakao")
+    public CommonResponse<?> OauthLogin(@RequestBody KakaoLoginParams  params) {
+        LoginResponse loginResponse = oAuthLoginService.login(params);
         return CommonResponse.success("정상적으로 로그인 됐습니다", loginResponse);
     }
 
