@@ -13,11 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +38,6 @@ public class SmsService {
      */
     public String sendAuthenticationCode(String phoneNum){
 
-        findProfileByPhoneNum(phoneNum);
 //        Message coolsms = new Message(smsKey, smsSecretKey);
 
         String numStr = RandomUtils.generateAuthCode();
@@ -69,8 +66,7 @@ public class SmsService {
      * @param authCode 인증 코드
      * @return randomPassword 임시 비밀번호 반환
      */
-    @Transactional
-    public String authenticationSms(String phoneNum, String authCode) {
+    public void authenticationSms(String phoneNum, String authCode) {
         // 인증 요청 phoneNum 존재 여부 확인
         if(!authenticationMap.containsKey(phoneNum)){
             throw new CustomException(ProfileErrorCode.NOT_FOUND_PHONE);
@@ -82,6 +78,11 @@ public class SmsService {
         if(LocalDateTime.now().isBefore(LocalDateTime.parse(time))) throw new CustomException(ProfileErrorCode.AUTH_TIME_EXPIRED);
         // 인증 코드 일치하는지
         if(!authCode.equals(auth)) throw new CustomException(ProfileErrorCode.NOT_MATCH_VALUE);
+        // 인증 key 삭제
+        authenticationMap.remove(phoneNum);
+    }
+
+    private String setRandomPassword(String phoneNum) {
         // 휴대폰 번호로 찾기
         Profile findProfile = findProfileByPhoneNum(phoneNum);
         // 비밀번호 생성
@@ -89,9 +90,6 @@ public class SmsService {
         // 임시 비밀번호 저장
         String encodePassword = encoder.encode(randomPassword);
         findProfile.setPassword(encodePassword);
-        // 인증 key 삭제
-        authenticationMap.remove(phoneNum);
-        
         return randomPassword;
     }
 
