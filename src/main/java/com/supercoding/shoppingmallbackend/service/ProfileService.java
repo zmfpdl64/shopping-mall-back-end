@@ -9,7 +9,7 @@ import com.supercoding.shoppingmallbackend.entity.*;
 import com.supercoding.shoppingmallbackend.repository.AddressRepository;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.security.JwtUtiles;
-import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
+import com.supercoding.shoppingmallbackend.dto.vo.ProfileDetail;
 import com.supercoding.shoppingmallbackend.dto.response.profile.LoginResponse;
 import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
@@ -103,6 +103,7 @@ public class ProfileService {
     }
 
 
+    @Transactional(readOnly = true)
     public LoginResponse login(String email, String password) {
         //유저 존재여부 확인
         Profile profile = getProfileByEmail(email);
@@ -118,11 +119,13 @@ public class ProfileService {
     }
 
 
+    @Transactional(readOnly = true)
     public ProfileDetail loadProfileByProfileIdx(Long idx) {
 
         return ProfileDetail.from(profileRepository.loadProfileByProfileIdx(idx));
     }
 
+    @Transactional(readOnly = true)
     public ProfileMoneyResponse findProfileLeftMoney(Long profileIdx) {
         return ProfileMoneyResponse.from(getFindProfile(profileIdx));
     }
