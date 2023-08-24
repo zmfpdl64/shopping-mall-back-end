@@ -1,6 +1,6 @@
 package com.supercoding.shoppingmallbackend.security;
 
-import com.supercoding.shoppingmallbackend.dto.ProfileDetail;
+import com.supercoding.shoppingmallbackend.dto.vo.ProfileDetail;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
