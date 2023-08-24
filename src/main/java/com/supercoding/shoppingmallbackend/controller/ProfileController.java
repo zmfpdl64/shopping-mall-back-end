@@ -6,6 +6,8 @@ import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileInfoRespo
 import com.supercoding.shoppingmallbackend.dto.request.profile.*;
 import com.supercoding.shoppingmallbackend.dto.response.profile.ProfileMoneyResponse;
 import com.supercoding.shoppingmallbackend.dto.response.profile.RechargeResponse;
+import com.supercoding.shoppingmallbackend.dto.request.oauth.KakaoLoginParams;
+import com.supercoding.shoppingmallbackend.service.OAuthLoginService;
 import com.supercoding.shoppingmallbackend.security.AuthHolder;
 import com.supercoding.shoppingmallbackend.dto.response.profile.LoginResponse;
 import com.supercoding.shoppingmallbackend.service.ProfileService;
@@ -29,6 +31,7 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final SmsService smsService;
+    private final OAuthLoginService oAuthLoginService;
 
     @Operation(summary = "회원 가입 토큰 x", description = "구매자, 판매자를 선택하여 회원 가입을 진행합니다.")
     @PostMapping("/signup")
@@ -114,6 +117,8 @@ public class ProfileController {
 
     @Operation(summary = "회원 프로필 변경 토큰 o", description = "회원 프로필 전송시 기존 프로필 삭제 후 업데이트")
     @PostMapping("/profile")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "multipart/form-data",
+            schema = @Schema(implementation = MultipartFile.class)))
     public CommonResponse<?> changeProfile(@RequestParam("profile") MultipartFile profileImage){
         profileService.changeProfile(profileImage);
         return CommonResponse.success(null, null);
@@ -132,6 +137,16 @@ public class ProfileController {
     public CommonResponse<?> checkDuplicateEmail(@RequestBody EmailRequest emailRequest) {
         profileService.checkDuplicateEmail(emailRequest.getEmail());
         return CommonResponse.success("이메일 사용할 수 있습니다.", null);
+    }
+
+    @Operation(summary = "kakao 로그인, 회원가입 토큰 x", description = "카카오 url 접속시 auth code 전달 받아 로그인, 회원가입 진행" +
+            "https://kauth.kakao.com/oauth/authorize?client_id=39e024cd16a47a29d9162ee86e85b69a&redirect_uri=http://52.79.168.48:8080/api/v1/user/kakao&response_type=code")
+    @GetMapping("/kakao")
+    public CommonResponse<?> OauthLogin(@RequestParam("code") String  code) {
+        log.info(code);
+        KakaoLoginParams kakaoLoginParams = new KakaoLoginParams(code);
+        LoginResponse loginResponse = oAuthLoginService.login(kakaoLoginParams);
+        return CommonResponse.success("정상적으로 로그인 됐습니다", loginResponse);
     }
 
     //휴대폰 고유 값으로 변경하는 URL
