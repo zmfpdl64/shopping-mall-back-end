@@ -18,10 +18,7 @@ public class EndExceptionHandler extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }catch(CustomException e){
             response.getWriter().write(CommonResponse.fail(e.getErrorCode()).toStream());
-        }catch(RuntimeException e) {
-            response.getWriter().write(CommonResponse.fail(e).toStream());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             response.getWriter().write(CommonResponse.fail(e).toStream());
         }
 
