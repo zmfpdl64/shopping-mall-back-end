@@ -48,7 +48,14 @@ cloud:
     credentials:
       accessKey: ENC(N9j5dKB5zyxN8P1GNOZLF0O3knZ5csZRLOv2p2vWnzs=)
       secretKey: ENC(w4Uf+DmpExPTKIvIajXPLEZ7lWovWvyVn9gh6yHc5hE/EERKzXfeO7Iz6ip7vXzm7JlA/MsYlME=)
-
+oauth:
+  kakao:
+    client-id: ENC(3BeQp3mjO4TcqSMXQs0TlkXuWqGR0B2WvXpG5vjd/E/WuTF5CTNrBf14JLODfXOZ)
+    client-secret: ENC(GlrSP7Ao9zu8G8TJsStnvcVsUjbsuataTw75y+BZ/xaQXba2UjhDMkcWDrNhDnCR)
+    redirect-url: ENC(5L6okmbEA/xEXOKHKQXMPVYfecAkulCcBrtH2JQeBgvNiB9tUZUnz17skd8SqZ9T5bGOUIxmnKI=)
+    url:
+      auth: https://kauth.kakao.com
+      api: https://kapi.kakao.com
 secret-key-source: ${SECRET_KEY_SOURCE}
 sms-key: ENC(EjM7Vn4YTaBm49u/UbAK6jDJVOUrtKWl+fAqNqepw/U=)
 sms-secret-key: ENC(BGLvLtXfkPRBSi93767OjJVJd4KJMR0VmZMjcterwLrzanQHnNSPkNx4sj5PX7vJ)
