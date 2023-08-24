@@ -3,6 +3,7 @@ package com.supercoding.shoppingmallbackend.service;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.PhoneUtils;
+import com.supercoding.shoppingmallbackend.common.util.RandomUtils;
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,10 +38,9 @@ public class SmsService {
      */
     public String sendAuthenticationCode(String phoneNum){
 
-        findProfileByPhoneNum(phoneNum);
 //        Message coolsms = new Message(smsKey, smsSecretKey);
 
-        StringBuilder numStr = generateAuthCode();
+        String numStr = RandomUtils.generateAuthCode();
 
         HashMap<String, String> params = new HashMap<>();
         params.put("to", PhoneUtils.joinPhoneString(phoneNum));
@@ -52,13 +50,13 @@ public class SmsService {
 
 //        try { //TODO: 실제 서비스 시 주석 해제
 //            coolsms.send(params); // 메시지 전송
-            String value = numStr.toString() + "|" + LocalDateTime.now().toString();
+            String value = numStr + "|" + LocalDateTime.now().toString();
             authenticationMap.put(phoneNum, value);
             log.info("key: {}      value: {}", phoneNum, value);
 //        } catch (CoolsmsException e) {
 //            throw new CustomException(UtilErrorCode.SEND_ERROR.getErrorCode());
 //        }
-        return numStr.toString();
+        return numStr;
     }
 
 
@@ -68,8 +66,7 @@ public class SmsService {
      * @param authCode 인증 코드
      * @return randomPassword 임시 비밀번호 반환
      */
-    @Transactional
-    public String authenticationSms(String phoneNum, String authCode) {
+    public void authenticationSms(String phoneNum, String authCode) {
         // 인증 요청 phoneNum 존재 여부 확인
         if(!authenticationMap.containsKey(phoneNum)){
             throw new CustomException(ProfileErrorCode.NOT_FOUND_PHONE);
@@ -81,49 +78,23 @@ public class SmsService {
         if(LocalDateTime.now().isBefore(LocalDateTime.parse(time))) throw new CustomException(ProfileErrorCode.AUTH_TIME_EXPIRED);
         // 인증 코드 일치하는지
         if(!authCode.equals(auth)) throw new CustomException(ProfileErrorCode.NOT_MATCH_VALUE);
+        // 인증 key 삭제
+        authenticationMap.remove(phoneNum);
+    }
+
+    private String setRandomPassword(String phoneNum) {
         // 휴대폰 번호로 찾기
         Profile findProfile = findProfileByPhoneNum(phoneNum);
         // 비밀번호 생성
-        String randomPassword = generateRandomPassword();
+        String randomPassword = RandomUtils.generateRandomPassword();
         // 임시 비밀번호 저장
         String encodePassword = encoder.encode(randomPassword);
         findProfile.setPassword(encodePassword);
-        // 인증 key 삭제
-        authenticationMap.remove(phoneNum);
-        
         return randomPassword;
     }
 
     private Profile findProfileByPhoneNum(String phoneNum) {
         return profileRepository.findByPhoneNum(phoneNum).orElseThrow(() -> new CustomException(ProfileErrorCode.NOT_FOUND));
-    }
-
-    private String generateRandomPassword() {
-        String upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
-        String digits = "0123456789";
-
-        String allowedCharacters = upperCaseLetters + lowerCaseLetters + digits;
-
-        SecureRandom random = new SecureRandom();
-        StringBuilder password = new StringBuilder();
-
-        for (int i = 0; i < 10; i++) {
-            int index = random.nextInt(allowedCharacters.length());
-            password.append(allowedCharacters.charAt(index));
-        }
-
-        return password.toString();
-    }
-    private StringBuilder generateAuthCode() {
-        StringBuilder numStr = new StringBuilder();
-
-        Random rand = new Random();
-        for(int i=0; i<6; i++) {
-            String ran = Integer.toString(rand.nextInt(10));
-            numStr.append(ran);
-        }
-        return numStr;
     }
 
 }

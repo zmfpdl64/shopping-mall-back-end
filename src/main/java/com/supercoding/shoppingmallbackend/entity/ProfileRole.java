@@ -16,4 +16,8 @@ public enum ProfileRole {
         }
         return ProfileRole.EMPTY;
     }
+
+    public String getPosition() {
+        return position;
+    }
 }
