@@ -1,4 +1,4 @@
-package com.supercoding.shoppingmallbackend.dto;
+package com.supercoding.shoppingmallbackend.dto.vo;
 
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import com.supercoding.shoppingmallbackend.entity.ProfileRole;
