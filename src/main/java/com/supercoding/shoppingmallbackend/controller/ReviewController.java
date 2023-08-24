@@ -70,12 +70,12 @@ public class ReviewController {
             int pageInt = Integer.parseInt(page);
             int sizeInt = Integer.parseInt(size);
 
-            if (pageInt < 0 || sizeInt < 1) throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE);
+            if (pageInt < 0 || sizeInt < 1) throw CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE.exception();
 
             PageRequest pageRequest = PageRequest.of(pageInt, sizeInt, sort);
             return reviewService.getAllProductREviewWithPagination(productIdLong, pageRequest);
         } catch (NumberFormatException e) {
-            throw new CustomException(CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE);
+            throw CommonErrorCode.INVALID_QUERY_PARAM_OR_PATH_VARIABLE.exception();
         }
     }
 
