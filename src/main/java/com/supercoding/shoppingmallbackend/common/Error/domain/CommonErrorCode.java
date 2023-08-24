@@ -1,6 +1,7 @@
 package com.supercoding.shoppingmallbackend.common.Error.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCode;
 import com.supercoding.shoppingmallbackend.common.Error.ErrorCodeInterface;
 import org.springframework.http.HttpStatus;
@@ -29,5 +30,9 @@ public enum CommonErrorCode implements ErrorCodeInterface {
     @Override
     public ErrorCode getErrorCode() {
         return errorCode;
+    }
+
+    public CustomException exception() {
+        return new CustomException(this);
     }
 }
