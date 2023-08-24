@@ -197,6 +197,7 @@ public class ProfileService {
     public void updatePassword(String email, String password, String updatePassword) {
         Profile findProfile = getProfileByEmail(email);
         if(!encoder.matches(password, findProfile.getPassword())) throw new CustomException(ProfileErrorCode.NOT_FOUND);
+        if(findProfile.getOAuthProvider()!=null) throw new CustomException(ProfileErrorCode.UNAUTHORIZED_UPDATE_PASSWORD);
         findProfile.setPassword(encoder.encode(updatePassword));
     }
 

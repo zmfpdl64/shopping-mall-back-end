@@ -55,7 +55,7 @@ public class Profile extends CommonField {
 
     @NotNull
     @Column(name = "paymoney", nullable = false)
-    private Long paymoney;
+    private Long paymoney = 0L;
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses =  new ArrayList<>();
@@ -74,4 +74,8 @@ public class Profile extends CommonField {
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProfileRole role;
+
+    @Column(name = "oauth")
+    @Enumerated(EnumType.STRING)
+    private OAuthProvider oAuthProvider;
 }

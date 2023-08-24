@@ -8,6 +8,8 @@ import com.supercoding.shoppingmallbackend.common.util.FilePath;
 import com.supercoding.shoppingmallbackend.dto.request.questions.CreateQuestionRequest;
 
 import com.supercoding.shoppingmallbackend.dto.request.questions.UpdateQuestionRequest;
+import com.supercoding.shoppingmallbackend.dto.response.GetMyAnswerResponse;
+import com.supercoding.shoppingmallbackend.dto.response.GetMyQuestionResponse;
 import com.supercoding.shoppingmallbackend.dto.response.questions.GetQuestionResponse;
 import com.supercoding.shoppingmallbackend.entity.*;
 import com.supercoding.shoppingmallbackend.repository.ConsumerRepository;
@@ -20,8 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class QuestionService {
@@ -61,12 +68,13 @@ public class QuestionService {
 
     // 문의 조회
     @Transactional
-    public GetQuestionResponse getQuestionByQuestionId(Long questionId) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_INPUT_VALUE.getErrorCode()));
-        GetQuestionResponse response = GetQuestionResponse.from(question);
-        return response;
+    public List<GetQuestionResponse> getQuestionByQuestionId(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ProductErrorCode.NOTFOUND_PRODUCT));
+        List<Question> questionList = questionRepository.findAllByProduct(product);
+        return questionList.stream().map(GetQuestionResponse::from).collect(Collectors.toList());
     }
+  
     // 문의 수정
     @Transactional
     public void updateQuestionByQuestionId(Long questionId, Long profileIdx, UpdateQuestionRequest updateQuestionRequest, MultipartFile imageFile) {
@@ -91,5 +99,17 @@ public class QuestionService {
     public void deleteQuestionByQuestionId(Long questionId, Long profileIdx) {
         Question valiQuestion = validProfileAndQuestion(questionId,profileIdx);
         questionRepository.deleteById(valiQuestion.getId());
+    }
+
+    public List<GetMyQuestionResponse> getWriterByMe(Long profileIdx) {
+            Long validProfileIdx = Optional.ofNullable(profileIdx)
+                    .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+            Consumer consumer = consumerRepository.findByProfileIdAndIsDeletedIsFalse(validProfileIdx)
+                    .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
+
+            List<Question> questionList = questionRepository.findAllByConsumer(consumer);
+
+            return questionList.stream().map(GetMyQuestionResponse::from).collect(Collectors.toList());
     }
 }

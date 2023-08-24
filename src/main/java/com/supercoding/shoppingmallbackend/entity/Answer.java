@@ -1,8 +1,13 @@
 package com.supercoding.shoppingmallbackend.entity;
 
+import com.supercoding.shoppingmallbackend.dto.request.answer.CreateAnswerRequest;
+import com.supercoding.shoppingmallbackend.dto.request.answer.UpdateAnswerRequest;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -16,14 +21,35 @@ public class Answer extends CommonField {
     @Column(name = "idx", nullable = false)
     private Long id;
 
-    @Column(name = "question_idx")
-    private Long questionIdx;
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "question_idx")
+    private Question question;
 
-    @Column(name = "seller_idx")
-    private Long sellerIdx;
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "seller_idx")
+    private Seller seller;
 
     @Lob
     @Column(name = "content")
     private String content;
 
+    public static Answer from(CreateAnswerRequest createAnswerRequest, Seller seller, Question question) {
+        return Answer.builder()
+                .question(question)
+                .seller(seller)
+                .content(createAnswerRequest.getContent())
+                .build();
+    }
+
+    public static Answer from(Answer originAnswer, UpdateAnswerRequest updateAnswerRequest) {
+        return Answer.builder()
+                .id(originAnswer.getId())
+                .question(originAnswer.getQuestion())
+                .seller(originAnswer.getSeller())
+                .content(updateAnswerRequest.getContent())
+                .build();
+
+    }
 }

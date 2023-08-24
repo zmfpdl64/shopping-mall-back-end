@@ -3,6 +3,7 @@ package com.supercoding.shoppingmallbackend.service;
 import com.supercoding.shoppingmallbackend.common.Error.CustomException;
 import com.supercoding.shoppingmallbackend.common.Error.domain.ProfileErrorCode;
 import com.supercoding.shoppingmallbackend.common.util.PhoneUtils;
+import com.supercoding.shoppingmallbackend.common.util.RandomUtils;
 import com.supercoding.shoppingmallbackend.entity.Profile;
 import com.supercoding.shoppingmallbackend.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class SmsService {
         findProfileByPhoneNum(phoneNum);
 //        Message coolsms = new Message(smsKey, smsSecretKey);
 
-        StringBuilder numStr = generateAuthCode();
+        String numStr = RandomUtils.generateAuthCode();
 
         HashMap<String, String> params = new HashMap<>();
         params.put("to", PhoneUtils.joinPhoneString(phoneNum));
@@ -52,13 +53,13 @@ public class SmsService {
 
 //        try { //TODO: 실제 서비스 시 주석 해제
 //            coolsms.send(params); // 메시지 전송
-            String value = numStr.toString() + "|" + LocalDateTime.now().toString();
+            String value = numStr + "|" + LocalDateTime.now().toString();
             authenticationMap.put(phoneNum, value);
             log.info("key: {}      value: {}", phoneNum, value);
 //        } catch (CoolsmsException e) {
 //            throw new CustomException(UtilErrorCode.SEND_ERROR.getErrorCode());
 //        }
-        return numStr.toString();
+        return numStr;
     }
 
 
@@ -84,7 +85,7 @@ public class SmsService {
         // 휴대폰 번호로 찾기
         Profile findProfile = findProfileByPhoneNum(phoneNum);
         // 비밀번호 생성
-        String randomPassword = generateRandomPassword();
+        String randomPassword = RandomUtils.generateRandomPassword();
         // 임시 비밀번호 저장
         String encodePassword = encoder.encode(randomPassword);
         findProfile.setPassword(encodePassword);
@@ -96,34 +97,6 @@ public class SmsService {
 
     private Profile findProfileByPhoneNum(String phoneNum) {
         return profileRepository.findByPhoneNum(phoneNum).orElseThrow(() -> new CustomException(ProfileErrorCode.NOT_FOUND));
-    }
-
-    private String generateRandomPassword() {
-        String upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
-        String digits = "0123456789";
-
-        String allowedCharacters = upperCaseLetters + lowerCaseLetters + digits;
-
-        SecureRandom random = new SecureRandom();
-        StringBuilder password = new StringBuilder();
-
-        for (int i = 0; i < 10; i++) {
-            int index = random.nextInt(allowedCharacters.length());
-            password.append(allowedCharacters.charAt(index));
-        }
-
-        return password.toString();
-    }
-    private StringBuilder generateAuthCode() {
-        StringBuilder numStr = new StringBuilder();
-
-        Random rand = new Random();
-        for(int i=0; i<6; i++) {
-            String ran = Integer.toString(rand.nextInt(10));
-            numStr.append(ran);
-        }
-        return numStr;
     }
 
 }

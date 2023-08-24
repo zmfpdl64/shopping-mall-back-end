@@ -147,15 +147,15 @@ public class Product extends CommonField {
                 .build();
     }
 
-    public static Product from(Product originProduct, ProductFileRequest productFileRequest, Genre genre) throws ParseException {
+    public static Product from(Product originProduct, ProductRequestBase productRequestBase, Genre genre) throws ParseException {
         return Product.builder()
                 .id(originProduct.getId())
                 .seller(originProduct.getSeller())
                 .genre(genre)
-                .title(productFileRequest.getTitle())
-                .price(productFileRequest.getPrice())
-                .closingAt(DateUtils.convertToTimestamp(productFileRequest.getClosingAt()))
-                .amount(productFileRequest.getAmount())
+                .title(productRequestBase.getTitle())
+                .price(productRequestBase.getPrice())
+                .closingAt(DateUtils.convertToTimestamp(productRequestBase.getClosingAt()))
+                .amount(productRequestBase.getAmount())
                 .productCategories(originProduct.getProductCategories())
                 .productContentImages(originProduct.getProductContentImages())
                 .mainImageUrl(originProduct.getMainImageUrl())
