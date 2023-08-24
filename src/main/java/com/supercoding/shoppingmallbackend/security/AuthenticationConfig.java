@@ -29,18 +29,21 @@ public class AuthenticationConfig {
                 .addFilterBefore(new EndExceptionHandler(), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                .authorizeHttpRequests(authorization ->
-//                        authorization
-//                                .antMatchers(GET, "/api/v1/product/*", "/api/v1/reviews/{id}", "/api/v1/questions/{id}").permitAll()
-//                                .antMatchers(POST, "/api/v1/product/*","/api/v1/scrapList/**", "/api/v1/reviews/**",
+//                .authorizeHttpRequests(authorization ->authorization
+//                        .antMatchers(GET, "/api/v1/product/*", "/api/v1/reviews/{id}", "/api/v1/questions/{id}").permitAll()
+//                        .antMatchers(POST, "/api/v1/product/*","/api/v1/scrapList/**", "/api/v1/reviews/**",
 //                                        "/api/v1/questions/**", "/api/v1/shoppingcart/**", "/api/v1/payments/**").authenticated()
-//                                .antMatchers(PUT, "/api/v1/product/*","/api/v1/scrapList/**", "/api/v1/reviews/**",
+//                        .antMatchers(PUT, "/api/v1/product/*","/api/v1/scrapList/**", "/api/v1/reviews/**",
 //                                        "/api/v1/questions/**", "/api/v1/shoppingcart/**", "/api/v1/payments/**").authenticated()
-//                                .antMatchers(DELETE, "/api/v1/product/*","/api/v1/scrapList/**", "/api/v1/reviews/**",
+//                        .antMatchers(DELETE, "/api/v1/product/*","/api/v1/scrapList/**", "/api/v1/reviews/**",
 //                                        "/api/v1/questions/**", "/api/v1/shoppingcart/**", "/api/v1/payments/**").authenticated()
-//                                .antMatchers(GET,"/api/v1/token/**").permitAll()
-//                                .antMatchers(POST, "/api/v1/token/**").authenticated()
-//                                .anyRequest().permitAll()
+//                        .antMatchers(GET,"/api/v1/token/**").permitAll()
+//                        .antMatchers(POST, "/api/v1/token/**").authenticated()
+//                        .antMatchers("/api/v1/payments", "/api/v1/payments/**").authenticated()
+//                        .antMatchers("api/v1/reviews", "api/v1/reviews/**").authenticated()
+//                        .antMatchers("/api/v1/scrap-list", "/api/v1/scrap-list/**").authenticated()
+//                        .antMatchers("api/v1/shoppingcart", "api/v1/shoppingcart/**").authenticated()
+//                        .anyRequest().permitAll()
 //                )
                 .exceptionHandling().authenticationEntryPoint(new CustomEntryPoint())
                 .and()
