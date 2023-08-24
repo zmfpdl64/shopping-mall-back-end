@@ -32,12 +32,12 @@ public class AnswerService {
 
     // 답변 작성
     @Transactional
-    public void createAnswer(CreateAnswerRequest createAnswerRequest, Long profileIdx) {
+    public void createAnswer(CreateAnswerRequest createAnswerRequest,Long questionIdx, Long profileIdx) {
         Long validProfileIdx = Optional.ofNullable(profileIdx)
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
         Seller seller = sellerRepository.findByProfile_Id(validProfileIdx)
                 .orElseThrow(() -> new CustomException(UserErrorCode.NOTFOUND_USER.getErrorCode()));
-        Question question = questionRepository.findById(createAnswerRequest.getQuestionIdx())
+        Question question = questionRepository.findById(questionIdx)
                 .orElseThrow(() -> new CustomException(CommonErrorCode.INVALID_INPUT_VALUE.getErrorCode()));
         Optional.ofNullable(question.getAnswer()).ifPresent(answer -> {
             throw new CustomException(AnswerErrorCode.ALREADY_HAVE_ANSWER);
@@ -63,9 +63,9 @@ public class AnswerService {
         return answer;
     }
 
-    public void updateAnswerByAnswerId(Long answerId, Long profileIdx, UpdateAnswerRequest updateAnswerRequest) {
+    public void updateAnswerByAnswerId(Long answerId, Long profileIdx, CreateAnswerRequest answerRequest) {
         Answer originAnswer = validProfileAndAnswer(answerId,profileIdx);
-        Answer updateAnswer = Answer.from(originAnswer,updateAnswerRequest);
+        Answer updateAnswer = Answer.from(originAnswer,answerRequest);
 
         answerRepository.save(updateAnswer);
     }
