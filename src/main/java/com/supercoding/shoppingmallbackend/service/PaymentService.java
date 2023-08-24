@@ -183,7 +183,6 @@ public class PaymentService {
     public CommonResponse<List<PaymentResponse>> buyWhole(Long profileId, PaymentRequest paymentRequest) {
         Consumer consumer = getConsumer(profileId);
         List<ShoppingCart> purchaseList =  shoppingCartRepository.findAllByConsumerAndIsDeletedIsFalse(consumer);
-
         return processPayment(consumer, purchaseList, paymentRequest);
     }
 
@@ -206,6 +205,7 @@ public class PaymentService {
 
     private CommonResponse<List<PaymentResponse>> processPayment(Consumer consumer, List<ShoppingCart> purchaseList, PaymentRequest paymentRequest) {
 
+        // 상품의 재고가 충분한지 확인
         if (!validateProductQuatity(purchaseList)) throw new CustomException(PaymentErrorCode.OVER_AMOUNT);
 
         // 페이머니가 충분한지 확인
