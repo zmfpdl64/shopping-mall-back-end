@@ -67,8 +67,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public CommonResponse<?> handleException(Exception e) {
-        e.printStackTrace();
         log.error(e.getMessage(), 500);
-        return CommonResponse.fail(new CustomException(CommonErrorCode.INTERNAL_SERVER_ERROR));
+        return CommonResponse.fail(CommonErrorCode.INTERNAL_SERVER_ERROR.getErrorCode());
     }
 }
