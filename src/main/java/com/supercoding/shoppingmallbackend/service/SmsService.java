@@ -44,7 +44,7 @@ public class SmsService {
      */
     public String sendAuthenticationCode(String phoneNum){
 
-        Message coolsms = new Message(smsKey, smsSecretKey);
+//        Message coolsms = new Message(smsKey, smsSecretKey);
 
         String numStr = RandomUtils.generateAuthCode();
 
@@ -54,14 +54,14 @@ public class SmsService {
         params.put("type", "sms");
         params.put("text", "인증번호는 [" + numStr + "] 입니다.");
 
-        try { //TODO: 실제 서비스 시 주석 해제
-            coolsms.send(params); // 메시지 전송
+//        try { //TODO: 실제 서비스 시 주석 해제
+//            coolsms.send(params); // 메시지 전송
         AuthAndTime authAndTime = new AuthAndTime(numStr, LocalDateTime.now().plusMinutes(10).toString());
         authenticationMap.put(phoneNum, authAndTime);
             log.info("key: {}      value: {}", phoneNum, authAndTime);
-        } catch (CoolsmsException e) {
-            throw new CustomException(UtilErrorCode.SEND_ERROR.getErrorCode());
-        }
+//        } catch (CoolsmsException e) {
+//            throw new CustomException(UtilErrorCode.SEND_ERROR.getErrorCode());
+//        }
         return numStr;
     }
 
@@ -97,7 +97,7 @@ public class SmsService {
 
 
     @TimeTrace
-    @Scheduled(cron = "0 10 * * * *")
+    @Scheduled(cron = "0 0 1 * * *") //1시간마다 만료된 key 제거
     public void clearAuthenticationMap() {
         authenticationMap.entrySet().forEach((set) -> {
             AuthAndTime authAndTime = authenticationMap.get(set.getKey());
