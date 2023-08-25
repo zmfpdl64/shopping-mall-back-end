@@ -36,7 +36,7 @@ public class SmsService {
 
     private final ProfileRepository profileRepository;
     private final BCryptPasswordEncoder encoder;
-    private final Map<String, String> authenticationMap = new ConcurrentHashMap<>();
+    private final Map<String, AuthAndTime> authenticationMap = new ConcurrentHashMap<>();
 
     /**
      * 임시 코드 생성 메소드
@@ -56,9 +56,9 @@ public class SmsService {
 
         try { //TODO: 실제 서비스 시 주석 해제
             coolsms.send(params); // 메시지 전송
-            String value = numStr + "|" + LocalDateTime.now().toString();
-            authenticationMap.put(phoneNum, value);
-            log.info("key: {}      value: {}", phoneNum, value);
+        AuthAndTime authAndTime = new AuthAndTime(numStr, LocalDateTime.now().plusMinutes(10).toString());
+        authenticationMap.put(phoneNum, authAndTime);
+            log.info("key: {}      value: {}", phoneNum, authAndTime);
         } catch (CoolsmsException e) {
             throw new CustomException(UtilErrorCode.SEND_ERROR.getErrorCode());
         }
@@ -92,23 +92,15 @@ public class SmsService {
         if(!authenticationMap.containsKey(phone)){
             throw new CustomException(ProfileErrorCode.NOT_FOUND_PHONE);
         }
-        return getAuthAndTime(phone);
+        return authenticationMap.get(phone);
     }
 
-    /**
-     * phone을 전달하면 해당 authCode와 Time을 담은 객체를 반환한다.
-     * @param phone 핸드폰 번호
-     * @return AuthAndTime
-     */
-    private AuthAndTime getAuthAndTime(String phone) {
-        return new AuthAndTime(authenticationMap.get(phone).split("\\|"));
-    }
 
     @TimeTrace
     @Scheduled(cron = "0 10 * * * *")
     public void clearAuthenticationMap() {
         authenticationMap.entrySet().forEach((set) -> {
-            AuthAndTime authAndTime = getAuthAndTime(set.getKey());
+            AuthAndTime authAndTime = authenticationMap.get(set.getKey());
             if(!isBefore(authAndTime)) authenticationMap.remove(set.getKey());
         });
     }
