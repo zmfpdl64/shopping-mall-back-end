@@ -172,7 +172,7 @@ public class PaymentService {
     @Caching(evict = {
             @CacheEvict(value = "purchaseList", key = "#profileId"),
             @CacheEvict(value = "purchaseListOrderNumber", allEntries = true),
-            @CacheEvict(value = "saleList", key = "#profileId"),
+            @CacheEvict(value = "saleList", allEntries = true),
             @CacheEvict(value = "saleListOrderNumber", allEntries = true),
             @CacheEvict(value = "purchaseListPage", allEntries = true),
             @CacheEvict(value = "saleListPage", allEntries = true),
@@ -189,7 +189,7 @@ public class PaymentService {
     @Caching(evict = {
             @CacheEvict(value = "purchaseList", key = "#profileId"),
             @CacheEvict(value = "purchaseListOrderNumber", allEntries = true),
-            @CacheEvict(value = "saleList", key = "#profileId"),
+            @CacheEvict(value = "saleList", allEntries = true),
             @CacheEvict(value = "saleListOrderNumber", allEntries = true),
             @CacheEvict(value = "purchaseListPage", allEntries = true),
             @CacheEvict(value = "saleListPage", allEntries = true),
