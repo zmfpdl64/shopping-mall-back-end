@@ -1,6 +1,6 @@
 # [SuperBoard 보드게임 쇼핑몰](https://super-boarding.netlify.app/)
 
-![superBoardingLogo_1.png](..%2F..%2F..%2F..%2F%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C%2FsuperBoardingLogo_1.png)
+![superBoardingLogo.png](superBoardingLogo.png)
 ### 프로젝트 기간
 
 - 2023-08-14 ~ 2023-08-25 (12일)
